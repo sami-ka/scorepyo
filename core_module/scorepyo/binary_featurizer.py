@@ -1,3 +1,11 @@
+"""TODO Add docstring binary featurizer
+TODO Add typing
+TODO Comment code
+TODO Improve naming and code clarity
+
+Returns:
+    _type_: _description_
+"""
 import numpy as np
 import pandas as pd
 
@@ -28,6 +36,8 @@ class AutomaticBinaryFeaturizer:
         )
 
     def fit(self, X_train, y_train, categorical_features="auto"):
+
+        # TODO Use pandera
         if categorical_features == "auto":
             categorical_features = None
         self._ebm.fit(X_train, y_train)
@@ -35,6 +45,8 @@ class AutomaticBinaryFeaturizer:
         self.one_hot_encoder.fit(X_train[categorical_features])
 
     def transform(self, X, categorical_features="auto"):
+
+        # TODO Use pandera
         ebm_global = self._ebm.explain_global(name="EBM")
 
         X_binarized = pd.DataFrame()
@@ -44,6 +56,7 @@ class AutomaticBinaryFeaturizer:
         list_original_column = []
 
         if categorical_features == "auto":
+            # TODO do something about categorical data
             categorical_features = []
 
         for i, feature_name in enumerate(ebm_global.data()["names"]):
@@ -98,6 +111,7 @@ class AutomaticBinaryFeaturizer:
                     list_scores.append(contrib)
                     list_original_column.append(feature_name)
 
+        # TODO : Put logodds of ebm ofr categorical features
         if self.one_hot_encode is not None:
 
             X_binarized[

@@ -1,3 +1,14 @@
+"""TODO Add docstring Basescorecard+Optuna scorecard
+TODO Add typing
+TODO Comment code
+TODO Improve naming and code clarity
+TODO add Neurips risk scorer
+TODO add class constrained OptunaScorecard
+
+Returns:
+    _type_: _description_
+"""
+
 from abc import abstractmethod
 import numpy as np
 import optuna
@@ -17,7 +28,7 @@ class _BaseScoreCard:
         self.max_point_value = max_point_value
 
         if df_info is not None:
-            # TODO check that it contains the columns binary feature et original feature
+            # TODO pandera check that it contains the columns binary feature et original feature
             self._df_info = df_info.copy()
 
         self.computation_card = None
@@ -40,6 +51,7 @@ class _BaseScoreCard:
         return proba[:, 1] >= proba_threshold
 
     def predict_proba(self, X):
+        # TODO have the same behaviour as predict proba from sklearn
         df_score_table = self.score_card.copy().T.set_index("SCORE")
         list_features = self.computation_card["binary_feature"].values
         # TODO check that X only has selected featureso r just that it contains them?
