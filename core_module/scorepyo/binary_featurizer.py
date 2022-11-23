@@ -34,11 +34,9 @@ class AutomaticBinaryFeaturizer:
 
         self.one_hot_encoder.fit(X_train[categorical_features])
 
-    def transform(self, X, X_train, X_test, categorical_features="auto"):
+    def transform(self, X, categorical_features="auto"):
         ebm_global = self._ebm.explain_global(name="EBM")
 
-        # X_train_binarized = pd.DataFrame()
-        # X_test_binarized = pd.DataFrame()
         X_binarized = pd.DataFrame()
         list_scores = []
         list_lower_threshold = []
@@ -46,7 +44,7 @@ class AutomaticBinaryFeaturizer:
         list_original_column = []
 
         if categorical_features == "auto":
-            categorical_features = None
+            categorical_features = []
 
         for i, feature_name in enumerate(ebm_global.data()["names"]):
             if feature_name not in categorical_features:
@@ -69,41 +67,25 @@ class AutomaticBinaryFeaturizer:
                     feature_name_binarized_upper = (
                         f"{feature_name} < {np.round(threshold_upper,2)}"
                     )
+
+                    feature_name_binarized_inbetween = f"{np.round(threshold_lower,2)} <= {feature_name} < {np.round(threshold_upper,2)}"
+
                     if j == 0:
                         col_name = feature_name_binarized_upper
-                        # X_train_binarized[col_name] = (
-                        #     X_train[feature_name] < threshold_upper
-                        # )
-                        # X_test_binarized[col_name] = (
-                        #     X_test[feature_name] < threshold_upper
-                        # )
+
                         X_binarized[col_name] = X[feature_name] < threshold_upper
 
                         list_lower_threshold.append(np.nan)
                         list_upper_threshold.append(threshold_upper)
                     elif j == number_plateau - 1:
                         col_name = feature_name_binarized_lower
-                        # X_train_binarized[col_name] = (
-                        #     X_train[feature_name] >= threshold_lower
-                        # )
-                        # X_test_binarized[col_name] = (
-                        #     X_test[feature_name] >= threshold_lower
-                        # )
+
                         X_binarized[col_name] = X[feature_name] >= threshold_lower
                         list_lower_threshold.append(threshold_lower)
                         list_upper_threshold.append(np.nan)
                     else:
-                        col_name = (
-                            feature_name_binarized_lower
-                            + " and "
-                            + feature_name_binarized_upper
-                        )
-                        # X_train_binarized[col_name] = (
-                        #     X_train[feature_name] < threshold_upper
-                        # ) & (X_train[feature_name] >= threshold_lower)
-                        # X_test_binarized[col_name] = (
-                        #     X_test[feature_name] < threshold_upper
-                        # ) & (X_test[feature_name] >= threshold_lower)
+                        col_name = feature_name_binarized_inbetween
+
                         X_binarized[col_name] = (X[feature_name] < threshold_upper) & (
                             X[feature_name] >= threshold_lower
                         )
@@ -111,20 +93,16 @@ class AutomaticBinaryFeaturizer:
                         list_lower_threshold.append(threshold_lower)
                         list_upper_threshold.append(threshold_upper)
 
-                    X[col_name] = X[col_name].astype(int)
+                    X_binarized[col_name] = X_binarized[col_name].astype(int)
 
                     list_scores.append(contrib)
                     list_original_column.append(feature_name)
 
         if self.one_hot_encode is not None:
 
-            X[
+            X_binarized[
                 self.one_hot_encoder.get_feature_names_out()
             ] = self.one_hot_encoder.transform(X[categorical_features])
-            # X_test_binarized[
-
-            #     one_hot_encoder.get_feature_names_out()
-            # ] = one_hot_encoder.transform(X_test[categorical_features])
 
             for name_out in self.one_hot_encoder.get_feature_names_out():
                 list_scores.append(None)
@@ -132,9 +110,7 @@ class AutomaticBinaryFeaturizer:
                 list_upper_threshold.append(None)
                 list_original_column.append("_".join(name_out.split("_")[:-1]))
         else:
-            # X[categorical_features] = self.one_hot_encoder.transform(
-            #     X[categorical_features]
-            # )
+            X_binarized[categorical_features] = X[categorical_features]
             for name_out in categorical_features:
                 list_scores.append(None)
                 list_lower_threshold.append(None)
@@ -142,7 +118,7 @@ class AutomaticBinaryFeaturizer:
                 list_original_column.append(name_out)
 
         df_score_feature = pd.DataFrame(
-            index=X_train_binarized.columns,
+            index=X_binarized.columns,
             data=np.array(
                 [
                     list_scores,
@@ -152,18 +128,18 @@ class AutomaticBinaryFeaturizer:
                 ]
             ).T,
             columns=[
-                "contrib",
+                "EBM_log_odds_contribution",
                 "lower_threshold",
                 "upper_threshold",
-                "original_feature",
+                "feature",
             ],
         )
 
         row_intercept = pd.DataFrame(
             index=["intercept"],
             columns=df_score_feature.columns,
-            data=[[ebm.intercept_[0], None, None, "intercept"]],
+            data=[[self._ebm.intercept_[0], None, None, "intercept"]],
         )
         df_score_feature = pd.concat([df_score_feature, row_intercept], axis=0)
-
-        return X_train_binarized, X_test_binarized, df_score_feature
+        df_score_feature.index.name = "binary_feature"
+        return X_binarized, df_score_feature
