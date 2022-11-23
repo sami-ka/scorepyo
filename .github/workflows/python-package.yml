@@ -39,9 +39,9 @@ jobs:
         run: |
           pwd
           ls -l
-          conda create -y -n env_scorepyo python=matrix.python-version
-          conda activate env_scorepyo
-          python bootstrap.py env_scorepyo
+          conda create -y -n env_scorepyo_ci python=matrix.python-version
+          conda activate env_scorepyo_ci
+          python bootstrap.py env_scorepyo_ci
 
       - name: format check - black
         run: |
