@@ -18,4 +18,4 @@ include = '\.pyi?$'
 [tool.isort]
 # make it compatible with black
 profile = "black" 
-known_first_party=scorepyo
+known_first_party=["scorepyo"]
