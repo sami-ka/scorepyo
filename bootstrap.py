@@ -30,7 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("envname")
     args = parser.parse_args()
     python_call(
-        module="pip", arguments=["install", "-e", "core_module/.[dev,ipy,doc]"]
+        module="pip",
+        arguments=["install", "-e", "core_module/.[dev,ipy,doc]", "--no-cache-dir"],
     )
 
     python_call(
