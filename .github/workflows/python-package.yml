@@ -65,3 +65,7 @@ jobs:
       - name: type checking :mypy
         run: |
           python -m mypy --config-file config/mypy.ini core_module/
+
+      - name: check vulnerabilities
+        run: |
+          bandit -c config/bandit.yml -r .
