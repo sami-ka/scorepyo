@@ -4,12 +4,11 @@ TODO Comment code
 TODO Improve naming and code clarity
 
 Returns:
+
     _type_: _description_
 """
 import numpy as np
 import pandas as pd
-
-
 from interpret.glassbox import ExplainableBoostingClassifier
 from sklearn.preprocessing import OneHotEncoder
 
