@@ -1,3 +1,6 @@
 {
-    "isort.importStrategy": "fromEnvironment"
+    "isort.importStrategy": "fromEnvironment",
+    "python.linting.pylintArgs": [
+        "--rcfile ./config/.pylintrc"
+    ]
 }

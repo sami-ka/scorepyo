@@ -60,7 +60,7 @@ jobs:
 
       - name: Linting
         run: |
-          python -m pylint --rcfile=config/.pylintrc
+          python -m pylint --rcfile=config/.pylintrc .
 
       - name: type checking :mypy
         run: |
