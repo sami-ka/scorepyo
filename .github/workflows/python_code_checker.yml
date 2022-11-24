@@ -1,0 +1,67 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python code checker
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Do not ignore bash profile files. or conda init
+    # wont work
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # - name: Add conda to system path
+      #   run: |
+      #     # $CONDA is an environment variable pointing to the root of the miniconda directory
+      #     echo $CONDA/bin >> $GITHUB_PATH
+      #     conda init
+
+      - name: Install dependencies
+        run: |
+          pwd
+          ls -l
+
+          # conda create -y -n env_scorepyo_ci python=${{matrix.python-version}}
+          # conda activate env_scorepyo_ci
+
+          pip install --upgrade pip wheel
+          pip install -e core_module/.[dev,doc] --no-cache-dir
+
+      - name: format check - black
+        run: |
+          python -m black --check --diff .
+
+      - name: format check - isort
+        run: |
+          python -m isort --diff --check-only .
+        #--settings-path ./config/.isort.cfg
+      - name: Test with pytest
+        run: |
+          python -m pytest -rfs --cov=pricing
+
+      - name: Linting
+        run: |
+          python -m pylint --rcfile=config/.pylintrc .
+
+      - name: type checking :mypy
+        run: |
+          python -m mypy --config-file config/mypy.ini core_module/
