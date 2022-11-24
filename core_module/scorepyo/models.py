@@ -7,9 +7,11 @@ TODO add class constrained OptunaScorecard
 
 Returns:
     _type_: _description_
+    
 """
 
 from abc import abstractmethod
+
 import numpy as np
 import optuna
 import pandas as pd

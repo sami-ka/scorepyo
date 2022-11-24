@@ -9,3 +9,13 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 root = ".."
 local_scheme = "no-local-version"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+
+[tool.isort]
+# make it compatible with black
+profile = "black" 
+known_first_party=["scorepyo"]
