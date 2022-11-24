@@ -39,8 +39,10 @@ jobs:
         run: |
           pwd
           ls -l
+
           conda create -y -n env_scorepyo_ci python=${{matrix.python-version}}
           conda activate env_scorepyo_ci
+          pip install --upgrade pip wheel
           python bootstrap.py env_scorepyo_ci
 
       - name: format check - black
