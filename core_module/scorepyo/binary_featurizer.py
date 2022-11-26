@@ -43,7 +43,7 @@ class AutomaticBinaryFeaturizer:
 
     Methods
     -------
-    fit(X_train, y_train, categorical_features="auto", to_exclude_features=None))
+    fit(X, y, categorical_features="auto", to_exclude_features=None))
         fits the EBM model on X,y and the one-hot encoder on the categorical features
 
     transform(X)
