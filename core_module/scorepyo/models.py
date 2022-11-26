@@ -4,9 +4,6 @@ TODO Comment code
 TODO Improve naming and code clarity
 TODO add Neurips risk scorer
 TODO add class constrained OptunaScorecard
-
-Returns:
-    _type_: _description_
     
 """
 
@@ -19,9 +16,56 @@ from sklearn.metrics import log_loss
 
 
 class _BaseScoreCard:
+    """
+    Base class for score card type model.
+
+    This class provides common functions for score card type model, no matter the way points and binary features are designed.
+    It needs common attributes, such as minimum/maximum point value for each binary feature and number of selected binary feature.
+
+
+    Attributes
+    ----------
+    nb_max_features : int
+        maximum number of binary features to compute by feature
+    min_point_value : int
+        minimum points to assign for a binary feature
+    max_point_value: ExplainableBoostingClassifier
+        maximum points to assign for a binary feature
+    _df_info: pandas.DataFrame
+        Dataframe containing the link between a binary feature and its origin
+
+
+
+    Methods
+    -------
+    @staticmethod
+    _predict_proba_score(score, intercept):
+        computes the value of the logistic function at score+intercept value
+
+    @abstractmethod
+    fit(self, X, y):
+        function to be implemented by child classes. This function should create the feature-point card and score card attributes.
+
+    predict(self, X, proba_threshold=0.5):
+        function that predicts the positive/negative class by using a threshold on the probability given by the model
+
+    predict_proba(self, X):
+        function that predicts the probability of the positive class
+
+    summary(self):
+        function that prints the feature-point card and score card of the model
+    """
+
     def __init__(
         self, nb_max_features, min_point_value=-2, max_point_value=3, df_info=None
     ):
+        """
+        Args:
+            nb_max_features (int): Number of maximum binary features to be selected
+            min_point_value (int, optional): Minimum point assigned to a binary feature. Defaults to -2.
+            max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
+            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
+        """
         # TODO test int and positif
         self.nb_max_features = nb_max_features
 
@@ -33,46 +77,91 @@ class _BaseScoreCard:
             # TODO pandera check that it contains the columns binary feature et original feature
             self._df_info = df_info.copy()
 
-        self.computation_card = None
+        self.feature_point_card = None
         self.score_card = None
 
     @staticmethod
     def _predict_proba_score(score, intercept):
+        """Function that computes the logistic function value at score+intercept value
+
+        Args:
+            score (np.array(int)): sum of points coming from binary features
+            intercept (float): intercept of score card. log-odds of having 0 point
+
+        Returns:
+            np.array(int): associated probability
+        """
         score_associated_proba = 1 / (1 + np.exp(-(score + intercept)))
         return score_associated_proba
 
     @abstractmethod
     def fit(self, X, y):
+        """Functions that creates the feature-point card and score card
+
+        Must be defined for each child class
+
+        Args:
+            X (pandas.DataFrame): binary feature dataset
+            y (pandas.Series): binary target
+
+        Raises:
+            NotImplementedError
+        """
         raise NotImplementedError
 
     def predict(self, X, proba_threshold=0.5):
-        if (self.computation_card is None) or (self.score_card is None):
+        """Predicts binary class based on probabillity threshold
+
+        Afer computing the probability for each sample,
+
+        Args:
+            X (_type_): _description_
+            proba_threshold (float, optional): _description_. Defaults to 0.5.
+
+        Returns:
+            _type_: _description_
+        """
+        if (self.feature_point_card is None) or (self.score_card is None):
             print("ScoreCard model has not been fitted yet")
+            return None  # TODO raise exception
         proba = self.predict_proba(X)
 
         return proba[:, 1] >= proba_threshold
 
     def predict_proba(self, X):
+        """Function that outputs probability of positive class according to score card
+
+        Args:
+            X (pandas.DataFrame): dataset of features
+
+        Returns:
+            ndarray of shape (n_samples, 2): probability of negative and positive class in each column resp.
+        """
+        if (self.feature_point_card is None) or (self.score_card is None):
+            print("ScoreCard model has not been fitted yet")
+            return None  # TODO Raise exception
+
         # TODO have the same behaviour as predict proba from sklearn
-        df_score_table = self.score_card.copy().T.set_index("SCORE")
-        list_features = self.computation_card["binary_feature"].values
+        # TODO check if full numpy approach is faster
+        df_score_card = self.score_card.copy().T.set_index("SCORE")
+        list_features = self.feature_point_card["binary_feature"].values
         # TODO check that X only has selected featureso r just that it contains them?
         X_selected_features = X[list_features]
 
-        points = self.computation_card["point"].values
+        points = self.feature_point_card["point"].values
         X_total_points = np.matmul(X_selected_features.values, points)
-        proba = df_score_table.loc[X_total_points, "_RISK_FLOAT"].values.reshape(-1, 1)
+        proba = df_score_card.loc[X_total_points, "_RISK_FLOAT"].values.reshape(-1, 1)
 
         return np.concatenate([1 - proba, proba], axis=1)
 
     def summary(self):
-        if (self.computation_card is None) or (self.score_card is None):
+        if (self.feature_point_card is None) or (self.score_card is None):
             print("ScoreCard model has not been fitted yet")
         print("======================")
         print("| FEATURE-POINT CARD |")
         print("======================")
         print(
-            self.computation_card[["Description", "point"]]
+            self.feature_point_card[["Description", "point"]]
             .sort_values(by="point")
             .to_markdown()
         )
@@ -87,6 +176,52 @@ class _BaseScoreCard:
 
 
 class OptunaScoreCard(_BaseScoreCard):
+    """
+    Score card model based on Optuna.
+
+    This class is a child class of _BaseScorecard. It implements the fit method that creates the feature-point card and score card attribute.
+    It computes them by leveraging the sampling efficiency of Optuna. Optuna is asked to select nb_max_features among all features, and assign points
+    to each selected feature. It minimizes the logloss on a given dataset.
+
+
+    Attributes
+    ----------
+    nb_max_features : int
+        maximum number of binary features to compute by feature
+    min_point_value : int
+        minimum points to assign for a binary feature
+    max_point_value: ExplainableBoostingClassifier
+        maximum points to assign for a binary feature
+    _df_info: pandas.DataFrame
+        Dataframe containing the link between a binary feature and its origin
+
+
+
+    Methods
+    -------
+    fit(self, X, y):
+        function creating the feature-point card and score card attributes via Optuna
+
+    score_logloss_objective(self, trial, X, y):
+        function that defines the logloss function used by Optuna
+
+
+    From _BaseScoreCard:
+
+    @staticmethod
+    _predict_proba_score(score, intercept):
+        computes the value of the logistic function at score+intercept value
+
+    predict(self, X, proba_threshold=0.5):
+        function that predicts the positive/negative class by using a threshold on the probability given by the model
+
+    predict_proba(self, X):
+        function that predicts the probability of the positive class
+
+    summary(self):
+        function that prints the feature-point card and score card of the model
+    """
+
     def __init__(
         self,
         nb_max_features,
@@ -95,6 +230,14 @@ class OptunaScoreCard(_BaseScoreCard):
         df_info=None,
         optuna_optimize_params=None,
     ):
+        """
+        Args:
+            nb_max_features (int): Number of maximum binary features to be selected
+            min_point_value (int, optional): Minimum point assigned to a binary feature. Defaults to -2.
+            max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
+            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
+            optuna_optimize_params (dict, optional): parameters for optuna optimize function. Defaults to None.
+        """
         super().__init__(nb_max_features, min_point_value, max_point_value, df_info)
         self.optuna_optimize_params = dict()
         if optuna_optimize_params is not None:
@@ -104,16 +247,27 @@ class OptunaScoreCard(_BaseScoreCard):
             self.optuna_optimize_params["timeout"] = 90
 
     def score_logloss_objective(self, trial, X, y):
+        """Logloss objective function for score card exploration parameters sampled with optuna.
+
+        This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
+        - `self.nb_max_features` categorical parameters for the choice of binary features to build the score card on
+        - `self.nb_max_features` integer parameters for the choice of points associated to the selected binary feature
+        - one float parameter for the intercept of the score card (i.e. the log odd associated to a score of 0)
+
+
+        Args:
+            trial (Optune.trial): Trial for optuna
+            X (pandas.DataFrame): dataset of features to minimize scorecard logloss on
+            y (nd.array): Target binary values
+
+        Returns:
+            float: log-loss value for score card sampled parameters
+        """
         # TODO : put option for no duplicate features
         # change way of doing the sampling by creating all combinations of binary features
         # https://stackoverflow.com/questions/73388133/is-there-a-way-for-optuna-suggest-categoricalto-return-multiple-choices-from-l
-        param_grid_point = {
-            f"feature_{i}_score": trial.suggest_int(
-                f"feature_{i}_score", self.min_point_value, self.max_point_value
-            )
-            for i in range(self.nb_max_features)
-        }
 
+        # Define the parameters of trial for the selection of the subset of binary features respecting the maximum number
         param_grid_choice_feature = {
             f"feature_{i}_choice": trial.suggest_categorical(
                 f"feature_{i}_choice", X.columns
@@ -121,6 +275,15 @@ class OptunaScoreCard(_BaseScoreCard):
             for i in range(self.nb_max_features)
         }
 
+        # Define the parameters of trial for the points associated to each selected binary feature
+        param_grid_point = {
+            f"feature_{i}_point": trial.suggest_int(
+                f"feature_{i}_point", self.min_point_value, self.max_point_value
+            )
+            for i in range(self.nb_max_features)
+        }
+
+        # Define the parameter of trial for the intercept of the score card
         score_intercept = trial.suggest_float(
             "intercept",
             -10 + self.min_point_value * self.nb_max_features,
@@ -128,70 +291,113 @@ class OptunaScoreCard(_BaseScoreCard):
             step=0.5,
         )
 
+        # Gather selected features
         selected_features = [
             param_grid_choice_feature[f"feature_{i}_choice"]
             for i in range(self.nb_max_features)
         ]
 
+        # gather points of selected features
         score_vector = [
-            param_grid_point[f"feature_{i}_score"] for i in range(self.nb_max_features)
+            param_grid_point[f"feature_{i}_point"] for i in range(self.nb_max_features)
         ]
 
-        score_train = np.matmul(X[selected_features].values, np.transpose(score_vector))
-        score_train_associated_probabilities = self._predict_proba_score(
-            score_train, score_intercept
+        # Compute scores for all samples by multiplying selected binary features of X by corresponding points
+        score_samples = np.matmul(
+            X[selected_features].values, np.transpose(score_vector)
         )
-        logloss_train = log_loss(y, score_train_associated_probabilities)
 
-        return logloss_train
+        # Compute associated probabilities
+        score_samples_associated_probabilities = self._predict_proba_score(
+            score_samples, score_intercept
+        )
+
+        # Compute logloss
+        logloss_samples = log_loss(y, score_samples_associated_probabilities)
+
+        return logloss_samples
 
     def fit(self, X, y):
+        """Function that search best parameters (choice of binary features, points and intercept) of a score card with Optuna
+
+        This functions calls Optuna to find the best parameters of a score card and then construct the feature-point card and score card attributes.
+
+        Args:
+            X (pandas.DataFrame): Dataset of features to fit the score card on
+            y (pandas.Series): Target binary values
+        """
         # Setting the logging level WARNING, the INFO logs are suppressed.
         optuna.logging.set_verbosity(optuna.logging.WARNING)
+
+        # Create Optuna study
         study = optuna.create_study(direction="minimize", study_name="Score search")
+
+        # Define optuna study objective
         optuna_objective = lambda trial: self.score_logloss_objective(
             trial,
             X,
             y,
         )
+
         study.optimize(optuna_objective, **self.optuna_optimize_params)
-        selected_scorepyo_features_point = [
-            study.best_params[f"feature_{i}_score"]
-            for i in range(self.nb_max_features)
-            if study.best_params[f"feature_{i}_score"] != 0
-        ]
+
+        # Get best selection of features
         selected_scorepyo_features = [
             study.best_params[f"feature_{i}_choice"]
             for i in range(self.nb_max_features)
-            if study.best_params[f"feature_{i}_score"] != 0
+            if study.best_params[f"feature_{i}_point"] != 0
         ]
+
+        # Get best associated points
+        selected_scorepyo_features_point = [
+            study.best_params[f"feature_{i}_point"]
+            for i in range(self.nb_max_features)
+            if study.best_params[f"feature_{i}_point"] != 0
+        ]
+
+        # Get best associated intercept
         self._intercept = study.best_params["intercept"]
 
-        self.computation_card = pd.DataFrame(index=selected_scorepyo_features)
-        self.computation_card["point"] = selected_scorepyo_features_point
+        # Build feature-point card
+        self.feature_point_card = pd.DataFrame(index=selected_scorepyo_features)
+        self.feature_point_card["point"] = selected_scorepyo_features_point
         if self._df_info is not None:
-            self.computation_card = self.computation_card.merge(
+            self.feature_point_card = self.feature_point_card.merge(
                 self._df_info, left_index=True, right_on=["binary_feature"]
             )
-            # self.computation_card = self.computation_card.drop("binary_feature", axis=1)
         else:
-            self.computation_card["feature"] = self.computation_card.index.copy()
-        self.computation_card = self.computation_card.set_index("feature")
-        self.computation_card["Description"] = self.computation_card["binary_feature"]
+            self.feature_point_card["feature"] = self.feature_point_card.index.copy()
+        self.feature_point_card = self.feature_point_card.set_index("feature")
+        self.feature_point_card["Description"] = self.feature_point_card[
+            "binary_feature"
+        ]
 
+        # Compute score card
+
+        # Minimum score is the sum of all negative points
         min_range_score = sum(
             np.clip(i, a_min=None, a_max=0)
-            for i in self.computation_card["point"].values
+            for i in self.feature_point_card["point"].values
         )
+
+        # Maximum score is the sum of all positive points
         max_range_score = sum(
             np.clip(i, a_min=0, a_max=None)
-            for i in self.computation_card["point"].values
+            for i in self.feature_point_card["point"].values
         )
+
+        # Compute risk score for all integers within min_range_score and max_range_score
         possible_scores = list(range(min_range_score, max_range_score + 1))
+
+        # Compute associated probability of each possible score
         possible_risks = [
             self._predict_proba_score(s, self._intercept) for s in possible_scores
         ]
+
+        # Compute nice display of probabilities
         possible_risks_pct = [f"{r:.2%}" for r in possible_risks]
+
+        # Assign dataframe to score_card attribute
         self.score_card = pd.DataFrame(
             index=["SCORE", "RISK", "_RISK_FLOAT"],
             data=[possible_scores, possible_risks_pct, possible_risks],
