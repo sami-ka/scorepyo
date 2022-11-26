@@ -12,6 +12,8 @@ from abc import abstractmethod
 import numpy as np
 import optuna
 import pandas as pd
+import pandera as pa
+from sklearn.exceptions import NotFittedError
 from sklearn.metrics import log_loss
 
 
@@ -66,15 +68,38 @@ class _BaseScoreCard:
             max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
             df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
         """
-        # TODO test int and positif
+        if nb_max_features <= 0:
+            raise NegativeValueError(
+                f"nb_max_features must be a strictly positive integer. \n {nb_max_features} is not positive."
+            )
+        if not isinstance(nb_max_features, numbers.Integral):
+            raise NonIntegerValueError(
+                f"nb_max_features must be a strictly positive integer. \n {nb_max_features} is not an integer."
+            )
         self.nb_max_features = nb_max_features
 
-        # TODO test value
+        if not isinstance(min_point_value, numbers.Integral):
+            raise NonIntegerValueError(
+                f"min_point_value must be a strictly positive integer. \n {min_point_value} is not an integer."
+            )
         self.min_point_value = min_point_value
+
+        if not isinstance(max_point_value, numbers.Integral):
+            raise NonIntegerValueError(
+                f"max_point_value must be a strictly positive integer. \n {max_point_value} is not an integer."
+            )
         self.max_point_value = max_point_value
 
         if df_info is not None:
-            # TODO pandera check that it contains the columns binary feature et original feature
+            dataframe_schema = pa.DataFrameSchema(
+                {
+                    "binary_feature": pa.Column(),
+                    "feature": pa.Column(),
+                },
+                strict=False,  # Disable check of other columns in the dataframe
+            )
+
+            dataframe_schema.validate(df_info)
             self._df_info = df_info.copy()
 
         self.feature_point_card = None
@@ -119,11 +144,10 @@ class _BaseScoreCard:
             proba_threshold (float, optional): _description_. Defaults to 0.5.
 
         Returns:
-            _type_: _description_
+            nbarray of shape (n_samples,): predicted class based on predicted probability and threshold
         """
         if (self.feature_point_card is None) or (self.score_card is None):
-            print("ScoreCard model has not been fitted yet")
-            return None  # TODO raise exception
+            raise NotFittedError("ScoreCard model has not been fitted yet")
         proba = self.predict_proba(X)
 
         return proba[:, 1] >= proba_threshold
@@ -138,14 +162,24 @@ class _BaseScoreCard:
             ndarray of shape (n_samples, 2): probability of negative and positive class in each column resp.
         """
         if (self.feature_point_card is None) or (self.score_card is None):
-            print("ScoreCard model has not been fitted yet")
-            return None  # TODO Raise exception
+            raise NotFittedError("ScoreCard model has not been fitted yet")
 
         # TODO have the same behaviour as predict proba from sklearn
         # TODO check if full numpy approach is faster
         df_score_card = self.score_card.copy().T.set_index("SCORE")
         list_features = self.feature_point_card["binary_feature"].values
         # TODO check that X only has selected featureso r just that it contains them?
+
+        dataframe_schema = pa.DataFrameSchema(
+            {
+                c: pa.Column(checks=[pa.Check.isin([0, 1, 0.0, 1.0])])
+                for c in list_features
+            },
+            strict=False,  # Disable check of other columns in the dataframe
+        )
+
+        dataframe_schema.validate(X)
+
         X_selected_features = X[list_features]
 
         points = self.feature_point_card["point"].values
@@ -326,6 +360,13 @@ class OptunaScoreCard(_BaseScoreCard):
             X (pandas.DataFrame): Dataset of features to fit the score card on
             y (pandas.Series): Target binary values
         """
+
+        dataframe_schema = pa.DataFrameSchema(
+            {c: pa.Column(checks=[pa.Check.isin([0, 1, 0.0, 1.0])]) for c in X.columns},
+            strict=True,  # Disable check of other columns in the dataframe
+        )
+
+        dataframe_schema.validate(X)
         # Setting the logging level WARNING, the INFO logs are suppressed.
         optuna.logging.set_verbosity(optuna.logging.WARNING)
 

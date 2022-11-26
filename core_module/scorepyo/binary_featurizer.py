@@ -1,17 +1,26 @@
-"""TODO Add docstring binary featurizer
+"""
 TODO Add typing
-TODO Comment code
-TODO Improve naming and code clarity
 TODO eneble possibility of regressor?
 
 Returns:
 
     _type_: _description_
 """
+import numbers
+import warnings
+
 import numpy as np
 import pandas as pd
+import pandera as pa
 from interpret.glassbox import ExplainableBoostingClassifier
+from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.utils.validation import check_is_fitted
+
+from scorepyo.exceptions import NegativeValueError, NonIntegerValueError
+
+# import scorepyo
+
 
 
 class AutomaticBinaryFeaturizer:
@@ -60,7 +69,16 @@ class AutomaticBinaryFeaturizer:
             max_number_binaries_by_features (int, optional): maximum number of binary features to compute by feature. Defaults to 2.
             keep_negative (bool, optional): indicator to keep features that decrease predicted probability. Defaults to False.
         """
-        # TODO raise exception
+
+        if max_number_binaries_by_features <= 0:
+            raise scorepyo.exceptions.NegativeValueError(
+                f"max_number_binaries_by_features must be a strictly positive integer. \n {max_number_binaries_by_features} is not positive."
+            )
+        if not isinstance(max_number_binaries_by_features, numbers.Integral):
+            raise NonIntegerValueError(
+                f"max_number_binaries_by_features must be a strictly positive integer. \n {max_number_binaries_by_features} is not an integer."
+            )
+
         self.max_number_binaries_by_features = max_number_binaries_by_features
 
         self.keep_negative = keep_negative
@@ -101,10 +119,23 @@ class AutomaticBinaryFeaturizer:
                 include=["category", "object", "bool"]
             ).columns
         else:
+            not_present_categorical_features = set(categorical_features) - set(
+                X.columns
+            )
+            if len(not_present_categorical_features) > 0:
+                raise warnings.warn(
+                    f"{not_present_categorical_features} are not in columns of X."
+                )
+
             self._categorical_features = categorical_features
         if to_exclude_features is None:
             self._to_exclude_features = []
         else:
+            not_present_to_exclude_features = set(to_exclude_features) - set(X.columns)
+            if len(not_present_to_exclude_features) > 0:
+                raise warnings.warn(
+                    f"{not_present_to_exclude_features} are not in columns of X."
+                )
             self._to_exclude_features = to_exclude_features
 
         self._categorical_features = [
@@ -136,8 +167,30 @@ class AutomaticBinaryFeaturizer:
             pandas.DataFrame: Binarized features
             pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
         """
-        # TODO check if fitted
-        # TODO Use pandera
+
+        if not (self._ebm.has_fitted_ and not check_is_fitted(self._one_hot_encoder)):
+            raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
+
+        dict_check_continuous_features = {
+            c: pa.Column(checks=[scorepyo.exceptions.NumericCheck()])
+            for c in self._continuous_features
+        }
+
+        dict_check_other_features = {
+            c: pa.Column()
+            for c in self._categorical_features + self._to_exclude_features
+        }
+
+        dataframe_schema = pa.DataFrameSchema(
+            {
+                **dict_check_continuous_features,
+                **dict_check_other_features,
+            },
+            strict=True,  # Enable check of other columns in the dataframe
+        )
+
+        dataframe_schema.validate(X)
+
         ebm_global = self._ebm.explain_global(name="EBM")
 
         X_binarized = pd.DataFrame()
