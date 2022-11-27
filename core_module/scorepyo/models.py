@@ -16,6 +16,8 @@ import pandera as pa
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import log_loss
 
+from scorepyo.exceptions import NegativeValueError, NonIntegerValueError
+
 
 class _BaseScoreCard:
     """

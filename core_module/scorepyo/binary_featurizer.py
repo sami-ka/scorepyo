@@ -68,7 +68,7 @@ class AutomaticBinaryFeaturizer:
         """
 
         if max_number_binaries_by_features <= 0:
-            raise scorepyo.exceptions.NegativeValueError(
+            raise NegativeValueError(
                 f"max_number_binaries_by_features must be a strictly positive integer. \n {max_number_binaries_by_features} is not positive."
             )
         if not isinstance(
