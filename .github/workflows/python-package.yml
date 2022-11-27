@@ -54,7 +54,6 @@ jobs:
         run: |
           python -m isort --diff --check-only . --settings-path ./core_module/pyproject.toml
         #--settings-path is suppose to point to the directory and not the file?
-        #--settings-path ./config/.isort.cfg
       - name: Test with pytest
         run: |
           python -m pytest -rfs --cov=pricing
@@ -69,4 +68,4 @@ jobs:
 
       - name: check vulnerabilities
         run: |
-          bandit -c config/bandit.yml -r .
+          python -m bandit -c config/bandit.yml -r .
