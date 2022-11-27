@@ -31,7 +31,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     python_call(
         module="pip",
-        arguments=["install", "-e", "core_module/.[dev,ipy,doc]", "--no-cache-dir"],],
+        arguments=["install", "-e", "core_module/.[dev,ipy,doc]", "--no-cache-dir"],
     )
 
     python_call(

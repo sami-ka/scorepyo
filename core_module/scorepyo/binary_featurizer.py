@@ -169,8 +169,7 @@ class AutomaticBinaryFeaturizer:
             raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
 
         dict_check_continuous_features = {
-            c: pa.Column(checks=[NumericCheck()])
-            for c in self._continuous_features
+            c: pa.Column(checks=[NumericCheck()]) for c in self._continuous_features
         }
 
         dict_check_other_features = {
