@@ -3,5 +3,5 @@
     "python.linting.pylintArgs": [
         "--rcfile ./config/.pylintrc"
     ],
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "off"
 }

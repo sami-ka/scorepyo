@@ -52,7 +52,7 @@ jobs:
 
       - name: format check - isort
         run: |
-          python -m isort --diff --check-only .
+          python -m isort --diff --check-only . --settings-path ./core_module
         #--settings-path ./config/.isort.cfg
       - name: Test with pytest
         run: |
