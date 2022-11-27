@@ -6,7 +6,7 @@ TODO add Neurips risk scorer
 TODO add class constrained OptunaScorecard
     
 """
-
+import numbers
 from abc import abstractmethod
 
 import numpy as np

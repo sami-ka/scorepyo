@@ -34,6 +34,7 @@ def NumericCheck():
         description="Check that the column is a numeric type to ensure pandas rolling aggregation will work",
     )
 
+
 # General errors
 
 

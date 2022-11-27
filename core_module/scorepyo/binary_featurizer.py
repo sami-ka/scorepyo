@@ -17,10 +17,7 @@ from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.utils.validation import check_is_fitted
 
-from scorepyo.exceptions import NegativeValueError, NonIntegerValueError
-
-# import scorepyo
-
+from scorepyo.exceptions import NegativeValueError, NonIntegerValueError, NumericCheck
 
 
 class AutomaticBinaryFeaturizer:
@@ -172,7 +169,7 @@ class AutomaticBinaryFeaturizer:
             raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
 
         dict_check_continuous_features = {
-            c: pa.Column(checks=[scorepyo.exceptions.NumericCheck()])
+            c: pa.Column(checks=[NumericCheck()])
             for c in self._continuous_features
         }
 
