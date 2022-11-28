@@ -60,7 +60,7 @@ jobs:
 
       - name: Linting
         run: |
-          python -m pylint --rcfile=./core_module/pyproject.toml.
+          python -m pylint --rcfile=./core_module/pyproject.toml .
 
       - name: type checking :mypy
         run: |
