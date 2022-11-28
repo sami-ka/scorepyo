@@ -60,12 +60,12 @@ jobs:
 
       - name: Linting
         run: |
-          python -m pylint --rcfile=config/.pylintrc .
+          python -m pylint --rcfile=./core_module/pyproject.toml.
 
       - name: type checking :mypy
         run: |
-          python -m mypy --config-file config/mypy.ini core_module/
+          python -m mypy --config-file ./core_module/pyproject.toml core_module/
 
       - name: check vulnerabilities
         run: |
-          python -m bandit -c config/bandit.yml -r .
+          python -m bandit -c ./core_module/pyproject.toml -r .
