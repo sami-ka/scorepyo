@@ -2,5 +2,8 @@
     "isort.importStrategy": "fromEnvironment",
     "python.linting.pylintArgs": [
         "--rcfile ./config/.pylintrc"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
 }

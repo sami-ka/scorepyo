@@ -1,17 +1,23 @@
-"""TODO Add docstring binary featurizer
+"""
 TODO Add typing
-TODO Comment code
-TODO Improve naming and code clarity
 TODO eneble possibility of regressor?
 
 Returns:
 
     _type_: _description_
 """
+import numbers
+import warnings
+
 import numpy as np
 import pandas as pd
+import pandera as pa
 from interpret.glassbox import ExplainableBoostingClassifier
+from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.utils.validation import check_is_fitted
+
+from scorepyo.exceptions import NegativeValueError, NonIntegerValueError, NumericCheck
 
 
 class AutomaticBinaryFeaturizer:
@@ -60,7 +66,19 @@ class AutomaticBinaryFeaturizer:
             max_number_binaries_by_features (int, optional): maximum number of binary features to compute by feature. Defaults to 2.
             keep_negative (bool, optional): indicator to keep features that decrease predicted probability. Defaults to False.
         """
-        # TODO raise exception
+
+        if max_number_binaries_by_features <= 0:
+            raise NegativeValueError(
+                f"max_number_binaries_by_features must be a strictly positive integer. \n {max_number_binaries_by_features} is not positive."
+            )
+        if not isinstance(
+            max_number_binaries_by_features,
+            numbers.Integral,
+        ):
+            raise NonIntegerValueError(
+                f"max_number_binaries_by_features must be a strictly positive integer. \n {max_number_binaries_by_features} is not an integer."
+            )
+
         self.max_number_binaries_by_features = max_number_binaries_by_features
 
         self.keep_negative = keep_negative
@@ -70,17 +88,26 @@ class AutomaticBinaryFeaturizer:
         # TODO : Include pairwise interaction into featurizer?
         # max_bins controls the number of split for each single-feature tree
         self._ebm = ExplainableBoostingClassifier(
-            interactions=0, max_bins=self.max_number_binaries_by_features + 2
+            interactions=0,
+            max_bins=self.max_number_binaries_by_features + 2,
         )
 
         # One-hot encoder that imputes infrequent_if_exist for unknown categories
         # it allows only the 10 most frequent categories, in order to not create too many columns
         # for high-cardinality categories
         self._one_hot_encoder = OneHotEncoder(
-            handle_unknown="infrequent_if_exist", max_categories=10, sparse=False
+            handle_unknown="infrequent_if_exist",
+            max_categories=10,
+            sparse=False,
         )
 
-    def fit(self, X, y, categorical_features="auto", to_exclude_features=None):
+    def fit(
+        self,
+        X,
+        y,
+        categorical_features="auto",
+        to_exclude_features=None,
+    ):
         """Fit function of binarizer
 
         This functions fits the EBM on X,y and the one-hot encoder on X.
@@ -98,13 +125,30 @@ class AutomaticBinaryFeaturizer:
         # TODO Use pandera
         if categorical_features == "auto":
             self._categorical_features = X.select_dtypes(
-                include=["category", "object", "bool"]
+                include=[
+                    "category",
+                    "object",
+                    "bool",
+                ]
             ).columns
         else:
+            not_present_categorical_features = set(categorical_features) - set(
+                X.columns
+            )
+            if len(not_present_categorical_features) > 0:
+                raise warnings.warn(
+                    f"{not_present_categorical_features} are not in columns of X."
+                )
+
             self._categorical_features = categorical_features
         if to_exclude_features is None:
             self._to_exclude_features = []
         else:
+            not_present_to_exclude_features = set(to_exclude_features) - set(X.columns)
+            if len(not_present_to_exclude_features) > 0:
+                raise warnings.warn(
+                    f"{not_present_to_exclude_features} are not in columns of X."
+                )
             self._to_exclude_features = to_exclude_features
 
         self._categorical_features = [
@@ -136,8 +180,29 @@ class AutomaticBinaryFeaturizer:
             pandas.DataFrame: Binarized features
             pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
         """
-        # TODO check if fitted
-        # TODO Use pandera
+
+        if not (self._ebm.has_fitted_ and not check_is_fitted(self._one_hot_encoder)):
+            raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
+
+        dict_check_continuous_features = {
+            c: pa.Column(checks=[NumericCheck()]) for c in self._continuous_features
+        }
+
+        dict_check_other_features = {
+            c: pa.Column()
+            for c in self._categorical_features + self._to_exclude_features
+        }
+
+        dataframe_schema = pa.DataFrameSchema(
+            {
+                **dict_check_continuous_features,
+                **dict_check_other_features,
+            },
+            strict=True,  # Enable check of other columns in the dataframe
+        )
+
+        dataframe_schema.validate(X)
+
         ebm_global = self._ebm.explain_global(name="EBM")
 
         X_binarized = pd.DataFrame()
@@ -147,7 +212,10 @@ class AutomaticBinaryFeaturizer:
         list_original_column = []
 
         # For each continuous feature, we look at their single-feature tree
-        for i, feature_name in enumerate(ebm_global.data()["names"]):
+        for (
+            i,
+            feature_name,
+        ) in enumerate(ebm_global.data()["names"]):
             if feature_name in self._continuous_features:
 
                 # Get EBM info for current feature
@@ -253,8 +321,24 @@ class AutomaticBinaryFeaturizer:
         row_intercept = pd.DataFrame(
             index=["intercept"],
             columns=df_score_feature.columns,
-            data=[[self._ebm.intercept_[0], None, None, "intercept"]],
+            data=[
+                [
+                    self._ebm.intercept_[0],
+                    None,
+                    None,
+                    "intercept",
+                ]
+            ],
         )
-        df_score_feature = pd.concat([df_score_feature, row_intercept], axis=0)
+        df_score_feature = pd.concat(
+            [
+                df_score_feature,
+                row_intercept,
+            ],
+            axis=0,
+        )
         df_score_feature.index.name = "binary_feature"
-        return X_binarized, df_score_feature
+        return (
+            X_binarized,
+            df_score_feature,
+        )
