@@ -1,9 +1,21 @@
 {
-    "isort.importStrategy": "fromEnvironment",
+    // "isort.importStrategy": "fromEnvironment",
     "python.linting.pylintArgs": [
-        "--rcfile ./config/.pylintrc"
+        "--rcfile",
+        "./core_module/pyproject.toml"
     ],
-    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.typeCheckingMode": "off",
     "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "isort.args": [
+        "--settings-path",
+        "./core_module/pyproject.toml",
+        "--profile",
+        "black"
+    ],
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    }
 }

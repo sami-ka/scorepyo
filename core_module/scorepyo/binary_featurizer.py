@@ -15,7 +15,6 @@ import pandera as pa
 from interpret.glassbox import ExplainableBoostingClassifier
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.utils.validation import check_is_fitted
 
 from scorepyo.exceptions import NegativeValueError, NonIntegerValueError, NumericCheck
 
@@ -80,7 +79,7 @@ class AutomaticBinaryFeaturizer:
             )
 
         self.max_number_binaries_by_features = max_number_binaries_by_features
-
+        # TODO: test boolean value
         self.keep_negative = keep_negative
 
         # Creation of underlying EBM to extract binary feature
@@ -161,7 +160,9 @@ class AutomaticBinaryFeaturizer:
             and (c not in self._to_exclude_features)
         ]
         self._ebm.fit(X, y)
-        self._one_hot_encoder.fit(X[self._categorical_features])
+
+        if len(self._categorical_features) > 0:
+            self._one_hot_encoder.fit(X[self._categorical_features])
 
     # TODO : Provide function that give the quality of the binarizer via the learning metrics of ebm
 
@@ -181,7 +182,8 @@ class AutomaticBinaryFeaturizer:
             pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
         """
 
-        if not (self._ebm.has_fitted_ and not check_is_fitted(self._one_hot_encoder)):
+        # Only checks for fit of ebm, as the one-hot encoder could be not fitted if there are no categorical features
+        if not getattr(self._ebm, "has_fitted_", False):
             raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
 
         dict_check_continuous_features = {
@@ -271,25 +273,27 @@ class AutomaticBinaryFeaturizer:
 
         # TODO : Put logodds of ebm for categorical features
 
-        # One-hot encode categorical features
-        X_binarized[
-            self._one_hot_encoder.get_feature_names_out()
-        ] = self._one_hot_encoder.transform(X[self._categorical_features])
+        if len(self._categorical_features) > 0:
+            # One-hot encode categorical features
+            X_binarized[
+                self._one_hot_encoder.get_feature_names_out()
+            ] = self._one_hot_encoder.transform(X[self._categorical_features])
 
-        # Add info for info dataframe
-        for name_out in self._one_hot_encoder.get_feature_names_out():
-            list_scores.append(None)
-            list_lower_threshold.append(None)
-            list_upper_threshold.append(None)
-            list_original_column.append("_".join(name_out.split("_")[:-1]))
+            # Add info for info dataframe
+            for name_out in self._one_hot_encoder.get_feature_names_out():
+                list_scores.append(None)
+                list_lower_threshold.append(None)
+                list_upper_threshold.append(None)
+                list_original_column.append("_".join(name_out.split("_")[:-1]))
 
         # Copy features to exclude from binarizing
-        X_binarized[self._to_exclude_features] = X[self._to_exclude_features].copy()
-        for name_out in self._to_exclude_features:
-            list_scores.append(None)
-            list_lower_threshold.append(None)
-            list_upper_threshold.append(None)
-            list_original_column.append(name_out)
+        if len(self._to_exclude_features) > 0:
+            X_binarized[self._to_exclude_features] = X[self._to_exclude_features].copy()
+            for name_out in self._to_exclude_features:
+                list_scores.append(None)
+                list_lower_threshold.append(None)
+                list_upper_threshold.append(None)
+                list_original_column.append(name_out)
 
         # Regroup information about binary features created in the info dataframe
         # this dataframe contains:
