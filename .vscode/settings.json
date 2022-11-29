@@ -4,7 +4,7 @@
         "--rcfile",
         "./core_module/pyproject.toml"
     ],
-    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.typeCheckingMode": "basic",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "isort.args": [

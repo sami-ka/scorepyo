@@ -56,7 +56,7 @@ jobs:
         #--settings-path is suppose to point to the directory and not the file?
       - name: Test with pytest
         run: |
-          python -m pytest -rfs --cov=scorepyo
+          python -m pytest -rfs --cov=scorepyo --cov-report term-missing
 
       - name: Linting
         run: |
