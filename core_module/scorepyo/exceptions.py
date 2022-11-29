@@ -41,22 +41,23 @@ def NumericCheck():
 class MissingColumnError(Exception):
     """Error raised when column is missing in a pd.DataFrame"""
 
-    def __init__(self, message) -> None:
-        self.message = message
-        super().__init__(self.message)
+    pass
 
 
 class NegativeValueError(Exception):
     """Error raised when quantity value is not a strictly positive float"""
 
-    def __init__(self, message) -> None:
-        self.message = message
-        super().__init__(self.message)
+    pass
 
 
 class NonIntegerValueError(Exception):
     """Error raised when value is not an integer"""
 
-    def __init__(self, message) -> None:
-        self.message = message
-        super().__init__(self.message)
+    pass
+
+
+class MinPointOverMaxPointError(Exception):
+    """Error raised when min point value of ScoreCard model
+    is over max point value"""
+
+    pass

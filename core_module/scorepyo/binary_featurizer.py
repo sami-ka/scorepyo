@@ -8,6 +8,7 @@ Returns:
 """
 import numbers
 import warnings
+from math import floor, log10
 
 import numpy as np
 import pandas as pd
@@ -15,9 +16,13 @@ import pandera as pa
 from interpret.glassbox import ExplainableBoostingClassifier
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.utils.validation import check_is_fitted
 
-from scorepyo.exceptions import NegativeValueError, NonIntegerValueError, NumericCheck
+from scorepyo.exceptions import (
+    MissingColumnError,
+    NegativeValueError,
+    NonIntegerValueError,
+    NumericCheck,
+)
 
 
 class AutomaticBinaryFeaturizer:
@@ -80,7 +85,7 @@ class AutomaticBinaryFeaturizer:
             )
 
         self.max_number_binaries_by_features = max_number_binaries_by_features
-
+        # TODO: test boolean value
         self.keep_negative = keep_negative
 
         # Creation of underlying EBM to extract binary feature
@@ -136,7 +141,7 @@ class AutomaticBinaryFeaturizer:
                 X.columns
             )
             if len(not_present_categorical_features) > 0:
-                raise warnings.warn(
+                raise MissingColumnError(
                     f"{not_present_categorical_features} are not in columns of X."
                 )
 
@@ -146,7 +151,7 @@ class AutomaticBinaryFeaturizer:
         else:
             not_present_to_exclude_features = set(to_exclude_features) - set(X.columns)
             if len(not_present_to_exclude_features) > 0:
-                raise warnings.warn(
+                raise MissingColumnError(
                     f"{not_present_to_exclude_features} are not in columns of X."
                 )
             self._to_exclude_features = to_exclude_features
@@ -161,7 +166,9 @@ class AutomaticBinaryFeaturizer:
             and (c not in self._to_exclude_features)
         ]
         self._ebm.fit(X, y)
-        self._one_hot_encoder.fit(X[self._categorical_features])
+
+        if len(self._categorical_features) > 0:
+            self._one_hot_encoder.fit(X[self._categorical_features])
 
     # TODO : Provide function that give the quality of the binarizer via the learning metrics of ebm
 
@@ -181,7 +188,8 @@ class AutomaticBinaryFeaturizer:
             pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
         """
 
-        if not (self._ebm.has_fitted_ and not check_is_fitted(self._one_hot_encoder)):
+        # Only checks for fit of ebm, as the one-hot encoder could be not fitted if there are no categorical features
+        if not getattr(self._ebm, "has_fitted_", False):
             raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
 
         dict_check_continuous_features = {
@@ -210,6 +218,8 @@ class AutomaticBinaryFeaturizer:
         list_lower_threshold = []
         list_upper_threshold = []
         list_original_column = []
+        list_binary_feature_names = []
+        list_columns = []
 
         # For each continuous feature, we look at their single-feature tree
         for (
@@ -237,59 +247,106 @@ class AutomaticBinaryFeaturizer:
                     threshold_lower = dict_EBM_info_feature["names"][j]
                     threshold_upper = dict_EBM_info_feature["names"][j + 1]
 
+                    # Round precision for column name
+                    # needed when difference upper and lower bound is below 2 digits
+                    difference = threshold_upper - threshold_lower
+                    needed_round_precision = -floor(log10(abs(difference)))
+                    needed_round_precision = max(needed_round_precision, 2)
+
                     # Case of the first plateau, only have an upper bound for current feature value
                     if j == 0:
-                        col_name = f"{feature_name} < {np.round(threshold_upper,2)}"
+                        col_name = f"{feature_name} < {np.round(threshold_upper,needed_round_precision)}"
 
-                        X_binarized[col_name] = X[feature_name] < threshold_upper
+                        list_columns.append(
+                            pd.DataFrame(
+                                data=(X[feature_name] < threshold_upper).values,
+                                columns=[col_name],
+                            )
+                        )
+                        threshold_lower = np.nan
 
-                        list_lower_threshold.append(np.nan)
-                        list_upper_threshold.append(threshold_upper)
                     # Case of the last plateau, only have a lower bound for current feature value
                     elif j == number_plateau - 1:
-                        col_name = f"{feature_name} >= {np.round(threshold_lower,2)}"
-
-                        X_binarized[col_name] = X[feature_name] >= threshold_lower
-                        list_lower_threshold.append(threshold_lower)
-                        list_upper_threshold.append(np.nan)
+                        col_name = f"{feature_name} >= {np.round(threshold_lower,needed_round_precision)}"
+                        list_columns.append(
+                            pd.DataFrame(
+                                data=(X[feature_name] >= threshold_lower).values,
+                                columns=[col_name],
+                            )
+                        )
+                        threshold_upper = np.nan
 
                     # Case for other inbetween plateaus
                     else:
-                        col_name = f"{np.round(threshold_lower,2)} <= {feature_name} < {np.round(threshold_upper,2)}"
-
-                        X_binarized[col_name] = (X[feature_name] < threshold_upper) & (
-                            X[feature_name] >= threshold_lower
+                        col_name = f"{np.round(threshold_lower,needed_round_precision)} <= {feature_name} < {np.round(threshold_upper,needed_round_precision)}"
+                        list_columns.append(
+                            pd.DataFrame(
+                                data=(
+                                    (X[feature_name] < threshold_upper)
+                                    & (X[feature_name] >= threshold_lower)
+                                ).values,
+                                columns=[col_name],
+                            )
                         )
 
-                        list_lower_threshold.append(threshold_lower)
-                        list_upper_threshold.append(threshold_upper)
-
-                    X_binarized[col_name] = X_binarized[col_name].astype(int)
+                    list_lower_threshold.append(threshold_lower)
+                    list_upper_threshold.append(threshold_upper)
 
                     list_scores.append(contrib)
                     list_original_column.append(feature_name)
+                    list_binary_feature_names.append(col_name)
 
         # TODO : Put logodds of ebm for categorical features
+        if len(self._categorical_features) > 0:
+            # One-hot encode categorical features
+            one_hot_categorical_columns = self._one_hot_encoder.get_feature_names_out()
+            list_columns.append(
+                pd.DataFrame(
+                    data=(
+                        self._one_hot_encoder.transform(X[self._categorical_features])
+                    ),
+                    columns=one_hot_categorical_columns,
+                )
+            )
 
-        # One-hot encode categorical features
-        X_binarized[
-            self._one_hot_encoder.get_feature_names_out()
-        ] = self._one_hot_encoder.transform(X[self._categorical_features])
+            list_binary_feature_names.extend(one_hot_categorical_columns)
 
-        # Add info for info dataframe
-        for name_out in self._one_hot_encoder.get_feature_names_out():
-            list_scores.append(None)
-            list_lower_threshold.append(None)
-            list_upper_threshold.append(None)
-            list_original_column.append("_".join(name_out.split("_")[:-1]))
+            # Add info for info dataframe
+            for name_out in one_hot_categorical_columns:
+                list_scores.append(None)
+                list_lower_threshold.append(None)
+                list_upper_threshold.append(None)
+                list_original_column.append("_".join(name_out.split("_")[:-1]))
 
         # Copy features to exclude from binarizing
-        X_binarized[self._to_exclude_features] = X[self._to_exclude_features].copy()
-        for name_out in self._to_exclude_features:
-            list_scores.append(None)
-            list_lower_threshold.append(None)
-            list_upper_threshold.append(None)
-            list_original_column.append(name_out)
+        if len(self._to_exclude_features) > 0:
+            list_columns.append(X[self._to_exclude_features].copy())
+
+            for name_out in self._to_exclude_features:
+                list_scores.append(None)
+                list_lower_threshold.append(None)
+                list_upper_threshold.append(None)
+                list_original_column.append(name_out)
+
+        # concat all created columns at the end (vs on the fly) for performance
+        X_binarized = pd.concat(list_columns, axis=1)
+
+        # convert to 1/0
+        with warnings.catch_warnings():
+            # Setting values in-place is fine, ignore the warning in Pandas >= 1.5.0
+            # This can be removed, if Pandas 1.5.0 does not need to be supported any longer.
+            # See also: https://stackoverflow.com/q/74057367/859591
+            warnings.filterwarnings(
+                "ignore",
+                category=FutureWarning,
+                message=(
+                    ".*will attempt to set the values inplace instead of always setting a new array. "
+                    "To retain the old behavior, use either.*"
+                ),
+            )
+            X_binarized.loc[:, list_binary_feature_names] = X_binarized.loc[
+                :, list_binary_feature_names
+            ].astype(int)
 
         # Regroup information about binary features created in the info dataframe
         # this dataframe contains:
