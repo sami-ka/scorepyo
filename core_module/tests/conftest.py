@@ -10,6 +10,21 @@ def continuous_features():
 
 
 @pytest.fixture(scope="module")
+def binary_features():
+    X = pd.DataFrame(columns=["binary_A", "binary_B"], data=[[0, 1], [1, 1], [1, 1]])
+    return X
+
+
+@pytest.fixture(scope="module")
+def df_info_binary_features():
+    df_info = pd.DataFrame(
+        columns=["feature", "binary_feature"],
+        data=[["A", "binary_A"], ["B", "binary_B"]],
+    )
+    return df_info
+
+
+@pytest.fixture(scope="module")
 def mixed_features():
     X = pd.DataFrame(
         columns=["A", "B", "C"], data=[[0.2, 0.7, "1"], [0.1, 0.9, "2"], [7.8, -7, "2"]]

@@ -17,7 +17,12 @@ from interpret.glassbox import ExplainableBoostingClassifier
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
 
-from scorepyo.exceptions import NegativeValueError, NonIntegerValueError, NumericCheck
+from scorepyo.exceptions import (
+    MissingColumnError,
+    NegativeValueError,
+    NonIntegerValueError,
+    NumericCheck,
+)
 
 
 class AutomaticBinaryFeaturizer:
@@ -136,7 +141,7 @@ class AutomaticBinaryFeaturizer:
                 X.columns
             )
             if len(not_present_categorical_features) > 0:
-                raise warnings.warn(
+                raise MissingColumnError(
                     f"{not_present_categorical_features} are not in columns of X."
                 )
 
@@ -146,7 +151,7 @@ class AutomaticBinaryFeaturizer:
         else:
             not_present_to_exclude_features = set(to_exclude_features) - set(X.columns)
             if len(not_present_to_exclude_features) > 0:
-                raise warnings.warn(
+                raise MissingColumnError(
                     f"{not_present_to_exclude_features} are not in columns of X."
                 )
             self._to_exclude_features = to_exclude_features
@@ -305,9 +310,6 @@ class AutomaticBinaryFeaturizer:
             )
 
             list_binary_feature_names.extend(one_hot_categorical_columns)
-            # X_binarized[
-            #     self._one_hot_encoder.get_feature_names_out()
-            # ] = self._one_hot_encoder.transform(X[self._categorical_features])
 
             # Add info for info dataframe
             for name_out in one_hot_categorical_columns:
@@ -318,9 +320,8 @@ class AutomaticBinaryFeaturizer:
 
         # Copy features to exclude from binarizing
         if len(self._to_exclude_features) > 0:
-            # X_binarized[self._to_exclude_features] = X[self._to_exclude_features].copy()
-
             list_columns.append(X[self._to_exclude_features].copy())
+
             for name_out in self._to_exclude_features:
                 list_scores.append(None)
                 list_lower_threshold.append(None)

@@ -16,7 +16,11 @@ import pandera as pa
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import log_loss
 
-from scorepyo.exceptions import NegativeValueError, NonIntegerValueError
+from scorepyo.exceptions import (
+    MinPointOverMaxPointError,
+    NegativeValueError,
+    NonIntegerValueError,
+)
 
 
 class _BaseScoreCard:
@@ -61,7 +65,7 @@ class _BaseScoreCard:
     """
 
     def __init__(
-        self, nb_max_features, min_point_value=-2, max_point_value=3, df_info=None
+        self, nb_max_features=4, min_point_value=-2, max_point_value=3, df_info=None
     ):
         """
         Args:
@@ -82,14 +86,18 @@ class _BaseScoreCard:
 
         if not isinstance(min_point_value, numbers.Integral):
             raise NonIntegerValueError(
-                f"min_point_value must be a strictly positive integer. \n {min_point_value} is not an integer."
+                f"min_point_value must be an integer. \n {min_point_value} is not an integer."
             )
-        self.min_point_value = min_point_value
 
         if not isinstance(max_point_value, numbers.Integral):
             raise NonIntegerValueError(
-                f"max_point_value must be a strictly positive integer. \n {max_point_value} is not an integer."
+                f"max_point_value must be an integer. \n {max_point_value} is not an integer."
             )
+        if min_point_value > max_point_value:
+            raise MinPointOverMaxPointError(
+                f"max_point_value must be greater than or equal to min_point_value. \n {max_point_value=} < {min_point_value=} ."
+            )
+        self.min_point_value = min_point_value
         self.max_point_value = max_point_value
 
         if df_info is not None:
@@ -103,6 +111,8 @@ class _BaseScoreCard:
 
             dataframe_schema.validate(df_info)
             self._df_info = df_info.copy()
+        else:
+            self._df_info = None
 
         self.feature_point_card = None
         self.score_card = None
@@ -152,7 +162,7 @@ class _BaseScoreCard:
             raise NotFittedError("ScoreCard model has not been fitted yet")
         proba = self.predict_proba(X)
 
-        return proba[:, 1] >= proba_threshold
+        return (proba[:, 1] >= proba_threshold).astype(int)
 
     def predict_proba(self, X):
         """Function that outputs probability of positive class according to score card
@@ -192,7 +202,7 @@ class _BaseScoreCard:
 
     def summary(self):
         if (self.feature_point_card is None) or (self.score_card is None):
-            print("ScoreCard model has not been fitted yet")
+            raise NotFittedError("ScoreCard model has not been fitted yet")
         print("======================")
         print("| FEATURE-POINT CARD |")
         print("======================")
@@ -260,7 +270,7 @@ class OptunaScoreCard(_BaseScoreCard):
 
     def __init__(
         self,
-        nb_max_features,
+        nb_max_features=4,
         min_point_value=-2,
         max_point_value=3,
         df_info=None,
@@ -409,11 +419,15 @@ class OptunaScoreCard(_BaseScoreCard):
                 self._df_info, left_index=True, right_on=["binary_feature"]
             )
         else:
-            self.feature_point_card["feature"] = self.feature_point_card.index.copy()
+            self.feature_point_card[
+                "binary_feature"
+            ] = self.feature_point_card.index.values
+            self.feature_point_card["feature"] = self.feature_point_card.index.values
+
         self.feature_point_card = self.feature_point_card.set_index("feature")
         self.feature_point_card["Description"] = self.feature_point_card[
             "binary_feature"
-        ]
+        ].values
 
         # Compute score card
 

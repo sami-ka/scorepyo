@@ -5,7 +5,11 @@ from pandera.errors import SchemaError
 from sklearn.exceptions import NotFittedError
 
 from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
-from scorepyo.exceptions import NegativeValueError, NonIntegerValueError
+from scorepyo.exceptions import (
+    MissingColumnError,
+    NegativeValueError,
+    NonIntegerValueError,
+)
 
 # from pytest_lazyfixture import lazy_fixture
 
@@ -18,6 +22,18 @@ def test_binarizer_integer_param():
 def test_binarizer_positive_param():
     with pytest.raises(NegativeValueError):
         AutomaticBinaryFeaturizer(max_number_binaries_by_features=-1)
+
+
+def test_missing_categorical_columns(mixed_features, binary_target):
+    binarizer = AutomaticBinaryFeaturizer()
+    with pytest.raises(MissingColumnError):
+        binarizer.fit(mixed_features, binary_target, categorical_features=["D"])
+
+
+def test_missing_to_exclude_columns(mixed_features, binary_target):
+    binarizer = AutomaticBinaryFeaturizer()
+    with pytest.raises(MissingColumnError):
+        binarizer.fit(mixed_features, binary_target, to_exclude_features=["D"])
 
 
 def test_detect_categorical_columns(mixed_features, binary_target):
