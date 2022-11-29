@@ -47,7 +47,7 @@ jobs:
           # conda activate env_scorepyo_ci
 
           pip install --upgrade pip wheel
-          pip install -e core_module/.[dev,doc] --no-cache-dir
+          pip install core_module/.[dev,doc] --no-cache-dir
 
       - name: format check - black
         run: |
