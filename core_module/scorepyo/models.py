@@ -1,18 +1,17 @@
-"""TODO Add docstring Basescorecard+Optuna scorecard
-TODO Add typing
-TODO Comment code
-TODO Improve naming and code clarity
+"""
 TODO add Neurips risk scorer
-TODO add class constrained OptunaScorecard
-    
+TODO add class constrained OptunaScorecard  
 """
 import numbers
 from abc import abstractmethod
+from typing import Optional
 
 import numpy as np
 import optuna
 import pandas as pd
 import pandera as pa
+
+# from numpy.typing import ArrayLike
 from sklearn.exceptions import NotFittedError
 from sklearn.metrics import log_loss
 
@@ -65,7 +64,11 @@ class _BaseScoreCard:
     """
 
     def __init__(
-        self, nb_max_features=4, min_point_value=-2, max_point_value=3, df_info=None
+        self,
+        nb_max_features: int = 4,
+        min_point_value: int = -2,
+        max_point_value: int = 3,
+        df_info: Optional[pd.DataFrame] = None,
     ):
         """
         Args:
@@ -82,7 +85,7 @@ class _BaseScoreCard:
             raise NonIntegerValueError(
                 f"nb_max_features must be a strictly positive integer. \n {nb_max_features} is not an integer."
             )
-        self.nb_max_features = nb_max_features
+        self.nb_max_features: int = nb_max_features
 
         if not isinstance(min_point_value, numbers.Integral):
             raise NonIntegerValueError(
@@ -97,8 +100,10 @@ class _BaseScoreCard:
             raise MinPointOverMaxPointError(
                 f"max_point_value must be greater than or equal to min_point_value. \n {max_point_value=} < {min_point_value=} ."
             )
-        self.min_point_value = min_point_value
-        self.max_point_value = max_point_value
+        self.min_point_value: int = min_point_value
+        self.max_point_value: int = max_point_value
+
+        self._df_info: Optional[pd.DataFrame]
 
         if df_info is not None:
             dataframe_schema = pa.DataFrameSchema(
@@ -114,11 +119,11 @@ class _BaseScoreCard:
         else:
             self._df_info = None
 
-        self.feature_point_card = None
-        self.score_card = None
+        self.feature_point_card: Optional[pd.DataFrame] = None
+        self.score_card: Optional[pd.DataFrame] = None
 
     @staticmethod
-    def _predict_proba_score(score, intercept):
+    def _predict_proba_score(score: int, intercept: float) -> np.ndarray:
         """Function that computes the logistic function value at score+intercept value
 
         Args:
@@ -132,7 +137,7 @@ class _BaseScoreCard:
         return score_associated_proba
 
     @abstractmethod
-    def fit(self, X, y):
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> Optional[NotImplementedError]:
         """Functions that creates the feature-point card and score card
 
         Must be defined for each child class
@@ -146,14 +151,14 @@ class _BaseScoreCard:
         """
         raise NotImplementedError
 
-    def predict(self, X, proba_threshold=0.5):
+    def predict(self, X: pd.DataFrame, proba_threshold: float = 0.5) -> np.ndarray:
         """Predicts binary class based on probabillity threshold
 
         Afer computing the probability for each sample,
 
         Args:
-            X (_type_): _description_
-            proba_threshold (float, optional): _description_. Defaults to 0.5.
+            X (pd.DataFrame): _description_
+            proba_threshold (float, optional): probability threshold for binary classification. Defaults to 0.5.
 
         Returns:
             nbarray of shape (n_samples,): predicted class based on predicted probability and threshold
@@ -164,7 +169,7 @@ class _BaseScoreCard:
 
         return (proba[:, 1] >= proba_threshold).astype(int)
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
         """Function that outputs probability of positive class according to score card
 
         Args:
@@ -200,7 +205,7 @@ class _BaseScoreCard:
 
         return np.concatenate([1 - proba, proba], axis=1)
 
-    def summary(self):
+    def summary(self) -> None:
         if (self.feature_point_card is None) or (self.score_card is None):
             raise NotFittedError("ScoreCard model has not been fitted yet")
         print("======================")
@@ -270,11 +275,11 @@ class OptunaScoreCard(_BaseScoreCard):
 
     def __init__(
         self,
-        nb_max_features=4,
-        min_point_value=-2,
-        max_point_value=3,
-        df_info=None,
-        optuna_optimize_params=None,
+        nb_max_features: int = 4,
+        min_point_value: int = -2,
+        max_point_value: int = 3,
+        df_info: Optional[pd.DataFrame] = None,
+        optuna_optimize_params: Optional[dict] = None,
     ):
         """
         Args:
@@ -292,7 +297,7 @@ class OptunaScoreCard(_BaseScoreCard):
             self.optuna_optimize_params["n_trials"] = 100
             self.optuna_optimize_params["timeout"] = 90
 
-    def score_logloss_objective(self, trial, X, y):
+    def score_logloss_objective(self, trial, X: pd.DataFrame, y: pd.Series) -> float:
         """Logloss objective function for score card exploration parameters sampled with optuna.
 
         This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
@@ -363,7 +368,7 @@ class OptunaScoreCard(_BaseScoreCard):
 
         return logloss_samples
 
-    def fit(self, X, y):
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
         """Function that search best parameters (choice of binary features, points and intercept) of a score card with Optuna
 
         This functions calls Optuna to find the best parameters of a score card and then construct the feature-point card and score card attributes.

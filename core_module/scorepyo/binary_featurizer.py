@@ -9,17 +9,20 @@ Returns:
 import numbers
 import warnings
 from math import floor, log10
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
 import pandera as pa
 from interpret.glassbox import ExplainableBoostingClassifier
+from sklearn.base import BaseEstimator
 from sklearn.exceptions import NotFittedError
 from sklearn.preprocessing import OneHotEncoder
 
 from scorepyo.exceptions import (
     MissingColumnError,
     NegativeValueError,
+    NonBooleanValueError,
     NonIntegerValueError,
     NumericCheck,
 )
@@ -63,8 +66,8 @@ class AutomaticBinaryFeaturizer:
 
     def __init__(
         self,
-        max_number_binaries_by_features=2,
-        keep_negative=True,
+        max_number_binaries_by_features: int = 2,
+        keep_negative: bool = True,
     ):
         """
         Args:
@@ -85,14 +88,19 @@ class AutomaticBinaryFeaturizer:
             )
 
         self.max_number_binaries_by_features = max_number_binaries_by_features
-        # TODO: test boolean value
-        self.keep_negative = keep_negative
+
+        if not isinstance(keep_negative, bool):
+            raise NonBooleanValueError(
+                f"keep_negative attribute must be a boolean. \n {keep_negative} is not a boolean"
+            )
+
+        self.keep_negative: bool = keep_negative
 
         # Creation of underlying EBM to extract binary feature
         # interactions to 0 to prevent pairwise interaction feature
         # TODO : Include pairwise interaction into featurizer?
         # max_bins controls the number of split for each single-feature tree
-        self._ebm = ExplainableBoostingClassifier(
+        self._ebm: BaseEstimator = ExplainableBoostingClassifier(
             interactions=0,
             max_bins=self.max_number_binaries_by_features + 2,
         )
@@ -100,7 +108,7 @@ class AutomaticBinaryFeaturizer:
         # One-hot encoder that imputes infrequent_if_exist for unknown categories
         # it allows only the 10 most frequent categories, in order to not create too many columns
         # for high-cardinality categories
-        self._one_hot_encoder = OneHotEncoder(
+        self._one_hot_encoder: BaseEstimator = OneHotEncoder(
             handle_unknown="infrequent_if_exist",
             max_categories=10,
             sparse=False,
@@ -108,10 +116,10 @@ class AutomaticBinaryFeaturizer:
 
     def fit(
         self,
-        X,
-        y,
-        categorical_features="auto",
-        to_exclude_features=None,
+        X: pd.DataFrame,
+        y: pd.Series,
+        categorical_features: Union[list[str], str] = "auto",
+        to_exclude_features: Optional[list[str]] = None,
     ):
         """Fit function of binarizer
 
@@ -172,7 +180,7 @@ class AutomaticBinaryFeaturizer:
 
     # TODO : Provide function that give the quality of the binarizer via the learning metrics of ebm
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Transform function of binarizer
 
         This function uses the previously fitted EBM to extract binary features from continuous features.

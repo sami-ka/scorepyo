@@ -61,3 +61,9 @@ class MinPointOverMaxPointError(Exception):
     is over max point value"""
 
     pass
+
+
+class NonBooleanValueError(Exception):
+    """Error raised when value is not boolean"""
+
+    pass
