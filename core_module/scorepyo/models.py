@@ -1,8 +1,6 @@
 """
-TODO Add typing
 TODO add Neurips risk scorer
-TODO add class constrained OptunaScorecard
-    
+TODO add class constrained OptunaScorecard  
 """
 import numbers
 from abc import abstractmethod
