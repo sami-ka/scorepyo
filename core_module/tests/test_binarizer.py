@@ -8,6 +8,7 @@ from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
 from scorepyo.exceptions import (
     MissingColumnError,
     NegativeValueError,
+    NonBooleanValueError,
     NonIntegerValueError,
 )
 
@@ -22,6 +23,15 @@ def test_binarizer_integer_param():
 def test_binarizer_positive_param():
     with pytest.raises(NegativeValueError):
         AutomaticBinaryFeaturizer(max_number_binaries_by_features=-1)
+
+
+@pytest.mark.parametrize(
+    "keep_negative_value",
+    [2, "True", "foo", [1, 2], [True], 1, 0],
+)
+def test_binarizer_boolean_param(keep_negative_value):
+    with pytest.raises(NonBooleanValueError):
+        AutomaticBinaryFeaturizer(keep_negative=keep_negative_value)
 
 
 def test_missing_categorical_columns(mixed_features, binary_target):
