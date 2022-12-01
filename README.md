@@ -17,6 +17,7 @@
 ```python
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
+
 from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
 from scorepyo.models import OptunaScoreCard
 
@@ -24,19 +25,21 @@ from scorepyo.models import OptunaScoreCard
 data = load_breast_cancer()
 data_X, y = data.data, data.target
 
-X = pd.DataFrame(data=data_X, columns = data.feature_names)
+X = pd.DataFrame(data=data_X, columns=data.feature_names)
 
 # Binarization
 binarizer = AutomaticBinaryFeaturizer(max_number_binaries_by_features=3)
-binarizer.fit(X,y)
+binarizer.fit(X, y)
 
 X_binarized, df_info = binarizer.transform(X)
 
 # Fitting the risk-score model
-scorepyo_model = OptunaScoreCard(nb_max_features=4,
-                                 min_point_value=-1, 
-                                 max_point_value=2,
-                                 df_info=df_info['feature'].reset_index())
+scorepyo_model = OptunaScoreCard(
+    nb_max_features=4,
+    min_point_value=-1,
+    max_point_value=2,
+    df_info=df_info["feature"].reset_index(),
+)
 
 scorepyo_model.fit(X_binarized, y)
 
