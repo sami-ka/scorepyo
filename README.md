@@ -78,11 +78,11 @@ You can find hereafter another example of such risk-score model for assessing a 
 <!-- ![Risk-score example for stroke risk](./source/_static/example_risk_score.PNG) -->
 <img src="./source/_static/example_risk_score.PNG" width="400" height="200">
 
-<div style="text-align: left"> Source:<a href="http://jmlr.org/papers/v20/18-615.html" target="_blank">Learning Optimized Risk Scores</a> <br>
-Berk Ustun and Cynthia Rudin<br>
+<div style="text-align: left"> Source: <a href="http://jmlr.org/papers/v20/18-615.html" target="_blank">Learning Optimized Risk Scores</a> <br>
+<!-- Berk Ustun and Cynthia Rudin<br>
 Journal of Machine Learning Research, 2019.</div>  
+<br /> -->
 <br />
-
 The extreme interpretability of such model is especially useful since it helps to understand and trust the model decision, but also to easily investigate fairness issues and make sure to satisfy legal requirements.
 
 
