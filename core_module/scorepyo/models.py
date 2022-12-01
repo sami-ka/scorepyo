@@ -63,6 +63,10 @@ class _BaseScoreCard:
         function that prints the feature-point card and score card of the model
     """
 
+    DESCRIPTION_COL = "Description"
+    POINT_COL = "Point(s)"
+    FEATURE_COL = "Feature"
+
     def __init__(
         self,
         nb_max_features: int = 4,
@@ -199,7 +203,7 @@ class _BaseScoreCard:
 
         X_selected_features = X[list_features]
 
-        points = self.feature_point_card["point"].values
+        points = self.feature_point_card[self.POINT_COL].values
         X_total_points = np.matmul(X_selected_features.values, points)
         proba = df_score_card.loc[X_total_points, "_RISK_FLOAT"].values.reshape(-1, 1)
 
@@ -208,14 +212,34 @@ class _BaseScoreCard:
     def summary(self) -> None:
         if (self.feature_point_card is None) or (self.score_card is None):
             raise NotFittedError("ScoreCard model has not been fitted yet")
+        feature_point_summary = (
+            self.feature_point_card[[self.DESCRIPTION_COL, self.POINT_COL]]
+            .sort_values(by=self.POINT_COL)
+            .copy()
+        )
+
+        empty_column_name = " "
+        feature_point_summary[empty_column_name] = "..."
+        feature_point_summary.iloc[1:, -1] = "+ " + feature_point_summary.iloc[1:, -1]
+        additional_display_rows = pd.DataFrame(
+            data=[
+                # [None, None, None],
+                [" ", "SCORE=", "..."]
+            ],
+            columns=feature_point_summary.columns,
+            index=[" "],
+        )
+
+        feature_point_summary = pd.concat(
+            [feature_point_summary, additional_display_rows], axis=0, ignore_index=False
+        )
+
+        feature_point_summary.index.name = self.FEATURE_COL
+
         print("======================")
         print("| FEATURE-POINT CARD |")
         print("======================")
-        print(
-            self.feature_point_card[["Description", "point"]]
-            .sort_values(by="point")
-            .to_markdown()
-        )
+        print(feature_point_summary.to_markdown())
         print()
         print("=======================================")
         print("=======================================")
@@ -418,8 +442,9 @@ class OptunaScoreCard(_BaseScoreCard):
 
         # Build feature-point card
         self.feature_point_card = pd.DataFrame(index=selected_scorepyo_features)
-        self.feature_point_card["point"] = selected_scorepyo_features_point
+        self.feature_point_card[self.POINT_COL] = selected_scorepyo_features_point
         if self._df_info is not None:
+            self._df_info = self._df_info.rename({"feature": self.FEATURE_COL}, axis=1)
             self.feature_point_card = self.feature_point_card.merge(
                 self._df_info, left_index=True, right_on=["binary_feature"]
             )
@@ -427,10 +452,12 @@ class OptunaScoreCard(_BaseScoreCard):
             self.feature_point_card[
                 "binary_feature"
             ] = self.feature_point_card.index.values
-            self.feature_point_card["feature"] = self.feature_point_card.index.values
+            self.feature_point_card[
+                self.FEATURE_COL
+            ] = self.feature_point_card.index.values
 
-        self.feature_point_card = self.feature_point_card.set_index("feature")
-        self.feature_point_card["Description"] = self.feature_point_card[
+        self.feature_point_card = self.feature_point_card.set_index(self.FEATURE_COL)
+        self.feature_point_card[self.DESCRIPTION_COL] = self.feature_point_card[
             "binary_feature"
         ].values
 
@@ -439,13 +466,13 @@ class OptunaScoreCard(_BaseScoreCard):
         # Minimum score is the sum of all negative points
         min_range_score = sum(
             np.clip(i, a_min=None, a_max=0)
-            for i in self.feature_point_card["point"].values
+            for i in self.feature_point_card[self.POINT_COL].values
         )
 
         # Maximum score is the sum of all positive points
         max_range_score = sum(
             np.clip(i, a_min=0, a_max=None)
-            for i in self.feature_point_card["point"].values
+            for i in self.feature_point_card[self.POINT_COL].values
         )
 
         # Compute risk score for all integers within min_range_score and max_range_score
