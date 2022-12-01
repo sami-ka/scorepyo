@@ -14,7 +14,7 @@
 ### *Example on Scikit-learn breast cancer dataset*
 <br />
 
-```
+```python
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
 from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
@@ -61,7 +61,7 @@ scorepyo_model.summary()
 # Installation
 Python 3.8, 3.9
 
-```
+```shell
 pip install scorepyo
 ```
 
@@ -98,7 +98,7 @@ Datasets usually comes with features of various type. Continuous feature must be
 Scorepyo leverages the awesome <a href="https://github.com/interpretml/interpret" target="_blank">interpretML</a> package and their EBM model to automatically extract binary features.
 
 ## Optuna-based Risk score model
-The risk-score model can be modeled as an optimization problem 3 sets of decision variables:
+The risk-score model can be modeled as an optimization problem with 3 sets of decision variables:
 * Subset of binary features to use
 * Points associated to each selected binary feature
 * Log-odd intercept when 0 point
@@ -115,6 +115,9 @@ The novelty in **Scorepyo** is that it leverages the power of <a href="https://g
 
 
 # Acknowledgements
+> ### <a href="https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants" target="_blank">*Standing on the shoulders of giants*</a>
+> #### <div style="text-align: right">*Bernard de Chartres* </div>
+<br />
 
 This package is mostly built on top of two great packages:
 * <a href="https://github.com/interpretml/interpret" target="_blank">interpretML</a>
