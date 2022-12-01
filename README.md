@@ -83,7 +83,9 @@ You can find hereafter another example of such risk-score model for assessing a 
 Journal of Machine Learning Research, 2019.</div>  
 <br /> -->
 <br />
-The extreme interpretability of such model is especially useful since it helps to understand and trust the model decision, but also to easily investigate fairness issues and make sure to satisfy legal requirements.
+The extreme interpretability of such model is especially useful since it helps to understand and trust the model decision, but also to easily investigate fairness issues and make sure to satisfy legal requirements, and eventually remember it.
+
+The simple computation also allows to write it down on a piece of paper for usage.
 
 
 # Components of Scorepyo
