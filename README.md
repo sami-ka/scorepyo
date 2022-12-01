@@ -28,7 +28,7 @@ data_X, y = data.data, data.target
 X = pd.DataFrame(data=data_X, columns=data.feature_names)
 
 # Binarization
-binarizer = AutomaticBinaryFeaturizer(max_number_binaries_by_features=3)
+binarizer = AutomaticBinaryFeaturizer(max_number_binaries_by_features=4)
 binarizer.fit(X, y)
 
 X_binarized, df_info = binarizer.transform(X)
@@ -62,7 +62,8 @@ scorepyo_model.summary()
 |:--------|:-------|:-------|:-------|:-------|:-------|:-------|:-------|
 | RISK    | 18.24% | 37.75% | 62.25% | 81.76% | 92.41% | 97.07% | 98.90% |
 
-
+<br />
+<br />
 
 # Installation
 Python 3.8, 3.9
@@ -70,6 +71,7 @@ Python 3.8, 3.9
 ```shell
 pip install scorepyo
 ```
+<br />
 
 # Risk-Score model
 
@@ -93,6 +95,7 @@ The extreme interpretability of such model is especially useful since it helps t
 
 The simple computation also allows to write it down on a piece of paper for usage.
 
+<br />
 
 # Components of Scorepyo
 The **Scorepyo** package provides two components that can be used independently:
