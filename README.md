@@ -33,7 +33,10 @@ binarizer.fit(X,y)
 X_binarized, df_info = binarizer.transform(X)
 
 # Fitting the risk-score model
-scorepyo_model = OptunaScoreCard(nb_max_features=4, min_point_value=-1, max_point_value=2, df_info=df_info['feature'].reset_index())
+scorepyo_model = OptunaScoreCard(nb_max_features=4,
+                                 min_point_value=-1, 
+                                 max_point_value=2,
+                                 df_info=df_info['feature'].reset_index())
 
 scorepyo_model.fit(X_binarized, y)
 
