@@ -19,12 +19,12 @@ here = Path(__file__).parent.absolute()
 
 # -- Project information -----------------------------------------------------
 
-project = "XXX"
+project = "Scorepyo"
 copyright = "XXX"
-author = "XXX"
+author = "Sami Kaddani"
 
 # The full version, including alpha/beta/rc tags
-release = "1.1.0"
+release = "0.1.0"
 
 
 # -- General configuration ---------------------------------------------------
@@ -82,7 +82,7 @@ pygments_style = "sphinx"
 html_theme = "sphinx_rtd_theme"
 
 # Adding a logo
-html_logo = str(here / "_static" / "sg_logo.svg")
+html_logo = str(here / "_static" / "scorepyo_logo.jpg")
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the

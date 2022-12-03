@@ -12,6 +12,7 @@ Welcome to the documentation!
 
    introduction/introduction
    notebooks/uploading_example_data
+   notebooks/example
 
 Module Documentation
 ==============================
@@ -21,7 +22,7 @@ Module Documentation
    :caption: Module Documentation
    :recursive:
 
-   featstory
+   scorepyo
 
 Indices and tables
 ==================

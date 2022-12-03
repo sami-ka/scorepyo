@@ -28,7 +28,7 @@ data_X, y = data.data, data.target
 X = pd.DataFrame(data=data_X, columns=data.feature_names)
 
 # Binarization
-binarizer = AutomaticBinaryFeaturizer(max_number_binaries_by_features=4)
+binarizer = AutomaticBinaryFeaturizer(max_number_binaries_by_features=3)
 binarizer.fit(X, y)
 
 X_binarized, df_info = binarizer.transform(X)
