@@ -49,11 +49,11 @@ def create_env(**kwargs):
 def format(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
     python_call(
         module="black",
-        arguments=["--diff", ".", "--config", "./core_module/pyproject.toml"],
+        arguments=[".", "--config", "./core_module/pyproject.toml"],
     )
     python_call(
         module="isort",
-        arguments=["--diff", ".", "--settings-path", "./core_module/pyproject.toml"],
+        arguments=[".", "--settings-path", "./core_module/pyproject.toml"],
     )
 
 
@@ -117,9 +117,10 @@ def CI(**_kwargs):
     mypy()
     bandit()
 
+
 def build_doc(**_kwargs):
     call(
-        cmd=["sphinx-build","-b", "html", "-a", "-E", "./docs/source", "./docs/build"],
+        cmd=["sphinx-build", "-b", "html", "-a", "-E", "./docs/source", "./docs/build"],
     )
 
 
@@ -131,4 +132,3 @@ if __name__ == "__main__":
     function = args["function"]
     remaining_arguments = {k: v for k, v in args.items() if k != "function"}
     globals()[function](**remaining_arguments)
-    
