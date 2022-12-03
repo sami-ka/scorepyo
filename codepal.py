@@ -38,7 +38,7 @@ def create_env(**kwargs):
         module="ipykernel", arguments=["install", "--user", f"--name={envname}"]
     )
 
-    python_call(module="pip", arguments=["install", "artifacts-keyring"])
+    # python_call(module="pip", arguments=["install", "artifacts-keyring"])
 
     if os.name == "nt":
         python_call(module="pip", arguments=["install", "pypiwin32"])
