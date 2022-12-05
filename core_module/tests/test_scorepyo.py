@@ -8,8 +8,8 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
-from scorepyo.binary_featurizer import AutoBinarizer
 from scorepyo.models import OptunaRiskScore
+from scorepyo.preprocessing import AutoBinarizer
 
 
 def test_end_2_end():

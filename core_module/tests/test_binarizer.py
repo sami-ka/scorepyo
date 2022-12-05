@@ -4,13 +4,13 @@ import pytest
 from pandera.errors import SchemaError
 from sklearn.exceptions import NotFittedError
 
-from scorepyo.binary_featurizer import AutoBinarizer
 from scorepyo.exceptions import (
     MissingColumnError,
     NegativeValueError,
     NonBooleanValueError,
     NonIntegerValueError,
 )
+from scorepyo.preprocessing import AutoBinarizer
 
 # from pytest_lazyfixture import lazy_fixture
 
