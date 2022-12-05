@@ -2,7 +2,7 @@
 
 <!-- ![Scorepyo](./source/_static/scorepyo_logo.jpg) -->
 <!-- ![Scorepyo](./source/_static/full_scorepyo_logo.png) -->
-<img src="./source/_static/full_scorepyo_logo.png" width="200" height="200">
+<img src="./docs_jupyter/images/square_logo_1000pxl.svg" width="200" height="200">
 
 <div style="text-align: left">Image by <a href="https://www.freepik.com/free-vector/scorpion-branding-logo-template_21251044.htm#page=2&query=scorpio&from_query=scorpio%20logo&position=3&from_view=search&track=sph">Freepik</a></div>
 <br />
@@ -18,7 +18,7 @@
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
 
-from scorepyo.binary_featurizer import AutoBinarizer
+from scorepyo.preprocessing import AutoBinarizer
 from scorepyo.models import OptunaRiskScore
 
 # Getting data
