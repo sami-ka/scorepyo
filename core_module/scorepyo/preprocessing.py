@@ -1,10 +1,4 @@
-"""
-TODO Add typing
-TODO eneble possibility of regressor?
-
-Returns:
-
-    _type_: _description_
+"""Class for the EBM-based automatic binarizer
 """
 import numbers
 import warnings
@@ -28,9 +22,9 @@ from scorepyo.exceptions import (
 )
 
 
-class AutomaticBinaryFeaturizer:
+class AutoBinarizer:
     """
-    Class for automatic binary featurizer.
+    Class for automatic feature binarizer.
 
     This class uses Explainable Boosting Machine (EBM) that are part of the General Additive Model (GAM) family.
     EBM will compute for each feature a tree. The final prediction will be made by summing up the tree value for each feature.

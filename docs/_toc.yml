@@ -1,0 +1,25 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: welcome
+# maxdepth: 2
+defaults: # The defaults key will be applied to all chapters and sub-sections
+  titlesonly: True
+
+parts:
+  - caption: Tutorials
+    chapters:
+      - file: tutorials/installation
+      - file: tutorials/context
+        sections:
+          - file: tutorials/example
+
+  - caption: In-depth
+    chapters:
+      - file: depth_binarizer/binarizer
+      - file: depth_model/model
+
+  - caption: API
+    chapters:
+      - file: API

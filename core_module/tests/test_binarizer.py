@@ -4,25 +4,25 @@ import pytest
 from pandera.errors import SchemaError
 from sklearn.exceptions import NotFittedError
 
-from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
 from scorepyo.exceptions import (
     MissingColumnError,
     NegativeValueError,
     NonBooleanValueError,
     NonIntegerValueError,
 )
+from scorepyo.preprocessing import AutoBinarizer
 
 # from pytest_lazyfixture import lazy_fixture
 
 
 def test_binarizer_integer_param():
     with pytest.raises(NonIntegerValueError):
-        AutomaticBinaryFeaturizer(max_number_binaries_by_features=3.5)
+        AutoBinarizer(max_number_binaries_by_features=3.5)
 
 
 def test_binarizer_positive_param():
     with pytest.raises(NegativeValueError):
-        AutomaticBinaryFeaturizer(max_number_binaries_by_features=-1)
+        AutoBinarizer(max_number_binaries_by_features=-1)
 
 
 @pytest.mark.parametrize(
@@ -31,23 +31,23 @@ def test_binarizer_positive_param():
 )
 def test_binarizer_boolean_param(keep_negative_value):
     with pytest.raises(NonBooleanValueError):
-        AutomaticBinaryFeaturizer(keep_negative=keep_negative_value)
+        AutoBinarizer(keep_negative=keep_negative_value)
 
 
 def test_missing_categorical_columns(mixed_features, binary_target):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with pytest.raises(MissingColumnError):
         binarizer.fit(mixed_features, binary_target, categorical_features=["D"])
 
 
 def test_missing_to_exclude_columns(mixed_features, binary_target):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with pytest.raises(MissingColumnError):
         binarizer.fit(mixed_features, binary_target, to_exclude_features=["D"])
 
 
 def test_detect_categorical_columns(mixed_features, binary_target):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -59,13 +59,13 @@ def test_detect_categorical_columns(mixed_features, binary_target):
 
 
 def test_not_fitted(mixed_features):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with pytest.raises(NotFittedError):
         binarizer.transform(mixed_features)
 
 
 def test_different_dataframe(mixed_features, continuous_features, binary_target):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -82,7 +82,7 @@ def test_different_dataframe(mixed_features, continuous_features, binary_target)
 )
 def test_number_plateaus(breast_cancer_features, breast_cancer_target, max_plateau):
     X, y = breast_cancer_features, breast_cancer_target
-    binarizer = AutomaticBinaryFeaturizer(
+    binarizer = AutoBinarizer(
         max_number_binaries_by_features=max_plateau, keep_negative=True
     )
     binarizer.fit(X, y)
@@ -91,7 +91,7 @@ def test_number_plateaus(breast_cancer_features, breast_cancer_target, max_plate
 
 
 def test_define_categorical_columns(mixed_features, binary_target):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -109,7 +109,7 @@ def test_define_categorical_columns(mixed_features, binary_target):
     [["A"], ["B"], ["C"], ["A", "B"], ["A", "C"], ["B", "C"], ["A", "B", "C"]],
 )
 def test_define_exclude_columns(mixed_features, binary_target, excluded_columns):
-    binarizer = AutomaticBinaryFeaturizer()
+    binarizer = AutoBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -129,7 +129,7 @@ def test_define_exclude_columns(mixed_features, binary_target, excluded_columns)
 
 
 def test_keep_negative(breast_cancer_features, breast_cancer_target):
-    binarizer = AutomaticBinaryFeaturizer(keep_negative=False)
+    binarizer = AutoBinarizer(keep_negative=False)
     binarizer.fit(breast_cancer_features, breast_cancer_target)
     _, df_info = binarizer.transform(breast_cancer_features)
     print(df_info)

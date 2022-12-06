@@ -13,7 +13,7 @@ local_scheme = "no-local-version"
 [tool.black]
 line-length = 88
 target-version = ['py39', 'py38']
-include = '\.pyi?$'
+#include = '\.pyi?$'
 
 [tool.isort]
 # make it compatible with black
@@ -23,7 +23,7 @@ known_first_party=["scorepyo"]
 
 [tool.bandit]
 assert_used.skips= ["*/test_*.py", "*/test_*.py"]
-exclude_dirs= ["**bootstrap.py"]
+exclude_dirs= ["**codepal.py"]
 
 [tool.mypy]
 ignore_missing_imports = "True"

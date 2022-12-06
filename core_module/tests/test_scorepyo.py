@@ -8,8 +8,8 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
-from scorepyo.binary_featurizer import AutomaticBinaryFeaturizer
-from scorepyo.models import OptunaScoreCard
+from scorepyo.models import OptunaRiskScore
+from scorepyo.preprocessing import AutoBinarizer
 
 
 def test_end_2_end():
@@ -27,9 +27,7 @@ def test_end_2_end():
 
     X_test["category"] = "C"
 
-    binarizer = AutomaticBinaryFeaturizer(
-        max_number_binaries_by_features=3, keep_negative=True
-    )
+    binarizer = AutoBinarizer(max_number_binaries_by_features=3, keep_negative=True)
     binarizer.fit(
         X_train, y_train, categorical_features="auto", to_exclude_features=None
     )
@@ -38,7 +36,7 @@ def test_end_2_end():
     X_test_binarized, _ = binarizer.transform(X_test)
 
     # Test without optuna params and with df_info
-    scorepyo_model = OptunaScoreCard(
+    scorepyo_model = OptunaRiskScore(
         nb_max_features=4,
         min_point_value=-1,
         max_point_value=2,
@@ -64,7 +62,7 @@ def test_end_2_end():
     print(f"Precision@0.5: \n{precision_test}")
 
     # Test with optuna params and no df_info
-    scorepyo_model_optuna_params = OptunaScoreCard(
+    scorepyo_model_optuna_params = OptunaRiskScore(
         nb_max_features=4,
         min_point_value=-1,
         max_point_value=2,

@@ -1,6 +1,4 @@
-"""
-TODO add Neurips risk scorer
-TODO add class constrained OptunaScorecard  
+"""Classes to create and fit risk-score type model.
 """
 import numbers
 from abc import abstractmethod
@@ -22,11 +20,11 @@ from scorepyo.exceptions import (
 )
 
 
-class _BaseScoreCard:
+class _BaseRiskScore:
     """
-    Base class for score card type model.
+    Base class for risk score type model.
 
-    This class provides common functions for score card type model, no matter the way points and binary features are designed.
+    This class provides common functions for risk score type model, no matter the way points and binary features are designed.
     It needs common attributes, such as minimum/maximum point value for each binary feature and number of selected binary feature.
 
 
@@ -62,6 +60,15 @@ class _BaseScoreCard:
     summary(self):
         function that prints the feature-point card and score card of the model
     """
+
+    _DESCRIPTION_COL = "Description"
+    """Column name for binary feature in the risk score summary"""
+
+    _POINT_COL = "Point(s)"
+    """Column name for points in the risk score summary"""
+
+    _FEATURE_COL = "Feature"
+    """Column name for original feature in the risk score summary"""
 
     def __init__(
         self,
@@ -164,13 +171,13 @@ class _BaseScoreCard:
             nbarray of shape (n_samples,): predicted class based on predicted probability and threshold
         """
         if (self.feature_point_card is None) or (self.score_card is None):
-            raise NotFittedError("ScoreCard model has not been fitted yet")
+            raise NotFittedError("RiskScore model has not been fitted yet")
         proba = self.predict_proba(X)
 
         return (proba[:, 1] >= proba_threshold).astype(int)
 
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
-        """Function that outputs probability of positive class according to score card
+        """Function that outputs probability of positive class according to risk-score model
 
         Args:
             X (pandas.DataFrame): dataset of features
@@ -179,7 +186,7 @@ class _BaseScoreCard:
             ndarray of shape (n_samples, 2): probability of negative and positive class in each column resp.
         """
         if (self.feature_point_card is None) or (self.score_card is None):
-            raise NotFittedError("ScoreCard model has not been fitted yet")
+            raise NotFittedError("RiskScore model has not been fitted yet")
 
         # TODO have the same behaviour as predict proba from sklearn
         # TODO check if full numpy approach is faster
@@ -199,7 +206,7 @@ class _BaseScoreCard:
 
         X_selected_features = X[list_features]
 
-        points = self.feature_point_card["point"].values
+        points = self.feature_point_card[self._POINT_COL].values
         X_total_points = np.matmul(X_selected_features.values, points)
         proba = df_score_card.loc[X_total_points, "_RISK_FLOAT"].values.reshape(-1, 1)
 
@@ -207,15 +214,36 @@ class _BaseScoreCard:
 
     def summary(self) -> None:
         if (self.feature_point_card is None) or (self.score_card is None):
-            raise NotFittedError("ScoreCard model has not been fitted yet")
+            raise NotFittedError("RiskScore model has not been fitted yet")
+        feature_point_summary = (
+            self.feature_point_card[[self._DESCRIPTION_COL, self._POINT_COL]]
+            .sort_values(by=self._POINT_COL)
+            .copy()
+        )
+
+        empty_column_name = " "
+        feature_point_summary[empty_column_name] = "..."
+        feature_point_summary.iloc[1:, -1] = "+ " + feature_point_summary.iloc[1:, -1]
+        feature_point_summary.iloc[0, -1] = " " + feature_point_summary.iloc[0, -1]
+        additional_display_rows = pd.DataFrame(
+            data=[
+                # [None, None, None],
+                [" ", "SCORE=", " ..."]
+            ],
+            columns=feature_point_summary.columns,
+            index=[" "],
+        )
+
+        feature_point_summary = pd.concat(
+            [feature_point_summary, additional_display_rows], axis=0, ignore_index=False
+        )
+
+        feature_point_summary.index.name = self._FEATURE_COL
+
         print("======================")
         print("| FEATURE-POINT CARD |")
         print("======================")
-        print(
-            self.feature_point_card[["Description", "point"]]
-            .sort_values(by="point")
-            .to_markdown()
-        )
+        print(feature_point_summary.to_markdown())
         print()
         print("=======================================")
         print("=======================================")
@@ -226,11 +254,11 @@ class _BaseScoreCard:
         print(self.score_card.loc[["SCORE", "RISK"], :].to_markdown(headers="firstrow"))
 
 
-class OptunaScoreCard(_BaseScoreCard):
+class OptunaRiskScore(_BaseRiskScore):
     """
-    Score card model based on Optuna.
+    Risk score model based on Optuna.
 
-    This class is a child class of _BaseScorecard. It implements the fit method that creates the feature-point card and score card attribute.
+    This class is a child class of _BaseRiskScore. It implements the fit method that creates the feature-point card and score card attribute.
     It computes them by leveraging the sampling efficiency of Optuna. Optuna is asked to select nb_max_features among all features, and assign points
     to each selected feature. It minimizes the logloss on a given dataset.
 
@@ -257,7 +285,7 @@ class OptunaScoreCard(_BaseScoreCard):
         function that defines the logloss function used by Optuna
 
 
-    From _BaseScoreCard:
+    From _BaseRiskScore:
 
     @staticmethod
     _predict_proba_score(score, intercept):
@@ -298,10 +326,10 @@ class OptunaScoreCard(_BaseScoreCard):
             self.optuna_optimize_params["timeout"] = 90
 
     def score_logloss_objective(self, trial, X: pd.DataFrame, y: pd.Series) -> float:
-        """Logloss objective function for score card exploration parameters sampled with optuna.
+        """Logloss objective function for Risk score exploration parameters sampled with optuna.
 
         This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
-        - `self.nb_max_features` categorical parameters for the choice of binary features to build the score card on
+        - `self.nb_max_features` categorical parameters for the choice of binary features to build the risk score on
         - `self.nb_max_features` integer parameters for the choice of points associated to the selected binary feature
         - one float parameter for the intercept of the score card (i.e. the log odd associated to a score of 0)
 
@@ -312,7 +340,7 @@ class OptunaScoreCard(_BaseScoreCard):
             y (nd.array): Target binary values
 
         Returns:
-            float: log-loss value for score card sampled parameters
+            float: log-loss value for risk score sampled parameters
         """
         # TODO : put option for no duplicate features
         # change way of doing the sampling by creating all combinations of binary features
@@ -334,7 +362,7 @@ class OptunaScoreCard(_BaseScoreCard):
             for i in range(self.nb_max_features)
         }
 
-        # Define the parameter of trial for the intercept of the score card
+        # Define the parameter of trial for the intercept of the risk score model
         score_intercept = trial.suggest_float(
             "intercept",
             -10 + self.min_point_value * self.nb_max_features,
@@ -369,12 +397,12 @@ class OptunaScoreCard(_BaseScoreCard):
         return logloss_samples
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
-        """Function that search best parameters (choice of binary features, points and intercept) of a score card with Optuna
+        """Function that search best parameters (choice of binary features, points and intercept) of a risk score model with Optuna
 
-        This functions calls Optuna to find the best parameters of a score card and then construct the feature-point card and score card attributes.
+        This functions calls Optuna to find the best parameters of a risk score model and then construct the feature-point card and score card attributes.
 
         Args:
-            X (pandas.DataFrame): Dataset of features to fit the score card on
+            X (pandas.DataFrame): Dataset of features to fit the risk score model on
             y (pandas.Series): Target binary values
         """
 
@@ -418,8 +446,9 @@ class OptunaScoreCard(_BaseScoreCard):
 
         # Build feature-point card
         self.feature_point_card = pd.DataFrame(index=selected_scorepyo_features)
-        self.feature_point_card["point"] = selected_scorepyo_features_point
+        self.feature_point_card[self._POINT_COL] = selected_scorepyo_features_point
         if self._df_info is not None:
+            self._df_info = self._df_info.rename({"feature": self._FEATURE_COL}, axis=1)
             self.feature_point_card = self.feature_point_card.merge(
                 self._df_info, left_index=True, right_on=["binary_feature"]
             )
@@ -427,10 +456,12 @@ class OptunaScoreCard(_BaseScoreCard):
             self.feature_point_card[
                 "binary_feature"
             ] = self.feature_point_card.index.values
-            self.feature_point_card["feature"] = self.feature_point_card.index.values
+            self.feature_point_card[
+                self._FEATURE_COL
+            ] = self.feature_point_card.index.values
 
-        self.feature_point_card = self.feature_point_card.set_index("feature")
-        self.feature_point_card["Description"] = self.feature_point_card[
+        self.feature_point_card = self.feature_point_card.set_index(self._FEATURE_COL)
+        self.feature_point_card[self._DESCRIPTION_COL] = self.feature_point_card[
             "binary_feature"
         ].values
 
@@ -439,13 +470,13 @@ class OptunaScoreCard(_BaseScoreCard):
         # Minimum score is the sum of all negative points
         min_range_score = sum(
             np.clip(i, a_min=None, a_max=0)
-            for i in self.feature_point_card["point"].values
+            for i in self.feature_point_card[self._POINT_COL].values
         )
 
         # Maximum score is the sum of all positive points
         max_range_score = sum(
             np.clip(i, a_min=0, a_max=None)
-            for i in self.feature_point_card["point"].values
+            for i in self.feature_point_card[self._POINT_COL].values
         )
 
         # Compute risk score for all integers within min_range_score and max_range_score
