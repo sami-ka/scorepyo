@@ -2,7 +2,7 @@
 
 <!-- ![Scorepyo](./source/_static/scorepyo_logo.jpg) -->
 <!-- ![Scorepyo](./source/_static/full_scorepyo_logo.png) -->
-<img src="./docs_jupyter/images/square_logo_1000pxl.svg" width="200" height="200">
+<img src="./docs/images/square_logo_1000pxl.svg" width="200" height="200">
 
 <div style="text-align: left">Image by <a href="https://www.freepik.com/free-vector/scorpion-branding-logo-template_21251044.htm#page=2&query=scorpio&from_query=scorpio%20logo&position=3&from_view=search&track=sph">Freepik</a></div>
 <br />
@@ -84,9 +84,9 @@ The points should be small integers, in order to be easily manipulated and remem
 You can find hereafter another example of such risk-score model for assessing a stroke risk:
 
 <!-- ![Risk-score example for stroke risk](./source/_static/example_risk_score.PNG) -->
-<img src="./source/_static/example_risk_score.PNG" width="400" height="200">
+<img src="./docs/depth_model/example_risk_score.PNG" width="400" height="200">
 
-<div style="text-align: left"> Source: <a href="http://jmlr.org/papers/v20/18-615.html" target="_blank">Learning Optimized Risk Scores</a> <br>
+<div style="text-align: left"> <a href="https://en.wikipedia.org/wiki/CHA2DS2%E2%80%93VASc_score#CHADS2" target="_blank">Source</a> <br>
 <!-- Berk Ustun and Cynthia Rudin<br>
 Journal of Machine Learning Research, 2019.</div>  
 <br /> -->
@@ -136,7 +136,7 @@ This package is mostly built on top of two great packages:
 
 To better understand the justification of automatically creating risk score model from data, or to not only round coefficients from logistic regression, I refer to the great introduction of this Neurips 2022 paper associated with <a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a>:
 
- >>> https://arxiv.org/pdf/2210.05846.pdf.
+ > https://arxiv.org/pdf/2210.05846.pdf.
  
  
 #
