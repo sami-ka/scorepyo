@@ -21,8 +21,12 @@ We can observe that each single-feature tree defines intervals on the feature do
 
 <img src="illustration_feature_extraction.PNG" align="right" style="width:700px;"/>
 
+'   '
+
+The `AutoBinarizer` class extracts every plateau of single-feature trees of the fitted EBM. Plateau with a negative log-odd value can be filtered with the `keep_negative` parameter. The number of plateaux of single-feature tree, and thus binary features extracted by continuous feature, is bounded by the `max_number_binaries_by_features` parameter.
 <br /><br />
 
 :::{admonition} Info
-The ```AutoBinarizer``` class extracts the log-odd value associated to each binary feature created as it can be used to filter to make a selection afterwards.
+The log-odd value associated to each binary feature created is extracted. It can be used as a filter to make a selection afterwards.
 :::
+

@@ -11,7 +11,7 @@ title: Welcome to Scorepyo Documentation
 :columns: 4
 :class: sd-m-auto
 
-<img src="images/scorepyo_logo.jpg" />
+<img src="images/scorepyo_logo.jpg" style="width:200px;"/>
 
 :::
 
@@ -28,22 +28,95 @@ Create risk-score type models for binary classification, based on data.
 
 Get started!
 ```
+:::
+::::
 
+% The SVG rendering breaks latex builds for the GitHub badge, so only include in HTML
+```{only} html
+[![](https://img.shields.io/github/stars/drskd/scorepyo?style=social)](https://github.com/drskd/scorepyo)
 
-```{tableofcontents}
 ```
 
-<!-- % The SVG rendering breaks latex builds for the GitHub badge, so only include in HTML
-```{only} html
-[![](https://img.shields.io/github/stars/executablebooks/jupyter-book?style=social)](https://github.com/executablebooks/jupyter-book)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2561065.svg)](https://doi.org/10.5281/zenodo.2561065)
+
+
+
+
+<!-- [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2561065.svg)](https://doi.org/10.5281/zenodo.2561065) -->
+
+::::{grid} 1 1 1 3
+:class-container: text-center
+:gutter: 3
+
+:::{grid-item-card}
+:link: tutorials/installation
+:link-type: doc
+:class-header: bg-light
+
+Quickstart 🚀
+^^^
+
+Install and run your first risk-score model!
+:::
+
+:::{grid-item-card}
+:link: depth_binarizer/binarizer
+:link-type: doc
+:class-header: bg-light
+
+Deep-dive: Automatic binarizer ✏️
+^^^
+
+Discover how Scorepyo leverages a recent ML model to extract binary features!
+:::
+
+:::{grid-item-card}
+:link: depth_model/model
+:link-type: doc
+:class-header: bg-light
+
+Deep-dive: Risk-score ✏️
+^^^
+
+Learn more about risk-score model, and its link with Optuna!
+:::
+::::
+
+# Built with Jupyter Book
+
+This documentation has been built with Jupyter book. 
+Feel free to check out their awesome documentation.
+
+
+::::{card-carousel} 1
+
+:::{card}
+:margin: 5
+:class-body: text-center
+:class-header: bg-light text-center
+:link: https://jupyterbook.org/en/stable/intro.html
+**Jupyter book**
+^^^
+```{image} logo.png
+:height: 50
+```
+How to use jupyter-book
++++
+Check this out {fas}`arrow-right`
+:::
+::::
+
+
+
+<!-- ```{tableofcontents}
 ``` -->
+
+
 
 <!-- ::: -->
 
 <!-- :::: -->
 
-<!-- ::::{grid} 1 1 2 3
+<!-- ::::{grid} 1 1 1 3
 :class-container: text-center
 :gutter: 3
 
@@ -125,26 +198,25 @@ This documentation is organized into a few major sections.
 
 # Built with Jupyter Book
 
-Below are some books that have been built with Jupyter Book.
-You can find more in [{bdg-primary}`the Jupyter Book Gallery`](https://executablebooks.org/en/latest/gallery.html).
+This documentation has been built with Jupyter book. 
+Feel free to check out their awesome documentation.
 
 
-::::{card-carousel} 3
+::::{card-carousel} 1
 
 :::{card}
 :margin: 3
 :class-body: text-center
 :class-header: bg-light text-center
-:link: https://www.inferentialthinking.com/
-**Inferential Thinking**
+:link: https://jupyterbook.org/en/stable/intro.html
+**Jupyter book**
 ^^^
-```{image} https://inferentialthinking.com/_static/favicon.png
+```{image} logo.png
 :height: 100
 ```
-
-The textbook used by UC Berkeley's popular Data 8 class.
+How to use jupyter-book
 +++
-Explore this book {fas}`arrow-right`
+Check this out {fas}`arrow-right`
 :::
 
 :::{card}
@@ -330,3 +402,4 @@ Many thanks to the Sloan Foundation, which [provides support for the Executable 
 :::
 
 :::: -->
+

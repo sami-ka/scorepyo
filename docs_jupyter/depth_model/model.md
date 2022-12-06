@@ -17,6 +17,8 @@ Here is CHADS2, an example of risk-score model for stroke risk of people with a 
 
 <img src="example_risk_score.PNG" align="right" title='test' style="width:700px;"/>
 
+<br /><br />
+
 What motivates the use of such model?
 
 ## Motivation
@@ -48,54 +50,111 @@ log odds, similar to log regression -->
 
 The risk-score model can be modeled as an optimization problem with 3 sets of decision variables.
 
-### Sets and variables
+### Sets, parameters and variables
 We can introduce the following notations:
 
 * Sets
-    * $F=[f_i, i \in [1,...,n]]$, set of binary features
+    * $\{i \in [1,...,n]\}$, set of indices of binary features
     * $X=[X_j, j \in [1,...,m]]$, set of samples with $X_j \in \{0,1\}^{m}$
-    * $y=[y_j, j \in [1,...,m]]$, set of binary target value
+    * $y=[y_j \in \{0,1\}, j \in [1,...,m]]$, set of binary target value
+* Parameters
+    * $N_{\text{min}}, N_{\text{max}}$, resp. minimum and maximum number of selected features
+    * $V_{\text{min}}$, $V_{\text{max}}$, resp. minimum and maximum value for points associated to selected features
 * Variables
     * feature selection variables (*binary*) : $f_i$, equals to $1$ if feature $i$ is selected for the risk-score model
     * log-odd/point variables (*relative integer*) : $points_i$, points associated to each binary feature
     * log-odd intercept (*continuous*): $intercept$, log-odd when risk score is equal to 0
 
+
+
 ### Objective function
 The objective function is the minimization of the logloss of the computed risk on training samples:
 
-$\sum_{j=1}^{m}y_jlog(p_j) +(1-y_j)log(1-p_j)$
+$min \sum_{j=1}^{m}y_jlog(p_j) +(1-y_j)log(1-p_j)$
 
 with $p_j = \frac{1}{1+e^{-[\sum_i (points_iX_{ji} F_i)+intercept]}}$
 
 ### Constraints
-TODO
+#### Min. and max. number of features
 
+This constraint enforces that the number of selected features lies in the interval defined by $N_{\text{min}}$ and $N_{\text{max}}$.
+
+$N_{\text{min}} \leq \sum_{i=1}^n f_i \leq N_{\text{max}}$
+
+
+#### Min. and max. points value and link
+
+<!-- These constraints enforce that each points value associated to the selected features lies in the interval defined by $V_{\text{min}}$ and $V_{\text{max}}$.
+
+$V_{\text{min}} \leq points_i \leq V_{\text{max}}, \forall i\in [1,...,n]$
+
+#### Link selection of features and points associated -->
+
+These constraints serve two purposes : bound point values to their possible minimum and maximum values, and link selection of features and their associated points. Indeed, we want to make sure that non-selected features will have 0 point associated to them.
+
+
+
+$V_{\text{min}}f_i \leq points_i \leq V_{\text{max}}f_i, \forall i \in [1,...,n]$ 
+
+:::{admonition} Note
+Note that in this formulation, the maximum number of selected features is always respected, unlike the minimum number of selected features. The model could select some features and assign them 0 point, this would be equate to not selecting that feature.
+:::
+
+We could also add other constraints, such as limit or force the number of selected features within defined subsets, etc.
 
 <!-- ## Optuna implementation -->
+In this formulation, there are $2n+1$ variables and $n+1$ constraints, with $n$ being the number of binary features. The size of this problem is relatively small, but the hard part is in the combination of the objective function, which involves a non linear (log-loss) function with a lot of samples, and integer variables.
+
 
 
 ## Optuna modelization
 
-The RiskScore models can take 4 parameters:
-* `nb_max_features` : number of maximum binary features to use for the risk score model
-* `min_point_value` : minimum possible number of points for each binary feature
-* `max_point_value` : maximum possible number of points for each binary feature
+To handle this problem with Optuna, we should not exactly use the same variables, as it is better to have a smaller number of variables with larger domain.
 
+### Sets, parameters and variables
 
-The first one implemented is via the `OptunaRiskScore` class. This class leverages the efficient sampling abilities of Optuna to select both binary features and their associated points amount.
+* Sets
+    * $\{i \in [1,...,n]\}$, set of binary features
+    * $X=[X_j, j \in [1,...,m]]$, set of samples with $X_j \in \{0,1\}^{m}$
+    * $y=[y_j \in \{0,1\}, j \in [1,...,m]]$, set of binary target value
+* Parameters
+    * $N_{\text{min}}, N_{\text{max}}$, resp. minimum and maximum number of selected features
+    * $V_{\text{min}}$, $V_{\text{max}}$, resp. minimum and maximum value for points associated to selected features
+* Variables
+    * feature selection variables (*categorical*) : $cf_k$, equals to $i$ if feature $i$ is selected for the risk-score model for the $k^{th}$ selected features, $k \in [1,...,N_{\text{max}}]$
+    * log-odd/point variables (*relative integer*) : $points_k$, points associated to $k^{th}$ selected features
+    * log-odd intercept (*continuous*): $intercept$, log-odd when risk score is equal to 
 
+Observe that now we are left only with $2N_{\text{max}}+1$ variables
+    
+### Objective function
+The objective function is still the minimization of the logloss of the computed risk on training samples:
 
-Since the `OptunaRiskScore` model is based on Optuna, we can also pass specific optuna optimize function parameters via a dictionnary in the  `optuna_optimize_params` parameter.
+$min \sum_{j=1}^{m}y_jlog(p_j) +(1-y_j)log(1-p_j)$
 
-### Max features strict or not
+with $p_j = \frac{1}{1+e^{-[\sum_k (points_kX_{jcf_k} F_{cf_k})+intercept]}}$
 
-### note that 0 is a possible point value
+Since Optuna offers the possibility to put any objective function, we can also use other classification metrics (e.g. average precision, ROC AUC).
+
+It will efficiently samples value for the $2N_{\text{max}}$ variables in order to minimize the log-loss.
+
+:::{admonition} Note
+Note that nothing prevents Optuna to sample a value of 0 point for one of the selected binary features.
+
+The `OptunaRiskScore` model will implement in future developments the enforcement of the selection of a minimum number of features. 
+:::
 
 ## Other packages
 
 ### Risk-slim
 
+<a href="https://github.com/ustunb/risk-slim" target="_blank">risk-slim</a> has an elegant approach mixing Machine Learning and Integer Linear Programming (ILP), that provides the ability to integrate preferences and constraints on the subset of features, and their associated point. It is unfortunately based on CPLEX, a commercial ILP solver that limits its use, and also have trouble converging in large dimensions.
+
 ### FasterRisk
+
+<a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a> is a recent package that makes the computation much faster by dropping the ILP approach and providing an other approach to explore this large space of solutions and generate a list of interesting risk-score models that will be diverse. This approach does not integrate constraints as risk-slim does, but does a great job at quickly computing risk-score models. It does not provide an automatic feature binarizer though.
 
 
 ### Comparison performance with FasterRisk
+
+Coming soon.

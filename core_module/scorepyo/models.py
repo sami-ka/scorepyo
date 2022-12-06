@@ -1,6 +1,4 @@
-"""
-TODO add Neurips risk scorer
-TODO add class constrained OptunaRiskScore  
+"""Classes to create and fit risk-score type model.
 """
 import numbers
 from abc import abstractmethod
@@ -63,9 +61,14 @@ class _BaseRiskScore:
         function that prints the feature-point card and score card of the model
     """
 
-    DESCRIPTION_COL = "Description"
-    POINT_COL = "Point(s)"
-    FEATURE_COL = "Feature"
+    _DESCRIPTION_COL = "Description"
+    """Column name for binary feature in the risk score summary"""
+
+    _POINT_COL = "Point(s)"
+    """Column name for points in the risk score summary"""
+
+    _FEATURE_COL = "Feature"
+    """Column name for original feature in the risk score summary"""
 
     def __init__(
         self,
@@ -203,7 +206,7 @@ class _BaseRiskScore:
 
         X_selected_features = X[list_features]
 
-        points = self.feature_point_card[self.POINT_COL].values
+        points = self.feature_point_card[self._POINT_COL].values
         X_total_points = np.matmul(X_selected_features.values, points)
         proba = df_score_card.loc[X_total_points, "_RISK_FLOAT"].values.reshape(-1, 1)
 
@@ -213,8 +216,8 @@ class _BaseRiskScore:
         if (self.feature_point_card is None) or (self.score_card is None):
             raise NotFittedError("RiskScore model has not been fitted yet")
         feature_point_summary = (
-            self.feature_point_card[[self.DESCRIPTION_COL, self.POINT_COL]]
-            .sort_values(by=self.POINT_COL)
+            self.feature_point_card[[self._DESCRIPTION_COL, self._POINT_COL]]
+            .sort_values(by=self._POINT_COL)
             .copy()
         )
 
@@ -234,7 +237,7 @@ class _BaseRiskScore:
             [feature_point_summary, additional_display_rows], axis=0, ignore_index=False
         )
 
-        feature_point_summary.index.name = self.FEATURE_COL
+        feature_point_summary.index.name = self._FEATURE_COL
 
         print("======================")
         print("| FEATURE-POINT CARD |")
@@ -442,9 +445,9 @@ class OptunaRiskScore(_BaseRiskScore):
 
         # Build feature-point card
         self.feature_point_card = pd.DataFrame(index=selected_scorepyo_features)
-        self.feature_point_card[self.POINT_COL] = selected_scorepyo_features_point
+        self.feature_point_card[self._POINT_COL] = selected_scorepyo_features_point
         if self._df_info is not None:
-            self._df_info = self._df_info.rename({"feature": self.FEATURE_COL}, axis=1)
+            self._df_info = self._df_info.rename({"feature": self._FEATURE_COL}, axis=1)
             self.feature_point_card = self.feature_point_card.merge(
                 self._df_info, left_index=True, right_on=["binary_feature"]
             )
@@ -453,11 +456,11 @@ class OptunaRiskScore(_BaseRiskScore):
                 "binary_feature"
             ] = self.feature_point_card.index.values
             self.feature_point_card[
-                self.FEATURE_COL
+                self._FEATURE_COL
             ] = self.feature_point_card.index.values
 
-        self.feature_point_card = self.feature_point_card.set_index(self.FEATURE_COL)
-        self.feature_point_card[self.DESCRIPTION_COL] = self.feature_point_card[
+        self.feature_point_card = self.feature_point_card.set_index(self._FEATURE_COL)
+        self.feature_point_card[self._DESCRIPTION_COL] = self.feature_point_card[
             "binary_feature"
         ].values
 
@@ -466,13 +469,13 @@ class OptunaRiskScore(_BaseRiskScore):
         # Minimum score is the sum of all negative points
         min_range_score = sum(
             np.clip(i, a_min=None, a_max=0)
-            for i in self.feature_point_card[self.POINT_COL].values
+            for i in self.feature_point_card[self._POINT_COL].values
         )
 
         # Maximum score is the sum of all positive points
         max_range_score = sum(
             np.clip(i, a_min=0, a_max=None)
-            for i in self.feature_point_card[self.POINT_COL].values
+            for i in self.feature_point_card[self._POINT_COL].values
         )
 
         # Compute risk score for all integers within min_range_score and max_range_score

@@ -1,10 +1,4 @@
-"""
-TODO Add typing
-TODO eneble possibility of regressor?
-
-Returns:
-
-    _type_: _description_
+"""Class for the EBM-based automatic binarizer
 """
 import numbers
 import warnings
