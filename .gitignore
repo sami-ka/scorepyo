@@ -132,3 +132,8 @@ dmypy.json
 _build/
 _autosummary/
 *.pptx
+
+# wheel building artefact
+/core_module/changelog.md
+/core_module/LICENSE
+/core_module/README.md
