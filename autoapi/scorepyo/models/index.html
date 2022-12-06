@@ -1,0 +1,825 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>scorepyo.models</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../../../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../welcome.html">
+                    Welcome to Scorepyo Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/installation.html">
+   Installation
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../tutorials/context.html">
+   Quickstart
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../tutorials/example.html">
+     Application to breast cancer dataset
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  In-depth
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../depth_binarizer/binarizer.html">
+   Automatic feature binarizer
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../depth_model/model.html">
+   Optuna-based risk-score model
+  </a>
+ </li>
+</ul>
+<p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  API
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../../API.html">
+   API documentation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../../_autosummary/scorepyo.html">
+     scorepyo
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+    <label for="toctree-checkbox-3">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.exceptions.html">
+       scorepyo.exceptions
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.models.html">
+       scorepyo.models
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.preprocessing.html">
+       scorepyo.preprocessing
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-repository-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Source repositories">
+      <i class="fab fa-github"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="headerbtn__text-container">repository</span>
+</a>
+
+      </li>
+      
+      <li>
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fautoapi/scorepyo/models/index.html&body=Your%20issue%20content%20here."
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Open an issue"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="headerbtn__text-container">open issue</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../../../_sources/autoapi/scorepyo/models/index.rst"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-contents">
+   Module Contents
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#classes">
+     Classes
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore">
+       _BaseRiskScore
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._DESCRIPTION_COL">
+         _DESCRIPTION_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._POINT_COL">
+         _POINT_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._FEATURE_COL">
+         _FEATURE_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._predict_proba_score">
+         _predict_proba_score
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.fit">
+         fit
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.predict">
+         predict
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.predict_proba">
+         predict_proba
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.summary">
+         summary
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore">
+       OptunaRiskScore
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective">
+         score_logloss_objective
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.fit">
+         fit
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>scorepyo.models</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-contents">
+   Module Contents
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#classes">
+     Classes
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore">
+       _BaseRiskScore
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._DESCRIPTION_COL">
+         _DESCRIPTION_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._POINT_COL">
+         _POINT_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._FEATURE_COL">
+         _FEATURE_COL
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._predict_proba_score">
+         _predict_proba_score
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.fit">
+         fit
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.predict">
+         predict
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.predict_proba">
+         predict_proba
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.summary">
+         summary
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore">
+       OptunaRiskScore
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective">
+         score_logloss_objective
+        </a>
+       </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.fit">
+         fit
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="module-scorepyo.models">
+<span id="scorepyo-models"></span><h1><a class="reference internal" href="#module-scorepyo.models" title="scorepyo.models"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scorepyo.models</span></code></a><a class="headerlink" href="#module-scorepyo.models" title="Permalink to this headline">#</a></h1>
+<p>Classes to create and fit risk-score type model.</p>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">#</a></h2>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">#</a></h3>
+<table class="autosummary longtable table autosummary">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo.models._BaseRiskScore" title="scorepyo.models._BaseRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BaseRiskScore</span></code></a></p></td>
+<td><p>Base class for risk score type model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#scorepyo.models.OptunaRiskScore" title="scorepyo.models.OptunaRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptunaRiskScore</span></code></a></p></td>
+<td><p>Risk score model based on Optuna.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.models.</span></span><span class="sig-name descname"><span class="pre">_BaseRiskScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models._BaseRiskScore" title="Permalink to this definition">#</a></dt>
+<dd><p>Base class for risk score type model.</p>
+<p>This class provides common functions for risk score type model, no matter the way points and binary features are designed.
+It needs common attributes, such as minimum/maximum point value for each binary feature and number of selected binary feature.</p>
+<dl class="simple">
+<dt>nb_max_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
+</dd>
+<dt>min_point_value<span class="classifier">int</span></dt><dd><p>minimum points to assign for a binary feature</p>
+</dd>
+<dt>max_point_value: ExplainableBoostingClassifier</dt><dd><p>maximum points to assign for a binary feature</p>
+</dd>
+<dt>_df_info: pandas.DataFrame</dt><dd><p>Dataframe containing the link between a binary feature and its origin</p>
+</dd>
+</dl>
+<p>&#64;staticmethod
+_predict_proba_score(score, intercept):</p>
+<blockquote>
+<div><p>computes the value of the logistic function at score+intercept value</p>
+</div></blockquote>
+<p>&#64;abstractmethod
+fit(self, X, y):</p>
+<blockquote>
+<div><p>function to be implemented by child classes. This function should create the feature-point card and score card attributes.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>predict(self, X, proba_threshold=0.5):</dt><dd><p>function that predicts the positive/negative class by using a threshold on the probability given by the model</p>
+</dd>
+<dt>predict_proba(self, X):</dt><dd><p>function that predicts the probability of the positive class</p>
+</dd>
+<dt>summary(self):</dt><dd><p>function that prints the feature-point card and score card of the model</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore._DESCRIPTION_COL">
+<span class="sig-name descname"><span class="pre">_DESCRIPTION_COL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">Description</span></em><a class="headerlink" href="#scorepyo.models._BaseRiskScore._DESCRIPTION_COL" title="Permalink to this definition">#</a></dt>
+<dd><p>Column name for binary feature in the risk score summary</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore._POINT_COL">
+<span class="sig-name descname"><span class="pre">_POINT_COL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">Point(s)</span></em><a class="headerlink" href="#scorepyo.models._BaseRiskScore._POINT_COL" title="Permalink to this definition">#</a></dt>
+<dd><p>Column name for points in the risk score summary</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore._FEATURE_COL">
+<span class="sig-name descname"><span class="pre">_FEATURE_COL</span></span><em class="property"><span class="w"> </span><span class="pre">=</span> <span class="pre">Feature</span></em><a class="headerlink" href="#scorepyo.models._BaseRiskScore._FEATURE_COL" title="Permalink to this definition">#</a></dt>
+<dd><p>Column name for original feature in the risk score summary</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore._predict_proba_score">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_predict_proba_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore._predict_proba_score" title="Permalink to this definition">#</a></dt>
+<dd><p>Function that computes the logistic function value at score+intercept value</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>score (np.array(int)): sum of points coming from binary features
+intercept (float): intercept of score card. log-odds of having 0 point</p>
+</dd>
+<dt>Returns:</dt><dd><p>np.array(int): associated probability</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">NotImplementedError</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.fit" title="Permalink to this definition">#</a></dt>
+<dd><p>Functions that creates the feature-point card and score card</p>
+<p>Must be defined for each child class</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (pandas.DataFrame): binary feature dataset
+y (pandas.Series): binary target</p>
+</dd>
+<dt>Raises:</dt><dd><p>NotImplementedError</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proba_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.predict" title="Permalink to this definition">#</a></dt>
+<dd><p>Predicts binary class based on probabillity threshold</p>
+<p>Afer computing the probability for each sample,</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (pd.DataFrame): _description_
+proba_threshold (float, optional): probability threshold for binary classification. Defaults to 0.5.</p>
+</dd>
+<dt>Returns:</dt><dd><p>nbarray of shape (n_samples,): predicted class based on predicted probability and threshold</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore.predict_proba">
+<span class="sig-name descname"><span class="pre">predict_proba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.predict_proba" title="Permalink to this definition">#</a></dt>
+<dd><p>Function that outputs probability of positive class according to risk-score model</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (pandas.DataFrame): dataset of features</p>
+</dd>
+<dt>Returns:</dt><dd><p>ndarray of shape (n_samples, 2): probability of negative and positive class in each column resp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.summary" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.models.</span></span><span class="sig-name descname"><span class="pre">OptunaRiskScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optuna_optimize_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#scorepyo.models._BaseRiskScore" title="scorepyo.models._BaseRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BaseRiskScore</span></code></a></p>
+<p>Risk score model based on Optuna.</p>
+<p>This class is a child class of _BaseRiskScore. It implements the fit method that creates the feature-point card and score card attribute.
+It computes them by leveraging the sampling efficiency of Optuna. Optuna is asked to select nb_max_features among all features, and assign points
+to each selected feature. It minimizes the logloss on a given dataset.</p>
+<dl class="simple">
+<dt>nb_max_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
+</dd>
+<dt>min_point_value<span class="classifier">int</span></dt><dd><p>minimum points to assign for a binary feature</p>
+</dd>
+<dt>max_point_value: ExplainableBoostingClassifier</dt><dd><p>maximum points to assign for a binary feature</p>
+</dd>
+<dt>_df_info: pandas.DataFrame</dt><dd><p>Dataframe containing the link between a binary feature and its origin</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>fit(self, X, y):</dt><dd><p>function creating the feature-point card and score card attributes via Optuna</p>
+</dd>
+<dt>score_logloss_objective(self, trial, X, y):</dt><dd><p>function that defines the logloss function used by Optuna</p>
+</dd>
+</dl>
+<p>From _BaseRiskScore:</p>
+<p>&#64;staticmethod
+_predict_proba_score(score, intercept):</p>
+<blockquote>
+<div><p>computes the value of the logistic function at score+intercept value</p>
+</div></blockquote>
+<dl class="simple">
+<dt>predict(self, X, proba_threshold=0.5):</dt><dd><p>function that predicts the positive/negative class by using a threshold on the probability given by the model</p>
+</dd>
+<dt>predict_proba(self, X):</dt><dd><p>function that predicts the probability of the positive class</p>
+</dd>
+<dt>summary(self):</dt><dd><p>function that prints the feature-point card and score card of the model</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore.score_logloss_objective">
+<span class="sig-name descname"><span class="pre">score_logloss_objective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective" title="Permalink to this definition">#</a></dt>
+<dd><p>Logloss objective function for Risk score exploration parameters sampled with optuna.</p>
+<p>This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
+- <cite>self.nb_max_features</cite> categorical parameters for the choice of binary features to build the risk score on
+- <cite>self.nb_max_features</cite> integer parameters for the choice of points associated to the selected binary feature
+- one float parameter for the intercept of the score card (i.e. the log odd associated to a score of 0)</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>trial (Optune.trial): Trial for optuna
+X (pandas.DataFrame): dataset of features to minimize scorecard logloss on
+y (nd.array): Target binary values</p>
+</dd>
+<dt>Returns:</dt><dd><p>float: log-loss value for risk score sampled parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore.fit" title="Permalink to this definition">#</a></dt>
+<dd><p>Function that search best parameters (choice of binary features, points and intercept) of a risk score model with Optuna</p>
+<p>This functions calls Optuna to find the best parameters of a risk score model and then construct the feature-point card and score card attributes.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>X (pandas.DataFrame): Dataset of features to fit the risk score model on
+y (pandas.Series): Target binary values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./autoapi\scorepyo\models"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By S. Kaddani<br/>
+  
+      &copy; Copyright 2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
