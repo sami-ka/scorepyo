@@ -84,7 +84,7 @@ The points should be small integers, in order to be easily manipulated and remem
 You can find hereafter another example of such risk-score model for assessing a stroke risk:
 
 <!-- ![Risk-score example for stroke risk](./source/_static/example_risk_score.PNG) -->
-<img src="./docs/depth_model/example_risk_score.PNG" width="300">
+<img src="./docs/depth_model/example_risk_score.PNG" width="400">
 
 <div style="text-align: left"> <a href="https://en.wikipedia.org/wiki/CHA2DS2%E2%80%93VASc_score#CHADS2" target="_blank">Source</a> <br>
 <!-- Berk Ustun and Cynthia Rudin<br>
