@@ -96,7 +96,7 @@ def test(**_kwargs):  # prefix by underscore to avoid pylint to say that it is u
     )
 
 
-def linting(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+def lint(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
     """Call pylint with parameters in pyproject.toml"""
     python_call(
         module="pylint",
@@ -129,7 +129,7 @@ def CI(**_kwargs):
     test()
 
     # Pylint
-    linting()
+    lint()
 
     # Mypy
     mypy()
