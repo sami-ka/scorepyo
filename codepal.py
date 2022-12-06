@@ -1,10 +1,9 @@
+"""Devops utils"""
 import argparse
 import os
 import subprocess
 import sys
 from typing import Iterable, List
-
-# from utils.call import call, python_call
 
 
 def call(cmd: List[str], **kwargs):  # pragma: no cover
@@ -28,6 +27,10 @@ def python_call(module: str, arguments: Iterable[str], **kwargs):  # pragma: no 
 
 
 def create_env(**kwargs):
+    """Install required package from setup.cfg in the current conda environment and register it"""
+    assert (
+        "env_name" in kwargs.keys()
+    ), "Please fill the current environment name with -e option"
     envname = kwargs["env_name"]
     python_call(
         module="pip",
@@ -43,10 +46,11 @@ def create_env(**kwargs):
     if os.name == "nt":
         python_call(module="pip", arguments=["install", "pypiwin32"])
 
-    call(["conda", "install", "-y", "pandoc"])
+    # call(["conda", "install", "-y", "pandoc"])
 
 
 def format(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call black and isort with parameters from pyproject.toml"""
     python_call(
         module="black",
         arguments=[".", "--config", "./core_module/pyproject.toml"],
@@ -60,6 +64,8 @@ def format(**_kwargs):  # prefix by underscore to avoid pylint to say that it is
 def format_CI(
     **_kwargs,
 ):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call black and isort as check-only with parameters from pyproject.toml.
+    This function is the one used in the CI pipeline."""
     python_call(
         module="black",
         arguments=[
@@ -83,6 +89,7 @@ def format_CI(
 
 
 def test(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call pytest"""
     python_call(
         module="pytest",
         arguments=["-rfs", "--cov=scorepyo", "--cov-report", "term-missing"],
@@ -90,6 +97,7 @@ def test(**_kwargs):  # prefix by underscore to avoid pylint to say that it is u
 
 
 def linting(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call pylint with parameters in pyproject.toml"""
     python_call(
         module="pylint",
         arguments=["--rcfile=./core_module/pyproject.toml", "."],
@@ -97,6 +105,7 @@ def linting(**_kwargs):  # prefix by underscore to avoid pylint to say that it i
 
 
 def mypy(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call mypy with parameters in pyproject.toml"""
     python_call(
         module="mypy",
         arguments=["--config-file", "./core_module/pyproject.toml", "core_module/"],
@@ -104,6 +113,7 @@ def mypy(**_kwargs):  # prefix by underscore to avoid pylint to say that it is u
 
 
 def bandit(**_kwargs):  # prefix by underscore to avoid pylint to say that it is unused
+    """Call bandit with parameters in pyproject.toml"""
     python_call(
         module="bandit",
         arguments=["-c", "./core_module/pyproject.toml", "-r", "."],
@@ -111,20 +121,31 @@ def bandit(**_kwargs):  # prefix by underscore to avoid pylint to say that it is
 
 
 def CI(**_kwargs):
+    """Launch all CI steps locally"""
+    # Black+isort
     format_CI()
+
+    # Pytest
     test()
+
+    # Pylint
     linting()
+
+    # Mypy
     mypy()
+
+    # Bandit
     bandit()
 
 
 def build_doc(**_kwargs):
-    call(
-        cmd=["sphinx-build", "-b", "html", "-a", "-E", "./docs/source", "./docs/build"],
-    )
+    "Call jupyter-book to build-doc."
+    call(cmd=["jupyter-book", "build", "docs"])
 
 
 if __name__ == "__main__":
+    """Parse the function name to call as an argument+potential additional parameters for create_env function
+    Call the specified function"""
     parser = argparse.ArgumentParser()
     parser.add_argument("function")
     parser.add_argument("-e", "--env-name")

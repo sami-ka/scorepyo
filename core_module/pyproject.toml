@@ -23,7 +23,7 @@ known_first_party=["scorepyo"]
 
 [tool.bandit]
 assert_used.skips= ["*/test_*.py", "*/test_*.py"]
-exclude_dirs= ["**bootstrap.py"]
+exclude_dirs= ["**codepal.py"]
 
 [tool.mypy]
 ignore_missing_imports = "True"

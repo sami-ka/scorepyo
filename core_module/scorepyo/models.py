@@ -224,10 +224,11 @@ class _BaseRiskScore:
         empty_column_name = " "
         feature_point_summary[empty_column_name] = "..."
         feature_point_summary.iloc[1:, -1] = "+ " + feature_point_summary.iloc[1:, -1]
+        feature_point_summary.iloc[0, -1] = " " + feature_point_summary.iloc[0, -1]
         additional_display_rows = pd.DataFrame(
             data=[
                 # [None, None, None],
-                [" ", "SCORE=", "..."]
+                [" ", "SCORE=", " ..."]
             ],
             columns=feature_point_summary.columns,
             index=[" "],
