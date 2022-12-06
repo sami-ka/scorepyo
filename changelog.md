@@ -2,6 +2,8 @@
 This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
+
+## [0.1.1] - 2022/12/07
 ### Fixed
 - add manifest file for wheel building
 - modified setup.cfg for better package information
