@@ -143,12 +143,37 @@ def build_doc(**_kwargs):
     call(cmd=["jupyter-book", "build", "docs"])
 
 
+def build_wheel(
+    **_kwargs,
+):  # prefix by underscore to avoid pylint to say that it is unused
+    """Build wheel"""
+    python_call(
+        module="build",
+        arguments=["core_module"],
+    )
+
+
+def check_wheel(
+    **_kwargs,
+):  # prefix by underscore to avoid pylint to say that it is unused
+    """Build wheel"""
+    call(cmd=["twine", "check", "core_module/dist/*"])
+
+
+def upload_wheel_test(
+    **_kwargs,
+):  # prefix by underscore to avoid pylint to say that it is unused
+    """Build wheel"""
+    call(cmd=["twine", "upload", "-r", "testpypi", "core_module/dist/*"])
+
+
 if __name__ == "__main__":
     """Parse the function name to call as an argument+potential additional parameters for create_env function
     Call the specified function"""
     parser = argparse.ArgumentParser()
     parser.add_argument("function")
     parser.add_argument("-e", "--env-name")
+    # parser.add_argument("-t", "--test")
     args = vars(parser.parse_args())
     function = args["function"]
     remaining_arguments = {k: v for k, v in args.items() if k != "function"}
