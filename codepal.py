@@ -167,6 +167,20 @@ def upload_wheel_test(
     call(cmd=["twine", "upload", "-r", "testpypi", "core_module/dist/*"])
 
 
+def upload_wheel_real(
+    **_kwargs,
+):  # prefix by underscore to avoid pylint to say that it is unused
+    """Build wheel"""
+    call(cmd=["twine", "upload", "core_module/dist/*"])
+
+
+def publish_doc(
+    **_kwargs,
+):  # prefix by underscore to avoid pylint to say that it is unused
+    """Build wheel"""
+    call(cmd=["ghp-import", "-n", "-p", "-f", "docs/_build/html"])
+
+
 if __name__ == "__main__":
     """Parse the function name to call as an argument+potential additional parameters for create_env function
     Call the specified function"""
