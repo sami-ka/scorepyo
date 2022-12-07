@@ -73,6 +73,13 @@ pip install scorepyo
 ```
 <br />
 
+# Documentation
+
+Want to know more? 
+<div style="text-align: left"> <a href="https://drskd.github.io/scorepyo/welcome.html target="_blank">Check the documentation!</a> <br />
+<br /> <br />
+
+
 # Risk-Score model
 
 Risk-score model are mostly used in medicine, justice, psychology or even credit application. They are widely appreciated, as the computation of the risk is fully explained with two simple tables:
