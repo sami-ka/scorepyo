@@ -130,6 +130,8 @@ dmypy.json
 
 # doc
 _build/
+# !docs/_build/html/**
+
 _autosummary/
 *.pptx
 
