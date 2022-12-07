@@ -1,5 +1,15 @@
 # Scorepyo
 
+<p align="left">
+  <a href="https://github.com/drskd/scorepyo/releases/"><img alt="Version" src="https://img.shields.io/github/v/release/drskd/scorepyo?color=orange&label=Release" /></a>
+  <a href="https://pypi.org/project/scorepyo/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/scorepyo" /></a>
+  <a href="https://github.com/drskd/scorepyo/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/pypi/l/scorepyo" /></a>
+  <a href="https://pypi.org/project/scorepyo/"><img alt="pypy latest version" src="  https://img.shields.io/pypi/v/scorepyo" /></a>
+  <a href="https://pypi.org/project/scorepyo/"><img alt="downloads" src="  https://img.shields.io/pypi/dm/scorepyo" /></a>
+
+
+</p>
+
 <!-- ![Scorepyo](./source/_static/scorepyo_logo.jpg) -->
 <!-- ![Scorepyo](./source/_static/full_scorepyo_logo.png) -->
 <img src="./docs/images/square_logo_1000pxl.svg" width="200" height="200">
