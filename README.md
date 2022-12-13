@@ -86,7 +86,7 @@ pip install scorepyo
 # Documentation
 
 Want to know more? 
-<div style="text-align: left"> <a href="https://drskd.github.io/scorepyo/welcome.html target="_blank">Check the documentation!</a> <br />
+<div style="text-align: left"> <a href="https://drskd.github.io/scorepyo/welcome.html" target="_blank">Check the documentation!</a> <br />
 <br /> <br />
 
 
