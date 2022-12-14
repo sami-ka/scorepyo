@@ -97,6 +97,7 @@ class AutoBinarizer:
         self._ebm: BaseEstimator = ExplainableBoostingClassifier(
             interactions=0,
             max_bins=self.max_number_binaries_by_features + 2,
+            min_samples_leaf=10,
         )
 
         # One-hot encoder that imputes infrequent_if_exist for unknown categories

@@ -1,5 +1,6 @@
 """Classes to create and fit risk-score type model.
 """
+import itertools
 import numbers
 from abc import abstractmethod
 from typing import Optional
@@ -614,108 +615,120 @@ class EBMRiskScore(_BaseRiskScore):
             df_info["EBM_log_odds_contribution"].abs() * df_info["density"]
         )
         nb_max_features = self.nb_max_features
-        top_features = df_info.sort_values(
+        nb_additional_features = 11
+        pool_top_features = df_info.sort_values(
             by="abs_contribution", ascending=False
-        ).index[:nb_max_features]
-        top_features = top_features.append(pd.Index(["intercept"]))
-        df_info_modified = df_info.copy()
-        df_info_modified["EBM_log_odds_contribution"] = np.where(
-            df_info_modified.index.isin(top_features),
-            df_info_modified["EBM_log_odds_contribution"],
-            0,
-        )
-
-        max_point_value = self.max_point_value
-        max_value_multipliers = (
-            max_point_value
-            / df_info_modified["EBM_log_odds_contribution"].fillna(0).abs().max()
-        )
-
-        min_value_multipliers = 0.5 if max_value_multipliers == 1 else 1
-        n_multipliers = 20
-        list_multipliers = np.linspace(
-            min_value_multipliers, max_value_multipliers, n_multipliers
-        )
-
-        w_original = df_info_modified["EBM_log_odds_contribution"].values
-
-        matrix_w_multiplied = w_original.reshape(-1, 1) * list_multipliers.reshape(
-            1, -1
-        )
-        y_fasterrisk = np.where(y == 1, 1, -1)
-        # X_train_binarized_augmented = np.concatenate([X_train_binarized.values,np.ones((len(X_train_binarized),1))], axis=1)
+        ).index[: nb_max_features + nb_additional_features]
         best_log_loss = 1e9
         best_w = None
         best_m = None
         best_intercept = None
-        for j in range(n_multipliers):
-            X_binarized_augmented = np.concatenate(
-                [
-                    X_binarized.values / list_multipliers[j],
-                    np.ones((len(X_binarized), 1)),
-                ],
-                axis=1,
+        for top_features in itertools.combinations(pool_top_features, nb_max_features):
+            # top_features = df_info.sort_values(
+            #     by="abs_contribution", ascending=False
+            # ).index[:nb_max_features]
+            top_features = pd.Index(top_features)
+            top_features = top_features.append(pd.Index(["intercept"]))
+            df_info_modified = df_info.copy()
+            df_info_modified["EBM_log_odds_contribution"] = np.where(
+                df_info_modified.index.isin(top_features),
+                df_info_modified["EBM_log_odds_contribution"],
+                0,
             )
-            w_multiplied = matrix_w_multiplied[:, j]
-            w_multiplied = w_multiplied.reshape(-1, 1)
-            J = [
-                j1
-                for j1, val in enumerate(w_multiplied)
-                if np.ceil(val) != np.floor(val)
-            ]
 
-            w_multiplied_floor = np.floor(w_multiplied)
-            # w_multiplied_ceil = np.ceil(w_multiplied)
-            gamma = np.repeat(w_multiplied_floor.T, repeats=len(X), axis=0)
+            max_point_value = self.max_point_value
+            max_value_multipliers = (
+                max_point_value
+                / df_info_modified["EBM_log_odds_contribution"].fillna(0).abs().max()
+            )
 
-            Z = np.einsum("ij,i->ij", X_binarized_augmented, y_fasterrisk)
-            gamma = gamma + (Z <= 0)
-            gamma = gamma.astype(float)
-            xGamma_sum = np.einsum("ij,ij->i", X_binarized_augmented, gamma)
-            denominator_part = np.einsum("i,i->i", y_fasterrisk, xGamma_sum)
-            l = 1 / (1 + np.exp(denominator_part))
+            min_value_multipliers = 0.5 if max_value_multipliers == 1 else 1
+            n_multipliers = 50  # 20
+            list_multipliers = np.linspace(
+                min_value_multipliers, max_value_multipliers, n_multipliers
+            )
 
-            while len(J) > 0:
-                U = dict()
-                for j1 in J:
-                    w_j_up = w_multiplied.copy()
-                    w_j_up[j1, :] = np.ceil(w_multiplied[j1, :])
-                    lX = np.einsum("i,ij->ij", l, X_binarized_augmented)
-                    substract_up = (w_j_up - w_multiplied).astype(float)
-                    U_j_up = np.sum(np.einsum("ij,jk->ik", lX, substract_up) ** 2)
+            w_original = df_info_modified["EBM_log_odds_contribution"].values
 
-                    w_j_down = w_multiplied.copy()
-                    w_j_down[j1, :] = np.floor(w_multiplied[j1, :])
-                    substract_down = (w_j_down - w_multiplied).astype(float)
-                    U_j_down = np.sum(np.einsum("ij,jk->ik", lX, substract_down) ** 2)
-                    U[j1] = {"up": U_j_up, "down": U_j_down}
+            matrix_w_multiplied = w_original.reshape(-1, 1) * list_multipliers.reshape(
+                1, -1
+            )
+            y_fasterrisk = np.where(y == 1, 1, -1)
+            # X_train_binarized_augmented = np.concatenate([X_train_binarized.values,np.ones((len(X_train_binarized),1))], axis=1)
 
-                j_up, U_up = min([(j1, U[j1]["up"]) for j1 in J], key=lambda t: t[1])
-                j_down, U_down = min(
-                    [(j1, U[j1]["down"]) for j1 in J], key=lambda t: t[1]
+            for j in range(n_multipliers):
+                X_binarized_augmented = np.concatenate(
+                    [
+                        X_binarized.values / list_multipliers[j],
+                        np.ones((len(X_binarized), 1)),
+                    ],
+                    axis=1,
                 )
-                if U_up <= U_down:
-                    J = [j1 for j1 in J if j1 != j_up]
-                    w_multiplied[j_up] = np.ceil(w_multiplied[j_up])
-                else:
-                    J = [j1 for j1 in J if j1 != j_down]
-                    w_multiplied[j_down] = np.floor(w_multiplied[j_down])
-                # break
+                w_multiplied = matrix_w_multiplied[:, j]
+                w_multiplied = w_multiplied.reshape(-1, 1)
+                J = [
+                    j1
+                    for j1, val in enumerate(w_multiplied)
+                    if np.ceil(val) != np.floor(val)
+                ]
 
-            w_multiplied_features = w_multiplied[:-1]
-            w_multiplied_intercept = w_multiplied[-1]
-            # w_multiplied_features, w_multiplied_intercept
-            XW = np.einsum(
-                "ij,jk->ik",
-                X_binarized_augmented.astype(float),
-                w_multiplied.astype(float),
-            )
-            logloss = np.mean(1 + np.exp(np.einsum("i,ik->i", -y_fasterrisk, XW)))
-            if logloss < best_log_loss:
-                best_log_loss = logloss
-                best_intercept = w_multiplied_intercept
-                best_w = w_multiplied_features
-                best_m = list_multipliers[j]
+                w_multiplied_floor = np.floor(w_multiplied)
+                # w_multiplied_ceil = np.ceil(w_multiplied)
+                gamma = np.repeat(w_multiplied_floor.T, repeats=len(X), axis=0)
+
+                Z = np.einsum("ij,i->ij", X_binarized_augmented, y_fasterrisk)
+                gamma = gamma + (Z <= 0)
+                gamma = gamma.astype(float)
+                xGamma_sum = np.einsum("ij,ij->i", X_binarized_augmented, gamma)
+                denominator_part = np.einsum("i,i->i", y_fasterrisk, xGamma_sum)
+                l = 1 / (1 + np.exp(denominator_part))
+
+                while len(J) > 0:
+                    U = dict()
+                    for j1 in J:
+                        w_j_up = w_multiplied.copy()
+                        w_j_up[j1, :] = np.ceil(w_multiplied[j1, :])
+                        lX = np.einsum("i,ij->ij", l, X_binarized_augmented)
+                        substract_up = (w_j_up - w_multiplied).astype(float)
+                        U_j_up = np.sum(np.einsum("ij,jk->ik", lX, substract_up) ** 2)
+
+                        w_j_down = w_multiplied.copy()
+                        w_j_down[j1, :] = np.floor(w_multiplied[j1, :])
+                        substract_down = (w_j_down - w_multiplied).astype(float)
+                        U_j_down = np.sum(
+                            np.einsum("ij,jk->ik", lX, substract_down) ** 2
+                        )
+                        U[j1] = {"up": U_j_up, "down": U_j_down}
+
+                    j_up, U_up = min(
+                        [(j1, U[j1]["up"]) for j1 in J], key=lambda t: t[1]
+                    )
+                    j_down, U_down = min(
+                        [(j1, U[j1]["down"]) for j1 in J], key=lambda t: t[1]
+                    )
+                    if U_up <= U_down:
+                        J = [j1 for j1 in J if j1 != j_up]
+                        w_multiplied[j_up] = np.ceil(w_multiplied[j_up])
+                    else:
+                        J = [j1 for j1 in J if j1 != j_down]
+                        w_multiplied[j_down] = np.floor(w_multiplied[j_down])
+                    # break
+
+                w_multiplied_features = w_multiplied[:-1]
+                w_multiplied_intercept = w_multiplied[-1]
+                # w_multiplied_features, w_multiplied_intercept
+                XW = np.einsum(
+                    "ij,jk->ik",
+                    X_binarized_augmented.astype(float),
+                    w_multiplied.astype(float),
+                )
+                logloss = np.mean(1 + np.exp(np.einsum("i,ik->i", -y_fasterrisk, XW)))
+                if logloss < best_log_loss:
+                    best_log_loss = logloss
+                    best_intercept = w_multiplied_intercept
+                    best_w = w_multiplied_features
+                    best_m = list_multipliers[j]
+                    print("\t", best_log_loss)
 
         self._w = best_w
         self._multiplier = best_m
