@@ -414,7 +414,7 @@ class AutoBinarizer:
 
     # TODO : Provide function that give the quality of the binarizer via the learning metrics of ebm
 
-    def transform_bis(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         if not getattr(self._ebm, "has_fitted_", False):
             raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
 
@@ -512,7 +512,7 @@ class AutoBinarizer:
 
             return X_binarized
 
-    def transform(self, X: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def transform_old(self, X: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Transform function of binarizer
 
         This function uses the previously fitted EBM to extract binary features from continuous features.
