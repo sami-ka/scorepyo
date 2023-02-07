@@ -1,6 +1,7 @@
 """Class for the EBM-based automatic binarizer
 """
 import numbers
+import time
 import warnings
 from math import floor, log10
 from typing import Optional, Union
@@ -129,6 +130,7 @@ class AutoBinarizer:
             to_exclude_features (list(str), optional): List of features to leave as is.
             Defaults to None.
         """
+        start_time = time.time()
 
         # TODO Use pandera
         if categorical_features == "auto":
@@ -168,6 +170,7 @@ class AutoBinarizer:
             if (c not in self._categorical_features)
             and (c not in self._to_exclude_features)
         ]
+
         self._ebm.fit(X, y)
 
         if len(self._categorical_features) > 0:
@@ -407,6 +410,7 @@ class AutoBinarizer:
         df_score_feature.index.name = "binary_feature"
 
         self.df_score_feature = df_score_feature.copy()
+        self._fit_time = time.time() - start_time
         # return (
         #     X_binarized,
         #     df_score_feature,
