@@ -232,6 +232,9 @@ def compare_random_seed_fixed(
     random_state=0,
     use_calib=False,
     random_state_calib=0,
+    sorting_method="new",
+    nb_binaries_by_features=3,
+    optimization_method="worse",
 ):
     X_train_orig, X_test, y_train_orig, y_test = train_test_split(
         X, y, test_size=0.2, random_state=random_state
@@ -246,18 +249,22 @@ def compare_random_seed_fixed(
         max_point_value=max_point_value,
         nb_max_features=nb_max_features,
         nb_additional_features=nb_additional_features,
-        optimization_metric="roc_auc",
+        max_number_binaries_by_features=nb_binaries_by_features,
+        # optimization_metric="roc_auc",
     )
 
     if use_calib:
         X_train, X_calib, y_train, y_calib = train_test_split(
-            X_train_orig, y_train_orig, test_size=0.2, random_state=random_state_calib
+            X_train_orig, y_train_orig, test_size=0.4, random_state=random_state_calib
         )
     else:
         X_train = X_train_orig.copy()
         y_train = y_train_orig.copy()
         X_calib = X_train
         y_calib = y_train
+        # # TODO Delete
+        # X_calib = X_test.copy()
+        # y_calib = y_test.copy()
 
     ebm_model.fit(
         X_train,
@@ -265,6 +272,9 @@ def compare_random_seed_fixed(
         X_calib=X_calib,
         y_calib=y_calib,
         categorical_features=categorical_features,
+        sorting_method=sorting_method,
+        ranker=sorting_method,
+        optimization_method=optimization_method,
     )
 
     binarizer = ebm_model._binarizer
@@ -330,7 +340,12 @@ def run(
     n_random_splits,
     list_datasets=("heart", "spam", "adult", "bank", "mammo", "mushroom"),
     range_nb_additional_features=None,
+    sorting_methods=("vanilla", "new"),
+    optimization_methods=("vanilla", "worse", "mean"),
+    range_nb_binaries_by_features=(3,),
+    test_calibration=False,
 ):
+    pd.set_option("mode.chained_assignment", None)
     column_names = [
         model + "_" + datasets + "_" + metric
         for model in ["faster_risk", "ebm"]
@@ -346,6 +361,9 @@ def run(
             "use_calibration",
             "dataset",
             "nb_additional_features",
+            "sorting_method",
+            "nb_binaries_by_feature",
+            "optimization_method",
         ]
     )
 
@@ -355,32 +373,50 @@ def run(
         if range_nb_additional_features is not None
         else [4]
     )
+    i = 0
+    range_calibration = [True, False] if test_calibration else [False]
     for dataset_name in list_datasets:
         X, y, categorical_features = read_data(dataset=dataset_name)
         for random_seed in np.random.randint(0, 1000, size=n_random_splits):
-            for use_calibration in [False]:
+            for use_calibration in range_calibration:
 
                 for nb_additional_features in range_nb_additional_features:
-                    results_tmp = compare_random_seed_fixed(
-                        X,
-                        y=y,
-                        nb_additional_features=nb_additional_features,
-                        categorical_features=categorical_features,
-                        random_state=random_seed,
-                        random_state_calib=random_seed,
-                        use_calib=use_calibration,
-                    )
+                    for sorting_method in sorting_methods:
+                        for nb_binaries_by_features in range_nb_binaries_by_features:
+                            for optimization_method in optimization_methods:
+                                i += 1
+                                # try:
+                                results_tmp = compare_random_seed_fixed(
+                                    X,
+                                    y=y,
+                                    nb_additional_features=nb_additional_features,
+                                    categorical_features=categorical_features,
+                                    random_state=random_seed,
+                                    random_state_calib=random_seed,
+                                    use_calib=use_calibration,
+                                    sorting_method=sorting_method,
+                                    nb_binaries_by_features=nb_binaries_by_features,
+                                    optimization_method=optimization_method,
+                                )
 
-                    results_tmp.extend(
-                        [
-                            random_seed,
-                            use_calibration,
-                            dataset_name,
-                            nb_additional_features,
-                        ]
-                    )
-                    print("\t", results_tmp[9:12], results_tmp[-9:])
-                    results.append(results_tmp.copy())
+                                results_tmp.extend(
+                                    [
+                                        random_seed,
+                                        use_calibration,
+                                        dataset_name,
+                                        nb_additional_features,
+                                        sorting_method.__class__,
+                                        nb_binaries_by_features,
+                                        optimization_method,
+                                    ]
+                                )
+                                # except:
+                                #     results_tmp = [None for _ in results[0]]
+
+                                # print("\t", results_tmp[9:12], results_tmp[-11:])
+                                if i % 20 == 0:
+                                    print(i)
+                                results.append(results_tmp.copy())
 
     df_results = pd.DataFrame(data=results, columns=column_names)
     return df_results

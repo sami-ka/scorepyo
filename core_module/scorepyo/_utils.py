@@ -1,5 +1,6 @@
 import numba
 import numpy as np
+
 def fast_numba_auc(y_true: np.array, y_score: np.array, sample_weight: np.array=None) -> float:
     """a function to calculate AUC via python + numba.
     Args:
