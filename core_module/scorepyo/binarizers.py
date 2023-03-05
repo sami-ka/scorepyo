@@ -23,7 +23,7 @@ from scorepyo.exceptions import (
 )
 
 
-class AutoBinarizer:
+class EBMBinarizer:
     """
     Class for automatic feature binarizer.
 
@@ -372,7 +372,7 @@ class AutoBinarizer:
         df_score_feature = pd.DataFrame(
             index=X_binarized.columns,
             columns=[
-                "EBM_log_odds_contribution",
+                "log_odds",
                 "lower_threshold",
                 "upper_threshold",
                 "category_value",
@@ -751,7 +751,7 @@ class AutoBinarizer:
                 ]
             ).T,
             columns=[
-                "EBM_log_odds_contribution",
+                "log_odds",
                 "lower_threshold",
                 "upper_threshold",
                 "feature",

@@ -6,7 +6,7 @@ from fasterrisk.fasterrisk import RiskScoreClassifier, RiskScoreOptimizer
 from sklearn.metrics import average_precision_score, log_loss, roc_auc_score
 from sklearn.model_selection import train_test_split
 
-from scorepyo.models import EBMRiskScoreNew
+from scorepyo.models import EBMRiskScore
 
 
 def read_heart_data():
