@@ -28,13 +28,15 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Protocol
 
 import numpy as np
 import pandas as pd
 import pandera as pa
-from fasterrisk.fasterrisk import RiskScoreClassifier, RiskScoreOptimizer
+from fasterrisk.fasterrisk import RiskScoreOptimizer
 from sklearn.linear_model import OrthogonalMatchingPursuit, lars_path, lasso_path
+
+# from typing import Protocol
+
 
 
 class Ranker(ABC):
@@ -44,7 +46,7 @@ class Ranker(ABC):
 
     @abstractmethod
     def _compute_ranking_features(self, df, **kwargs) -> pd.Series:
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class LogOddsDensity(Ranker):
@@ -120,6 +122,7 @@ class DiverseLogOddsDensity(Ranker):
 
 class CumulativeMetric(Ranker):
     def __init__(self, metric, ranker, **kwargs):
+        # TODO put a check on the metric function
         self.metric = metric
         self.ranker = ranker
 
