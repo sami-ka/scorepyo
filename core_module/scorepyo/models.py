@@ -30,16 +30,17 @@ from scorepyo.exceptions import (
     NonIntegerValueError,
 )
 from scorepyo.preprocessing import AutoBinarizer
-from scorepyo.ranking import (
-    BordaRank,
-    CumulativeMetric,
-    DiverseLogOddsDensity,
-    FasterRiskRank,
-    LarsPathRank,
-    LassoPathRank,
-    LogOddsDensity,
-    OMPRank,
-)
+
+# from scorepyo.ranking import (
+#     BordaRank,
+#     CumulativeMetric,
+#     DiverseLogOddsDensity,
+#     FasterRiskRank,
+#     LarsPathRank,
+#     LassoPathRank,
+#     LogOddsDensity,
+#     OMPRank,
+# )
 
 
 class _BaseRiskScore:
@@ -278,266 +279,6 @@ class _BaseRiskScore:
         print(self.score_card.loc[["SCORE", "RISK"], :].to_markdown(headers="firstrow"))
 
 
-class OptunaRiskScore(_BaseRiskScore):
-    """
-    Risk score model based on Optuna.
-
-    This class is a child class of _BaseRiskScore. It implements the fit method that creates the feature-point card and score card attribute.
-    It computes them by leveraging the sampling efficiency of Optuna. Optuna is asked to select nb_max_features among all features, and assign points
-    to each selected feature. It minimizes the logloss on a given dataset.
-
-
-    Attributes
-    ----------
-    nb_max_features : int
-        maximum number of binary features to compute by feature
-    min_point_value : int
-        minimum points to assign for a binary feature
-    max_point_value: ExplainableBoostingClassifier
-        maximum points to assign for a binary feature
-    _df_info: pandas.DataFrame
-        Dataframe containing the link between a binary feature and its origin
-
-
-
-    Methods
-    -------
-    fit(self, X, y):
-        function creating the feature-point card and score card attributes via Optuna
-
-    score_logloss_objective(self, trial, X, y):
-        function that defines the logloss function used by Optuna
-
-
-    From _BaseRiskScore:
-
-    @staticmethod
-    _predict_proba_score(score, intercept):
-        computes the value of the logistic function at score+intercept value
-
-    predict(self, X, proba_threshold=0.5):
-        function that predicts the positive/negative class by using a threshold on the probability given by the model
-
-    predict_proba(self, X):
-        function that predicts the probability of the positive class
-
-    summary(self):
-        function that prints the feature-point card and score card of the model
-    """
-
-    def __init__(
-        self,
-        nb_max_features: int = 4,
-        min_point_value: int = -2,
-        max_point_value: int = 3,
-        df_info: Optional[pd.DataFrame] = None,
-        optuna_optimize_params: Optional[dict] = None,
-    ):
-        """
-        Args:
-            nb_max_features (int): Number of maximum binary features to be selected
-            min_point_value (int, optional): Minimum point assigned to a binary feature. Defaults to -2.
-            max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
-            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
-            optuna_optimize_params (dict, optional): parameters for optuna optimize function. Defaults to None.
-        """
-        super().__init__(nb_max_features, min_point_value, max_point_value, df_info)
-        self.optuna_optimize_params = dict()
-        if optuna_optimize_params is not None:
-            self.optuna_optimize_params = optuna_optimize_params
-        else:
-            self.optuna_optimize_params["n_trials"] = 100
-            self.optuna_optimize_params["timeout"] = 90
-
-    def score_logloss_objective(self, trial, X: pd.DataFrame, y: pd.Series) -> float:
-        """Logloss objective function for Risk score exploration parameters sampled with optuna.
-
-        This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
-        - `self.nb_max_features` categorical parameters for the choice of binary features to build the risk score on
-        - `self.nb_max_features` integer parameters for the choice of points associated to the selected binary feature
-        - one float parameter for the intercept of the score card (i.e. the log odd associated to a score of 0)
-
-
-        Args:
-            trial (Optune.trial): Trial for optuna
-            X (pandas.DataFrame): dataset of features to minimize scorecard logloss on
-            y (nd.array): Target binary values
-
-        Returns:
-            float: log-loss value for risk score sampled parameters
-        """
-        # TODO : put option for no duplicate features
-        # change way of doing the sampling by creating all combinations of binary features
-        # https://stackoverflow.com/questions/73388133/is-there-a-way-for-optuna-suggest-categoricalto-return-multiple-choices-from-l
-
-        # Define the parameters of trial for the selection of the subset of binary features respecting the maximum number
-        param_grid_choice_feature = {
-            f"feature_{i}_choice": trial.suggest_categorical(
-                f"feature_{i}_choice", X.columns
-            )
-            for i in range(self.nb_max_features)
-        }
-
-        # # Define the parameters of trial for the points associated to each selected binary feature
-        # param_grid_point = {
-        #     f"feature_{i}_point": trial.suggest_int(
-        #         f"feature_{i}_point", self.min_point_value, self.max_point_value
-        #     )
-        #     for i in range(self.nb_max_features)
-        # }
-
-        # Define the parameters of trial for the points associated to each selected binary feature
-        non_zero_point = [
-            i for i in range(self.min_point_value, self.max_point_value + 1) if i != 0
-        ]
-        param_grid_point = {
-            f"feature_{i}_point": trial.suggest_categorical(
-                f"feature_{i}_point", non_zero_point
-            )
-            for i in range(self.nb_max_features)
-        }
-
-        # Define the parameter of trial for the intercept of the risk score model
-        score_intercept = trial.suggest_float(
-            "intercept",
-            -10 + self.min_point_value * self.nb_max_features,
-            10 + self.max_point_value * self.nb_max_features,
-            step=0.5,
-        )
-
-        multiplier = trial.suggest_float("multiplier", 0.5, 5, step=4.5 / 20)
-
-        # Gather selected features
-        selected_features = [
-            param_grid_choice_feature[f"feature_{i}_choice"]
-            for i in range(self.nb_max_features)
-        ]
-
-        # gather points of selected features
-        score_vector = [
-            param_grid_point[f"feature_{i}_point"] for i in range(self.nb_max_features)
-        ]
-
-        # Compute scores for all samples by multiplying selected binary features of X by corresponding points
-        score_samples = np.matmul(
-            X[selected_features].values, np.transpose(score_vector)
-        )
-
-        # Compute associated probabilities
-        score_samples_associated_probabilities = self._predict_proba_score(
-            score_samples, score_intercept, multiplier
-        )
-
-        # Compute logloss
-        logloss_samples = log_loss(y, score_samples_associated_probabilities)
-
-        # penalty_0_point = 5 if 0 in score_vector else 0
-
-        return logloss_samples  # * penalty_0_point
-
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> None:
-        """Function that search best parameters (choice of binary features, points and intercept) of a risk score model with Optuna
-
-        This functions calls Optuna to find the best parameters of a risk score model and then construct the feature-point card and score card attributes.
-
-        Args:
-            X (pandas.DataFrame): Dataset of features to fit the risk score model on
-            y (pandas.Series): Target binary values
-        """
-
-        dataframe_schema = pa.DataFrameSchema(
-            {c: pa.Column(checks=[pa.Check.isin([0, 1, 0.0, 1.0])]) for c in X.columns},
-            strict=True,  # Disable check of other columns in the dataframe
-        )
-
-        dataframe_schema.validate(X)
-        # Setting the logging level WARNING, the INFO logs are suppressed.
-        optuna.logging.set_verbosity(optuna.logging.WARNING)
-
-        # Create Optuna study
-        self._study = optuna.create_study(
-            direction="minimize", study_name="Score search"
-        )
-
-        # Define optuna study objective
-        optuna_objective = lambda trial: self.score_logloss_objective(
-            trial,
-            X,
-            y,
-        )
-
-        self._study.optimize(optuna_objective, **self.optuna_optimize_params)
-
-        # Get best selection of features
-        selected_scorepyo_features = [
-            self._study.best_params[f"feature_{i}_choice"]
-            for i in range(self.nb_max_features)
-            if self._study.best_params[f"feature_{i}_point"] != 0
-        ]
-
-        # Get best associated points
-        selected_scorepyo_features_point = [
-            self._study.best_params[f"feature_{i}_point"]
-            for i in range(self.nb_max_features)
-            if self._study.best_params[f"feature_{i}_point"] != 0
-        ]
-
-        # Get best associated intercept
-        self._intercept = self._study.best_params["intercept"]
-
-        # Build feature-point card
-        self.feature_point_card = pd.DataFrame(index=selected_scorepyo_features)
-        self.feature_point_card[self._POINT_COL] = selected_scorepyo_features_point
-        if self._df_info is not None:
-            self._df_info = self._df_info.rename({"feature": self._FEATURE_COL}, axis=1)
-            self.feature_point_card = self.feature_point_card.merge(
-                self._df_info, left_index=True, right_on=["binary_feature"]
-            )
-        else:
-            self.feature_point_card[
-                "binary_feature"
-            ] = self.feature_point_card.index.values
-            self.feature_point_card[
-                self._FEATURE_COL
-            ] = self.feature_point_card.index.values
-
-        self.feature_point_card = self.feature_point_card.set_index(self._FEATURE_COL)
-        self.feature_point_card[self._DESCRIPTION_COL] = self.feature_point_card[
-            "binary_feature"
-        ].values
-
-        # Compute score card
-
-        # Minimum score is the sum of all negative points
-        min_range_score = sum(
-            np.clip(i, a_min=None, a_max=0)
-            for i in self.feature_point_card[self._POINT_COL].values
-        )
-
-        # Maximum score is the sum of all positive points
-        max_range_score = sum(
-            np.clip(i, a_min=0, a_max=None)
-            for i in self.feature_point_card[self._POINT_COL].values
-        )
-
-        # Compute risk score for all integers within min_range_score and max_range_score
-        possible_scores = list(range(min_range_score, max_range_score + 1))
-
-        # Compute associated probability of each possible score
-        possible_risks = [
-            self._predict_proba_score(s, self._intercept) for s in possible_scores
-        ]
-
-        # Compute nice display of probabilities
-        possible_risks_pct = [f"{r:.2%}" for r in possible_risks]
-
-        # Assign dataframe to score_card attribute
-        self.score_card = pd.DataFrame(
-            index=["SCORE", "RISK", "_RISK_FLOAT"],
-            data=[possible_scores, possible_risks_pct, possible_risks],
-        )
-
-
 class EBMRiskScoreNew(_BaseRiskScore):
     """
     Risk score model based on EBM, ranking of features and exhaustive enumeration.
@@ -625,13 +366,13 @@ class EBMRiskScoreNew(_BaseRiskScore):
         self,
         X: pd.DataFrame,
         y: pd.Series,
+        ranker,
+        calibrator,
         X_calib: pd.DataFrame = None,
         y_calib: pd.Series = None,
         categorical_features=None,
         fit_binarizer=True,
-        sorting_method="vanilla",
-        optimization_method="worse",
-        ranker=None,
+        enumeration_maximization_metric=fast_numba_auc,
     ):
         """Function that search best parameters (choice of binary features, points and probabilities) of a risk score model.
 
@@ -650,8 +391,9 @@ class EBMRiskScoreNew(_BaseRiskScore):
 
 
         2) once the binary feature combination is chosen with the corresponding interger points, the logloss is optimized for each possible sum of points.
-
-
+        The logloss optimization can be done on a different dataset (X_calib, y_calib).
+        It can be done with a vanilla mode (preferred when train or calibration set is big enough), or a bootstrapped mode to avoid overfitting when there are few samples.
+        These logloss optimizer with more details can be found in the calibration script of the package.
 
         Args:
             X (pandas.DataFrame): Dataset of features to fit the risk score model on
@@ -751,7 +493,7 @@ class EBMRiskScoreNew(_BaseRiskScore):
         )
 
         # Compute cube of all points combination :
-        # number of k feature among n x cardinality of feature pool x max number of point combination for k features
+        # number of combinations of self.nb_max_features feature among the selected pool of binary features x cardinality of feature pool
         cube = np.zeros(
             shape=(nb_combi * dim_max_point_combination, len(pool_top_features)),
             dtype=np.float16,
@@ -767,6 +509,7 @@ class EBMRiskScoreNew(_BaseRiskScore):
             itertools.combinations(pool_top_features, self.nb_max_features)
         ):
             # Gather all point ranges for each binary feature
+            # if the feature is not in the current selected combination, the only point possibility is 0
             all_points_by_feature = [
                 dict_point_ranges[f]["all_points"] if f in top_features else [0]
                 for f in pool_top_features
@@ -774,18 +517,18 @@ class EBMRiskScoreNew(_BaseRiskScore):
 
             # Compute the cartesian product of all possible point values for each feature
             # This creates a nxd matrix with n being the number of combinations of points for each binary feature
-            # and d being the number of selected binary features
+            # and d being the total number of binary features in pool_top_features.
+            # for each line, there are only self.nb_max_features non zero point values.
             all_points_possibilities = np.array(
                 list(itertools.product(*all_points_by_feature))
             )
-            # print(all_points_possibilities.shape)
-            # all_points_possibilities = all_points_possibilities.T
-            #     all_points_possibilities = all_points_possibilities.reshape(len(pool_top_features),-1)
+
+            # Put this points combination into the global enumeration of points
             cube[
                 idx : idx + all_points_possibilities.shape[0], :
             ] = all_points_possibilities
             idx += all_points_possibilities.shape[0]
-            # print(idx, cube.shape)
+
         end_time_P2 = time.time()
 
         # if chunk_size_cube is None:
@@ -793,49 +536,38 @@ class EBMRiskScoreNew(_BaseRiskScore):
 
         start_time_P4 = time.time()
 
-        # dask_cube = da.from_array(cube, chunks=chunk_size_cube)
-        # dataset_transpose = X_binarized[list(pool_top_features)].values.T
+        # Use dask to compute the metric to optimize on all points combination
 
-        # if chunk_size_data is None:
-        #     chunk_size_data = dataset_transpose.shape
-        # dask_dataset_T = da.from_array(dataset_transpose, chunks=chunk_size_data)
-
+        # Dask array for the global enumeration of combinations
         dask_cube = da.from_array(cube, chunks=((50, len(pool_top_features))))
-        dataset_transpose = X_binarized[list(pool_top_features)].values.T
 
+        # Dask array for the dataset of selected binary features
+        dataset_transpose = X_binarized[list(pool_top_features)].values.T
         dask_dataset_T = da.from_array(
             dataset_transpose, chunks=dataset_transpose.shape
         )
 
-        f1d = lambda y_score: [roc_auc_score(y.values, y_score)]
-        f1d_numba = lambda y_score: [fast_numba_auc(y.values, y_score)]
-        f1d_ap = lambda y_score: [average_precision_score(y.values, y_score)]
-        # from sklearn.metrics import logloss
+        # 1Dfication of maximization metric function
 
-        # f1d_logloss = lambda y_score: [logloss(y.values, y_score)]
-
-        f1d_ap_roc_auc = lambda y_score: [
-            average_precision_score(y.values, y_score)
-            + fast_numba_auc(y.values, y_score)
+        enumeration_optimization_metric_1d = lambda y_score: [
+            enumeration_maximization_metric(y.values, y_score)
         ]
 
+        # computation of score for all samples for all enumerated points combination
         matmul = da.matmul(dask_cube, dask_dataset_T)
-        matmul
 
+        # computation of the maximum value on the defined enumeration metric
         idx_max = da.argmax(
             da.apply_along_axis(
-                # f1d_numba,
-                # f1d,
-                # f1d_ap,
-                f1d_ap_roc_auc,
+                enumeration_optimization_metric_1d,
                 axis=1,
                 arr=matmul,
                 shape=(1,),
                 dtype=matmul.dtype,
-                #  drop_axis=[1]
             )
         ).compute()
 
+        # Getting the points combination with the maximumu value
         best_points = cube[idx_max, :]
         best_feature_and_point_selection = [
             (point, f)
@@ -848,6 +580,7 @@ class EBMRiskScoreNew(_BaseRiskScore):
 
         end_time_P4 = time.time()
 
+        # Probabilities computation
         start_time_P5 = time.time()
 
         df_calibration = pd.DataFrame(columns=["target", "score"])
@@ -856,141 +589,14 @@ class EBMRiskScoreNew(_BaseRiskScore):
             X_calib_binarized[best_feature_selection].values, best_scenario
         )
 
-        df_score_proba_association = df_calibration.groupby("score")["target"].mean()
-        df_score_proba_association.columns = ["proba"]
         min_sum_point = np.sum(np.clip(best_scenario, a_max=0, a_min=None))
         max_sum_point = np.sum(np.clip(best_scenario, a_min=0, a_max=None))
-        full_index = np.arange(min_sum_point, max_sum_point + 1e-3)
-        missing_index = set(full_index) - set(df_score_proba_association.index)
 
-        df_score_proba_association = df_score_proba_association.reindex(full_index)
-        df_score_proba_association = df_score_proba_association.interpolate(
-            method="linear"
+        calibrator.calibrate(df_calibration, min_sum_point, max_sum_point)
+
+        df_reordering = calibrator.calibrate(
+            df_calibration, min_sum_point, max_sum_point
         )
-
-        df_reordering = pd.DataFrame(df_score_proba_association.copy())
-
-        # Count cardinality of each score
-        df_reordering["count"] = df_calibration.groupby("score")["target"].count()
-        df_reordering["count"] = df_reordering["count"].fillna(0)
-        df_reordering["target"] = df_reordering["target"].fillna(0)
-
-        # Adjust probability to have an optimized logloss and calibration
-        df_cvx = df_reordering.copy()
-
-        df_cvx["positive_count"] = df_cvx["target"] * df_cvx["count"]
-        df_cvx["negative_count"] = df_cvx["count"] - df_cvx["positive_count"]
-
-        df_cvx["positive_proba"] = df_cvx["positive_count"] / df_cvx["count"].sum()
-        df_cvx["negative_proba"] = df_cvx["negative_count"] / df_cvx["count"].sum()
-        # from scipy.stats import multinomial
-        list_proba_multinomial = list(df_cvx["positive_proba"].values)
-        list_proba_multinomial += list(df_cvx["negative_proba"].values)
-
-        rng = default_rng()
-        nb_experiment = 25
-        size_sample = df_cvx["count"].sum()
-        bootstrap_samples = rng.multinomial(
-            n=size_sample, pvals=list_proba_multinomial, size=nb_experiment
-        )
-
-        positive_count_samples = bootstrap_samples[:, : len(df_cvx)].T
-        negative_count_samples = bootstrap_samples[:, len(df_cvx) :].T
-        positive_col_bootstrap = [f"positive_count_{i}" for i in range(nb_experiment)]
-        negative_col_bootstrap = [f"negative_count_{i}" for i in range(nb_experiment)]
-        df_positive = pd.DataFrame(
-            positive_count_samples, columns=positive_col_bootstrap, index=df_cvx.index
-        )
-        df_negative = pd.DataFrame(
-            negative_count_samples, columns=negative_col_bootstrap, index=df_cvx.index
-        )
-        # df_cvx[positive_col_bootstrap] = positive_count_samples
-        # df_cvx[negative_col_bootstrap] = negative_count_samples
-        df_cvx = pd.concat([df_cvx, df_positive, df_negative], axis=1)
-        # import cvxpy as cp
-
-        # df_cvx
-
-        # # Compute number of positive and negative samples at each score value
-        # positive_sample_count = (
-        #     df_cvx["target"].values * df_cvx["count"].values
-        # ).astype(int)
-        # negative_sample_count = df_cvx["count"].values - positive_sample_count
-
-        # Declare the list of probabilities to be set as variables
-        list_proba = [cp.Variable(1) for _ in df_cvx.index]
-
-        # Compute total size of samples to normalize the logloss
-        total_count = df_cvx["count"].sum()
-
-        # Compute the logloss at each score in a list in order to sum it later
-        # the logloss at each score is simple as all samples will have the same
-        # probability p. for all positive samples, add -log(p), for all negative samples add -log(1-p)
-        list_bootstrap_sample_objective = []
-        for i in range(nb_experiment):
-            positive_sample_count = df_cvx[f"positive_count_{i}"].values
-            negative_sample_count = df_cvx[f"negative_count_{i}"].values
-            list_expression = [
-                -cp.log(p) * w_pos - cp.log(1 - p) * w_neg
-                for p, w_pos, w_neg in zip(
-                    list_proba, positive_sample_count, negative_sample_count
-                )
-            ]
-            list_bootstrap_sample_objective.append(list_expression.copy())
-        # objective = cp.Minimize(cp.sum(list_expression) / total_count)  # Objectiv
-
-        worse_log_loss = cp.Variable(1)
-        constraints = []
-        for p in list_proba:
-            constraints.append(p >= 0)
-            constraints.append(p <= 1)
-        for i in range(1, len(list_proba)):
-            # TODO : Put the threshold away and combine all similar scores into 1
-            constraints.append(list_proba[i] - list_proba[i - 1] - 1e-3 >= 0)
-
-        # Optimize worst case
-        if optimization_method == "worse":
-            for single_bootstrap_logloss in list_bootstrap_sample_objective:
-                constraints.append(
-                    worse_log_loss >= cp.sum(single_bootstrap_logloss) / total_count
-                )
-            objective = cp.Minimize(worse_log_loss)
-        elif optimization_method == "mean":
-            objective = cp.Minimize(
-                cp.sum(
-                    [
-                        cp.sum(single_bootstrap_logloss) / total_count
-                        for single_bootstrap_logloss in list_bootstrap_sample_objective
-                    ]
-                )
-            )
-        elif optimization_method == "vanilla":
-            # # Compute number of positive and negative samples at each score value
-            positive_sample_count = (
-                df_cvx["target"].values * df_cvx["count"].values
-            ).astype(int)
-            negative_sample_count = df_cvx["count"].values - positive_sample_count
-            list_expression = [
-                -cp.log(p) * w_pos - cp.log(1 - p) * w_neg
-                for p, w_pos, w_neg in zip(
-                    list_proba, positive_sample_count, negative_sample_count
-                )
-            ]
-            objective = cp.Minimize(cp.sum(list_expression) / total_count)  # Objectiv
-
-        else:
-            raise Exception
-        problem = cp.Problem(objective, constraints)
-
-        # opt = problem.solve(verbose=False)
-
-        opt = problem.solve(verbose=False)
-
-        # Get the optimized value for the probabilities
-        df_reordering["sorted_proba"] = [p.value[0] for p in list_proba]
-
-        self.df_reordering_debug = df_reordering
-        self.df_cvx_debug = df_cvx.copy()
 
         end_time_P5 = time.time()
 
