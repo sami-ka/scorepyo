@@ -300,8 +300,8 @@ class EBMBinarizer:
                     # Get EBM info for current feature
                     dict_EBM_info_feature = ebm_global.data(i)
 
-                    # Get number of plateaus for the corresponding tree
-                    number_categories = len(ebm_global.data(i)["names"])
+                    # # Get number of plateaus for the corresponding tree
+                    # number_categories = len(ebm_global.data(i)["names"])
 
                     feature_name = ebm_global.data()["names"][i]
 
@@ -465,7 +465,7 @@ class EBMBinarizer:
             feature_name = row["feature"]
             lower_threshold = row["lower_threshold"]
             upper_threshold = row["upper_threshold"]
-            category_value = row["category_value"]
+            # category_value = row["category_value"]
             type = row["type"]
 
             if type == "continuous":
@@ -675,8 +675,8 @@ class EBMBinarizer:
                     # Get EBM info for current feature
                     dict_EBM_info_feature = ebm_global.data(i)
 
-                    # Get number of plateaus for the corresponding tree
-                    number_categories = len(ebm_global.data(i)["names"])
+                    # # Get number of plateaus for the corresponding tree
+                    # number_categories = len(ebm_global.data(i)["names"])
 
                     feature_name = ebm_global.data()["names"][i]
 
