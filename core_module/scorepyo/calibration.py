@@ -140,7 +140,7 @@ class VanillaCalibrator(Calibrator):
 
 
 class BootstrappedCalibrator(Calibrator):
-   """ Bootstrapped calibrator that optimizes the logloss under ordering constraints on different bootstrapped sets.
+    """Bootstrapped calibrator that optimizes the logloss under ordering constraints on different bootstrapped sets.
 
     Given an original dataset, this calibrator bootstraps several times other dataset and finds probability that optimize the logloss on all datasets,
     still respecting the probability ordering by score.
@@ -150,10 +150,10 @@ class BootstrappedCalibrator(Calibrator):
 
     The latter will lead to worse logloss on the training dataset, but more robust logloss on the test set if it's similar to the distribution on the training dataset.
     The BootstrappedCalibrator should be favored when calibrating on a small dataset.
-    
+
     """
-   
-    def __init__(self, nb_experiments: int=20, method: str="average", **kwargs):
+
+    def __init__(self, nb_experiments: int = 20, method: str = "average", **kwargs):
         """
         Args:
             nb_experiments (int, optional): Number of bootstrapped datasets used to optimize the logloss. Defaults to 20.
@@ -229,7 +229,7 @@ class BootstrappedCalibrator(Calibrator):
                     worse_log_loss >= cp.sum(single_bootstrap_logloss) / total_count
                 )
             objective = cp.Minimize(worse_log_loss)
-            
+
         # else if average mode, optimize the mean logloss across all bootstrapped datasets
         elif self.method == "average":
             objective = cp.Minimize(

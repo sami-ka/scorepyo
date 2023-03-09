@@ -1,7 +1,10 @@
 import numba
 import numpy as np
 
-def fast_numba_auc(y_true: np.array, y_score: np.array, sample_weight: np.array=None) -> float:
+
+def fast_numba_auc(
+    y_true: np.array, y_score: np.array, sample_weight: np.array = None
+) -> float:
     """a function to calculate AUC via python + numba.
     Args:
         y_true (np.array): 1D numpy array as true labels.
@@ -13,7 +16,9 @@ def fast_numba_auc(y_true: np.array, y_score: np.array, sample_weight: np.array=
     if sample_weight is None:
         return fast_numba_auc_nonw(y_true=y_true, y_score=y_score)
     else:
-        return fast_numba_auc_w(y_true=y_true, y_score=y_score, sample_weight=sample_weight)
+        return fast_numba_auc_w(
+            y_true=y_true, y_score=y_score, sample_weight=sample_weight
+        )
 
 
 @numba.njit
@@ -25,7 +30,7 @@ def trapezoid_area(x1: float, x2: float, y1: float, y2: float) -> float:
 
 @numba.njit
 def fast_numba_auc_nonw(y_true: np.array, y_score: np.array) -> float:
-    y_true = (y_true == 1)
+    y_true = y_true == 1
 
     desc_score_indices = np.argsort(y_score, kind="mergesort")[::-1]
     y_score = y_score[desc_score_indices]
@@ -39,17 +44,20 @@ def fast_numba_auc_nonw(y_true: np.array, y_score: np.array) -> float:
     for i in range(len(y_true)):
         tps = prev_tps + y_true[i]
         fps = prev_fps + (1 - y_true[i])
-        if i == len(y_true) - 1 or y_score[i+1] != y_score[i]:
+        if i == len(y_true) - 1 or y_score[i + 1] != y_score[i]:
             auc += trapezoid_area(last_counted_fps, fps, last_counted_tps, tps)
             last_counted_fps = fps
             last_counted_tps = tps
         prev_tps = tps
         prev_fps = fps
-    return auc / (prev_tps*prev_fps)
+    return auc / (prev_tps * prev_fps)
+
 
 @numba.njit
-def fast_numba_auc_w(y_true: np.array, y_score: np.array, sample_weight: np.array) -> float:
-    y_true = (y_true == 1)
+def fast_numba_auc_w(
+    y_true: np.array, y_score: np.array, sample_weight: np.array
+) -> float:
+    y_true = y_true == 1
 
     desc_score_indices = np.argsort(y_score, kind="mergesort")[::-1]
     y_score = y_score[desc_score_indices]
@@ -65,7 +73,7 @@ def fast_numba_auc_w(y_true: np.array, y_score: np.array, sample_weight: np.arra
         weight = sample_weight[i]
         tps = prev_tps + y_true[i] * weight
         fps = prev_fps + (1 - y_true[i]) * weight
-        if i == len(y_true) - 1 or y_score[i+1] != y_score[i]:
+        if i == len(y_true) - 1 or y_score[i + 1] != y_score[i]:
             auc += trapezoid_area(last_counted_fps, fps, last_counted_tps, tps)
             last_counted_fps = fps
             last_counted_tps = tps
