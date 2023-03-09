@@ -1,10 +1,12 @@
-"""Class for the EBM-based automatic binarizer
+"""Class for binarizers:
+- EBM-based automatic binarizer
+- TODO : Quantile binarizer
 """
 import numbers
 import time
 import warnings
 from math import floor, log10
-from typing import Optional, Union
+from typing import Optional, Protocol, Union
 
 import numpy as np
 import pandas as pd
@@ -23,9 +25,22 @@ from scorepyo.exceptions import (
 )
 
 
+class BinarizerProtocol(Protocol):
+    """Protocol to respect for future and custom binarizer"""
+
+    def fit(self, X, y, **kwargs):
+        ...
+
+    def transform(self, X, **kwargs) -> pd.DataFrame:
+        ...
+
+    def get_info(self) -> pd.DataFrame:
+        ...
+
+
 class EBMBinarizer:
     """
-    Class for automatic feature binarizer.
+    Class for automatic feature binarizer based on EBM.
 
     This class uses Explainable Boosting Machine (EBM) that are part of the General Additive Model (GAM) family.
     EBM will compute for each feature a tree. The final prediction will be made by summing up the tree value for each feature.
@@ -778,3 +793,6 @@ class EBMBinarizer:
             X_binarized,
             df_score_feature,
         )
+
+    def get_info(self) -> pd.DataFrame:
+        return self.df_score_feature
