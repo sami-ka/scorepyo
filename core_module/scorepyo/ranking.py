@@ -62,10 +62,13 @@ class LogOddsDensity(Ranker):
     Child class of Ranker.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint disable=W0613
         ...
 
-    def _compute_ranking_features(self, df: pd.DataFrame, **kwargs) -> pd.Series:
+    def _compute_ranking_features(
+        self, df: pd.DataFrame, **kwargs
+    ) -> pd.Series:  # pylint disable=W0613
+
         """
         This method ranks the binary features based on the product of :
          - logodds contribution of the binary feature
@@ -590,6 +593,7 @@ class FasterRiskRank(Ranker):
         nb_steps: int,
         **kwargs,
     ) -> pd.Series:
+        # pylint disable=W0613
         """This function returns binary features rank based on number of appearances in FasterRisk candidate risk score models
 
         Args:
