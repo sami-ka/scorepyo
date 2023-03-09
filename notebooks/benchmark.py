@@ -244,7 +244,7 @@ def compare_random_seed_fixed(
     max_point_value = 3
     nb_max_features = 4
 
-    ebm_model = EBMRiskScoreNew(
+    ebm_model = EBMRiskScore(
         min_point_value=min_point_value,
         max_point_value=max_point_value,
         nb_max_features=nb_max_features,
