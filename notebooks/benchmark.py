@@ -272,9 +272,9 @@ def compare_random_seed_fixed(
         X_calib=X_calib,
         y_calib=y_calib,
         categorical_features=categorical_features,
-        sorting_method=sorting_method,
-        ranker=sorting_method,
-        optimization_method=optimization_method,
+        # sorting_method=sorting_method,
+        # ranker=sorting_method,
+        # optimization_method=optimization_method,
     )
 
     binarizer = ebm_model._binarizer

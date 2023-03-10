@@ -8,18 +8,21 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 
-from scorepyo.models import OptunaRiskScore
-from scorepyo.preprocessing import AutoBinarizer
+from scorepyo._utils import fast_numba_auc
+from scorepyo.calibration import VanillaCalibrator
+from scorepyo.models import EBMRiskScore
+from scorepyo.ranking import LogOddsDensity
 
 
 def test_end_2_end():
     # assert True
 
     data = load_breast_cancer()
-    data_X, y = data.data, data.target
+    data_X, data_y = data.data, data.target
 
     X = pd.DataFrame(data=data_X, columns=data.feature_names)
     X["category"] = np.where(X["mean smoothness"] <= 0.1, "A", "B")
+    y = pd.Series(data_y)
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.25, random_state=0
@@ -27,27 +30,35 @@ def test_end_2_end():
 
     X_test["category"] = "C"
 
-    binarizer = AutoBinarizer(max_number_binaries_by_features=3, keep_negative=True)
-    binarizer.fit(
-        X_train, y_train, categorical_features="auto", to_exclude_features=None
+    min_point_value = -2
+    max_point_value = 3
+    nb_max_features = 4
+
+    scorepyo_model = EBMRiskScore(
+        min_point_value=min_point_value,
+        max_point_value=max_point_value,
+        nb_max_features=nb_max_features,
+        nb_additional_features=6,
     )
 
-    X_train_binarized, df_info = binarizer.transform(X_train)
-    X_test_binarized, _ = binarizer.transform(X_test)
+    ranker = LogOddsDensity()
 
-    # Test without optuna params and with df_info
-    scorepyo_model = OptunaRiskScore(
-        nb_max_features=4,
-        min_point_value=-1,
-        max_point_value=2,
-        df_info=df_info["feature"].reset_index(),
+    optim_method = fast_numba_auc
+
+    scorepyo_model.fit(
+        X_train,
+        y_train,
+        X_calib=None,
+        y_calib=None,
+        categorical_features=["category"],
+        enumeration_maximization_metric=optim_method,
+        ranker=ranker,
+        calibrator=VanillaCalibrator(),
     )
 
-    scorepyo_model.fit(X_train_binarized, y_train)
+    print(scorepyo_model.summary())
 
-    scorepyo_model.summary()
-
-    y_proba = scorepyo_model.predict_proba(X_test_binarized)[:, 1].reshape(-1, 1)
+    y_proba = scorepyo_model.predict_proba(X_test)[:, 1].reshape(-1, 1)
 
     precision_recall_curve(y_test.astype(int), y_proba)
     average_precision = np.round(
@@ -56,37 +67,8 @@ def test_end_2_end():
 
     print(f"Average precision : \n{average_precision}")
 
-    y_pred_test = scorepyo_model.predict(X_test_binarized)
-    precision_test = precision_score(y_test.astype(int), y_pred_test)
+    precision_test = precision_score(y_test.astype(int), y_proba > 0.5)
 
     print(f"Precision@0.5: \n{precision_test}")
 
-    # Test with optuna params and no df_info
-    scorepyo_model_optuna_params = OptunaRiskScore(
-        nb_max_features=4,
-        min_point_value=-1,
-        max_point_value=2,
-        df_info=None,
-        optuna_optimize_params={"n_trials": 200, "timeout": 60},
-    )
-
-    scorepyo_model_optuna_params.fit(X_train_binarized, y_train)
-
-    scorepyo_model_optuna_params.summary()
-
-    y_proba = scorepyo_model_optuna_params.predict_proba(X_test_binarized)[
-        :, 1
-    ].reshape(-1, 1)
-
-    precision_recall_curve(y_test.astype(int), y_proba)
-    average_precision = np.round(
-        average_precision_score(y_test.astype(int), y_proba), 3
-    )
-
-    print(f"Average precision: \n{average_precision}")
-
-    y_pred_test = scorepyo_model_optuna_params.predict(X_test_binarized)
-    precision_test = precision_score(y_test.astype(int), y_pred_test)
-
-    print(f"Precision@0.5: \n{precision_test}")
     assert True

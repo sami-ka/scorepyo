@@ -22,7 +22,7 @@ class Calibrator(ABC):
         ABC (_type_): _description_
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=W0613
         ...
 
     def calibrate(
@@ -248,6 +248,6 @@ class BootstrappedCalibrator(Calibrator):
 
         problem = cp.Problem(objective, constraints)
 
-        opt = problem.solve(verbose=False)
+        _ = problem.solve(verbose=False)
 
         return [p.value[0] for p in list_proba]

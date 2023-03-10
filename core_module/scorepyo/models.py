@@ -1,13 +1,12 @@
+# mypy: ignore-errors
 """Classes to create and fit risk-score type model.
 """
 import itertools
 import numbers
 import time
 from abc import abstractmethod
-from typing import Optional
+from typing import Any, Optional
 
-import cvxpy as cp
-import dask
 import dask.array as da
 import numpy as np
 import pandas as pd
@@ -134,24 +133,26 @@ class _BaseRiskScore:
         self.feature_point_card: Optional[pd.DataFrame] = None
         self.score_card: Optional[pd.DataFrame] = None
 
-    @staticmethod
-    def _predict_proba_score(
-        score: int, intercept: float, multiplier: Optional[float] = 1.0
-    ) -> np.ndarray:
-        """Function that computes the logistic function value at score+intercept value
+    # @staticmethod
+    # def _predict_proba_score(
+    #     score: int, intercept: float, multiplier: Optional[float] = 1.0
+    # ) -> np.ndarray:
+    #     """Function that computes the logistic function value at score+intercept value
 
-        Args:
-            score (np.array(int)): sum of points coming from binary features
-            intercept (float): intercept of score card. log-odds of having 0 point
+    #     Args:
+    #         score (np.array(int)): sum of points coming from binary features
+    #         intercept (float): intercept of score card. log-odds of having 0 point
 
-        Returns:
-            np.array(int): associated probability
-        """
-        score_associated_proba = 1 / (1 + np.exp(-(score + intercept) / multiplier))
-        return score_associated_proba
+    #     Returns:
+    #         np.array(int): associated probability
+    #     """
+    #     score_associated_proba = 1 / (1 + np.exp(-(score + intercept) / multiplier))
+    #     return score_associated_proba
 
     @abstractmethod
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> Optional[NotImplementedError]:
+    def fit(
+        self, X: pd.DataFrame, y: pd.Series, *args: Any, **kwargs: Any
+    ) -> Optional[NotImplementedError]:
         """Functions that creates the feature-point card and score card
 
         Must be defined for each child class
@@ -317,7 +318,7 @@ class RiskScore(_BaseRiskScore):
         min_point_value: int = -2,
         max_point_value: int = 3,
         max_number_binaries_by_features: int = 3,
-        nb_additional_features: Optional[int] = 4,
+        nb_additional_features: int = 4,
         df_info: Optional[pd.DataFrame] = None,
     ):
         """
@@ -347,7 +348,7 @@ class RiskScore(_BaseRiskScore):
         categorical_features=None,
         fit_binarizer=True,
         enumeration_maximization_metric=fast_numba_auc,
-    ) -> RiskScore:
+    ):
         """Function that search best parameters (choice of binary features, points and probabilities) of a risk score model.
 
 
@@ -393,8 +394,6 @@ class RiskScore(_BaseRiskScore):
 
         # TODO : check columns of df_info
         df_info = self.binarizer.get_info()
-
-        start_time_P1 = time.time()
 
         # Prepare calibration set
         if X_calib is None:
@@ -478,7 +477,7 @@ class RiskScore(_BaseRiskScore):
 
         idx = 0
         # for each feature combination, compute point combinations
-        for i, top_features in enumerate(
+        for _, top_features in enumerate(
             itertools.combinations(pool_top_features, self.nb_max_features)
         ):
             # Gather all point ranges for each binary feature
@@ -493,7 +492,7 @@ class RiskScore(_BaseRiskScore):
             # and d being the total number of binary features in pool_top_features.
             # for each line, there are only self.nb_max_features non zero point values.
             all_points_possibilities = np.array(
-                list(itertools.product(*all_points_by_feature))
+                list(itertools.product(*all_points_by_feature))  # type: ignore
             )
 
             # Put this points combination into the global enumeration of points
@@ -548,7 +547,7 @@ class RiskScore(_BaseRiskScore):
         # Probabilities computation
 
         df_calibration = pd.DataFrame(columns=["target", "score"])
-        df_calibration["target"] = y_calib.values
+        df_calibration["target"] = y_calib.values  # type: ignore
         df_calibration["score"] = np.matmul(
             X_calib_binarized[best_feature_selection].values, best_scenario
         )

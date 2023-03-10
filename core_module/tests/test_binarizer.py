@@ -4,25 +4,25 @@ import pytest
 from pandera.errors import SchemaError
 from sklearn.exceptions import NotFittedError
 
+from scorepyo.binarizers import EBMBinarizer
 from scorepyo.exceptions import (
     MissingColumnError,
     NegativeValueError,
     NonBooleanValueError,
     NonIntegerValueError,
 )
-from scorepyo.preprocessing import AutoBinarizer
 
 # from pytest_lazyfixture import lazy_fixture
 
 
 def test_binarizer_integer_param():
     with pytest.raises(NonIntegerValueError):
-        AutoBinarizer(max_number_binaries_by_features=3.5)
+        EBMBinarizer(max_number_binaries_by_features=3.5)
 
 
 def test_binarizer_positive_param():
     with pytest.raises(NegativeValueError):
-        AutoBinarizer(max_number_binaries_by_features=-1)
+        EBMBinarizer(max_number_binaries_by_features=-1)
 
 
 @pytest.mark.parametrize(
@@ -31,23 +31,23 @@ def test_binarizer_positive_param():
 )
 def test_binarizer_boolean_param(keep_negative_value):
     with pytest.raises(NonBooleanValueError):
-        AutoBinarizer(keep_negative=keep_negative_value)
+        EBMBinarizer(keep_negative=keep_negative_value)
 
 
 def test_missing_categorical_columns(mixed_features, binary_target):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with pytest.raises(MissingColumnError):
         binarizer.fit(mixed_features, binary_target, categorical_features=["D"])
 
 
 def test_missing_to_exclude_columns(mixed_features, binary_target):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with pytest.raises(MissingColumnError):
         binarizer.fit(mixed_features, binary_target, to_exclude_features=["D"])
 
 
 def test_detect_categorical_columns(mixed_features, binary_target):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -59,13 +59,13 @@ def test_detect_categorical_columns(mixed_features, binary_target):
 
 
 def test_not_fitted(mixed_features):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with pytest.raises(NotFittedError):
         binarizer.transform(mixed_features)
 
 
 def test_different_dataframe(mixed_features, continuous_features, binary_target):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -82,16 +82,16 @@ def test_different_dataframe(mixed_features, continuous_features, binary_target)
 )
 def test_number_plateaus(breast_cancer_features, breast_cancer_target, max_plateau):
     X, y = breast_cancer_features, breast_cancer_target
-    binarizer = AutoBinarizer(
+    binarizer = EBMBinarizer(
         max_number_binaries_by_features=max_plateau, keep_negative=True
     )
     binarizer.fit(X, y)
-    X_binarized, _ = binarizer.transform(X)
+    X_binarized = binarizer.transform(X)
     assert len(X_binarized.columns) == max_plateau * len(X.columns)
 
 
 def test_define_categorical_columns(mixed_features, binary_target):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -99,7 +99,7 @@ def test_define_categorical_columns(mixed_features, binary_target):
         )
         binarizer.fit(mixed_features, binary_target, categorical_features=["C"])
     assert binarizer._categorical_features == ["C"]
-    X_binarized, _ = binarizer.transform(mixed_features)
+    X_binarized = binarizer.transform(mixed_features)
     # test if all categories of C are in the new columns
     assert all([(c in X_binarized.columns) for c in ["C_1", "C_2"]])
 
@@ -109,7 +109,7 @@ def test_define_categorical_columns(mixed_features, binary_target):
     [["A"], ["B"], ["C"], ["A", "B"], ["A", "C"], ["B", "C"], ["A", "B", "C"]],
 )
 def test_define_exclude_columns(mixed_features, binary_target, excluded_columns):
-    binarizer = AutoBinarizer()
+    binarizer = EBMBinarizer()
     with warnings.catch_warnings():
         warnings.filterwarnings(
             "ignore",
@@ -118,9 +118,13 @@ def test_define_exclude_columns(mixed_features, binary_target, excluded_columns)
         binarizer.fit(
             mixed_features, binary_target, to_exclude_features=excluded_columns
         )
+    print(binarizer._to_exclude_features)
+    print(excluded_columns)
+
     assert binarizer._to_exclude_features == excluded_columns
 
-    X_binarized, _ = binarizer.transform(mixed_features)
+    X_binarized = binarizer.transform(mixed_features)
+    print(X_binarized.columns)
     # test that all columns excluded from binarizer are left as is
     assert all([(c in X_binarized.columns) for c in excluded_columns])
 
@@ -129,15 +133,11 @@ def test_define_exclude_columns(mixed_features, binary_target, excluded_columns)
 
 
 def test_keep_negative(breast_cancer_features, breast_cancer_target):
-    binarizer = AutoBinarizer(keep_negative=False)
+    binarizer = EBMBinarizer(keep_negative=False)
     binarizer.fit(breast_cancer_features, breast_cancer_target)
-    _, df_info = binarizer.transform(breast_cancer_features)
+    binarizer.transform(breast_cancer_features)
+    df_info = binarizer.get_info()
     print(df_info)
     mask_no_intercept = df_info.index != "intercept"
-    mask_nan = ~df_info["EBM_log_odds_contribution"].isna()
-    assert (
-        df_info[mask_no_intercept & mask_nan]["EBM_log_odds_contribution"]
-        .astype(float)
-        .min()
-        >= 0
-    )
+    mask_nan = ~df_info["log_odds"].isna()
+    assert df_info[mask_no_intercept & mask_nan]["log_odds"].astype(float).min() >= 0

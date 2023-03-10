@@ -1,34 +1,9 @@
-"""ebm log-odds based
-    
-        ebm log-odds based + diversity
-        
-        ebm log-odds based 2nd + diversity
-
-        cumulative roc auc
-
-        cumulative log loss
-
-        cumulative average precision
-
-        cumulative average precision and roc auc
-
-        borda ebm log-odds based ebm log-odds based+diversity
-
-        lasso path
-
-        lars
-
-        omp
-
-        fasterrisk
-
-        fasterrisk mix
-
-        # TODO : Output ranking instead of 0/1 selection ?
+# mypy: ignore-errors
+"""Classes for binary features rankers
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Any, List
 
 import numpy as np
 import pandas as pd
@@ -44,12 +19,16 @@ class Ranker(ABC):
 
     """
 
-    def compute_ranking_features(self, df: pd.DataFrame, **kwargs) -> pd.Series:
+    def compute_ranking_features(
+        self, df: pd.DataFrame, *args: Any, **kwargs: Any
+    ) -> pd.Series:
         # TODO : pandera checks for output
-        return self._compute_ranking_features(df, **kwargs)
+        return self._compute_ranking_features(df, *args, **kwargs)
 
     @abstractmethod
-    def _compute_ranking_features(self, df: pd.DataFrame, **kwargs) -> pd.Series:
+    def _compute_ranking_features(
+        self, df: pd.DataFrame, *args: Any, **kwargs: Any
+    ) -> pd.Series:
         raise NotImplementedError
 
 
@@ -62,11 +41,11 @@ class LogOddsDensity(Ranker):
     Child class of Ranker.
     """
 
-    def __init__(self, **kwargs):  # pylint disable=W0613
+    def __init__(self, **kwargs):  # pylint: disable=W0613
         ...
 
     def _compute_ranking_features(
-        self, df: pd.DataFrame, **kwargs
+        self, df: pd.DataFrame, *args: Any, **kwargs: Any
     ) -> pd.Series:  # pylint disable=W0613
 
         """
@@ -114,7 +93,7 @@ class DiverseLogOddsDensity(Ranker):
     Child class of Ranker.
     """
 
-    def __init__(self, rank_diversity: int = 1, **kwargs):
+    def __init__(self, rank_diversity: int = 1, **kwargs):  # pylint: disable=W0613
         """
         Args:
             rank_diversity (int, optional): Indicates the number of additional binary features from the same origin to include in the ranking. Defaults to 1.
@@ -122,7 +101,9 @@ class DiverseLogOddsDensity(Ranker):
         # TODO check parameters
         self.rank_diversity = rank_diversity
 
-    def _compute_ranking_features(self, df: pd.DataFrame, **kwargs) -> pd.Series:
+    def _compute_ranking_features(
+        self, df: pd.DataFrame, *args: Any, **kwargs: Any
+    ) -> pd.Series:
         """This method ranks the binary features based on the product of :
          - logodds contribution of the binary feature
          - importance of density
@@ -187,7 +168,7 @@ class CumulativeMetric(Ranker):
     Child class of Ranker
     """
 
-    def __init__(self, metric, ranker: Ranker, **kwargs):
+    def __init__(self, metric, ranker: Ranker, **kwargs):  # pylint: disable=W0613
         """
         Args:
             metric (function): function taking 2 arguments: binary target and probabilities/scores
@@ -199,8 +180,13 @@ class CumulativeMetric(Ranker):
         self.ranker = ranker
 
     def _compute_ranking_features(
-        self, df: pd.DataFrame, X_binarized: pd.DataFrame, y: pd.Series, **kwargs
-    ) -> pd.Series:
+        self,
+        df: pd.DataFrame,
+        X_binarized: pd.DataFrame,
+        y: pd.Series,
+        *args: Any,
+        **kwargs: Any,
+    ) -> pd.Series:  # type: ignore
         """This ranker initially sorts binary features depending on a specified ranker.
         Then it computes a classification metric by adding one log odd contribution of a binary feature at a time.
         The binary features are then ranked according to the magnitude of the incremental difference they made on the metric.
@@ -297,10 +283,12 @@ class BordaRank(Ranker):
     Child class of ranker
     """
 
-    def __init__(self, list_ranker: List[Ranker], **kwargs):
+    def __init__(self, list_ranker: List[Ranker], **kwargs):  # pylint: disable=W0613
         self.list_ranker = list_ranker.copy()
 
-    def _compute_ranking_features(self, df: pd.DataFrame, **kwargs) -> pd.Series:
+    def _compute_ranking_features(
+        self, df: pd.DataFrame, *args: Any, **kwargs: Any
+    ) -> pd.Series:
         """Based on a list of Ranker, computes the Borda rank of each binary feature based on all rankers.
 
         Borda rank : https://en.wikipedia.org/wiki/Borda_count
@@ -346,7 +334,7 @@ class LassoPathRank(Ranker):
     Child class of Ranker
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=W0613
         ...
 
     def _compute_ranking_features(
@@ -388,10 +376,10 @@ class LassoPathRank(Ranker):
             current_column_zero_count = np.sum(np.where(coefs_lasso[:, i] == 0))
             if current_column_zero_count < previous_column_zero_count:
                 coefs_lasso_updated.append(coefs_lasso[:, i])
-        coefs_lasso_updated = np.array(coefs_lasso_updated).T
+        coefs_lasso_updated_ = np.array(coefs_lasso_updated).T
         lasso_selected_features = [
             c
-            for v, c in zip(coefs_lasso_updated[:, nb_steps], X_binarized.columns)
+            for v, c in zip(coefs_lasso_updated_[:, nb_steps], X_binarized.columns)
             if v != 0
         ]
 
@@ -423,7 +411,7 @@ class LarsPathRank(Ranker):
     Child class of Ranker
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=W0613
         ...
 
     def _compute_ranking_features(
@@ -495,7 +483,7 @@ class OMPRank(Ranker):
        Child class of Ranker.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=W0613
         ...
 
     def _compute_ranking_features(
@@ -575,7 +563,7 @@ class FasterRiskRank(Ranker):
         max_point_value=3,
         nb_max_features=4,
         **kwargs,
-    ):
+    ):  # pylint: disable=W0613
         self.parent_size = parent_size
         self.child_size = child_size
         self.max_attempts = max_attempts
@@ -648,7 +636,7 @@ class FasterRiskRank(Ranker):
         )
 
         (
-            sparseDiversePool_beta0,
+            _,
             sparseDiversePool_betas,
         ) = RiskScoreOptimizer_m.sparseDiversePoolLogRegModel_object.get_sparseDiversePool(
             gap_tolerance=RiskScoreOptimizer_m.sparseDiverseSet_gap_tolerance,

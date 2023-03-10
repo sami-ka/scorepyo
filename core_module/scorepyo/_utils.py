@@ -1,9 +1,10 @@
 import numba
 import numpy as np
+import numpy.typing as npt
 
 
 def fast_numba_auc(
-    y_true: np.array, y_score: np.array, sample_weight: np.array = None
+    y_true: npt.NDArray, y_score: npt.NDArray, sample_weight: npt.NDArray = None
 ) -> float:
     """a function to calculate AUC via python + numba.
     Args:
@@ -29,7 +30,7 @@ def trapezoid_area(x1: float, x2: float, y1: float, y2: float) -> float:
 
 
 @numba.njit
-def fast_numba_auc_nonw(y_true: np.array, y_score: np.array) -> float:
+def fast_numba_auc_nonw(y_true: npt.NDArray, y_score: npt.NDArray) -> float:
     y_true = y_true == 1
 
     desc_score_indices = np.argsort(y_score, kind="mergesort")[::-1]
@@ -55,7 +56,7 @@ def fast_numba_auc_nonw(y_true: np.array, y_score: np.array) -> float:
 
 @numba.njit
 def fast_numba_auc_w(
-    y_true: np.array, y_score: np.array, sample_weight: np.array
+    y_true: npt.NDArray, y_score: npt.NDArray, sample_weight: npt.NDArray
 ) -> float:
     y_true = y_true == 1
 

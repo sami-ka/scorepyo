@@ -6,7 +6,7 @@ import numbers
 import time
 import warnings
 from math import floor, log10
-from typing import Optional, Protocol, Union
+from typing import List, Optional, Protocol, Union
 
 import numpy as np
 import pandas as pd
@@ -28,7 +28,7 @@ from scorepyo.exceptions import (
 class BinarizerProtocol(Protocol):
     """Protocol to respect for future and custom binarizer"""
 
-    def fit(self, X, y, **kwargs):
+    def fit(self, X, y, *args, **kwargs):
         ...
 
     def transform(self, X, **kwargs) -> pd.DataFrame:
@@ -193,15 +193,15 @@ class EBMBinarizer:
 
         ebm_global = self._ebm.explain_global(name="EBM")
 
-        list_scores = []
-        list_lower_threshold = []
-        list_upper_threshold = []
-        list_category_value = []
-        list_original_column = []
-        list_binary_feature_names = []
+        list_scores: List[Optional[float]] = []
+        list_lower_threshold: List[Optional[float]] = []
+        list_upper_threshold: List[Optional[float]] = []
+        list_category_value: List[Optional[str]] = []
+        list_original_column: List[Optional[str]] = []
+        list_binary_feature_names: List[Optional[str]] = []
         list_columns = []
-        list_feature_type = []
-        list_density = []
+        list_feature_type: List[Optional[str]] = []
+        list_density: List[Optional[float]] = []
 
         if len(self._categorical_features) > 0:
             dict_categorical_features = dict()
@@ -350,11 +350,10 @@ class EBMBinarizer:
             for name_out in self._to_exclude_features:
                 list_scores.append(0)
                 list_density.append(0)
-                list_feature_type.append(None)
+                list_feature_type.append(None)  # type: ignore
                 list_lower_threshold.append(None)
                 list_upper_threshold.append(None)
                 list_category_value.append(None)
-                list_feature_type.append(None)
                 list_original_column.append(name_out)
 
         # concat all created columns at the end (vs on the fly) for performance
@@ -508,6 +507,10 @@ class EBMBinarizer:
             )
 
             list_binary_feature_names.extend(one_hot_categorical_columns)
+
+        # Copy features to exclude from binarizing
+        if len(self._to_exclude_features) > 0:
+            list_columns.append(X[self._to_exclude_features].copy())
 
         # concat all created columns at the end (vs on the fly) for performance
         X_binarized = pd.concat(list_columns, axis=1)
