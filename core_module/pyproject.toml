@@ -29,6 +29,7 @@ exclude_dirs= ["**codepal.py"]
 ignore_missing_imports = "True"
 namespace_packages = "True"
 exclude = ["core_module/build/"]
+no_implicit_optional = "False"
 
 
 
@@ -37,7 +38,7 @@ exclude = ["core_module/build/"]
 fail-under=10.0
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore="CVS"
+ignore=["CVS", "benchmark.py"]
 
 # Files or directories matching the regex patterns are skipped. The regex
 # matches against base names, not paths. The default value ignores emacs file

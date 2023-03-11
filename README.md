@@ -12,10 +12,11 @@
 
 <!-- ![Scorepyo](./source/_static/scorepyo_logo.jpg) -->
 <!-- ![Scorepyo](./source/_static/full_scorepyo_logo.png) -->
-<img src="./docs/images/square_logo_1000pxl.svg" width="200" height="200">
+<!-- <img src="./docs/images/square_logo_1000pxl.svg" width="200" height="200"> -->
+<img src="./docs/images/logo_zoom.PNG" width="230">
 
-<div style="text-align: left">Image by <a href="https://www.freepik.com/free-vector/scorpion-branding-logo-template_21251044.htm#page=2&query=scorpio&from_query=scorpio%20logo&position=3&from_view=search&track=sph">Freepik</a></div>
-<br />
+<!-- <div style="text-align: left">Image by <a href="https://www.freepik.com/free-vector/scorpion-branding-logo-template_21251044.htm#page=2&query=scorpio&from_query=scorpio%20logo&position=3&from_view=search&track=sph">Freepik</a></div>
+<br /> -->
 <br />
 
 **Scorepyo** is a python package for creating risk-score type models for binary classification, based on data. The created models can be used like other ML models, with fit and predict methods.
