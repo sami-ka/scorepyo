@@ -6,6 +6,7 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 - define architecture of risk score model: binary features ranker, enumeration metric, calibration method.
 - Add several rankers
 - Add several calibration methods
+- add dask usage for binary features metric enumeration
 ### Changed
 - architecture of risk score model
 - script naming
