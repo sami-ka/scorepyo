@@ -2,6 +2,19 @@
 This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
+### Added
+- define architecture of risk score model: binary features ranker, enumeration metric, calibration method.
+- Add several rankers
+- Add several calibration methods
+### Changed
+- architecture of risk score model
+- script naming
+- design of EBMBinarizer
+### Deprecated
+### Removed
+- Usage of Optuna and OptunaRiskScore
+### Fixed
+### Security
 
 ## [0.1.1] - 2022/12/07
 ### Fixed
