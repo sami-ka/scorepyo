@@ -3,7 +3,7 @@
 
 title: ""
 author: S. Kaddani
-logo: images/square_logo_1000pxl.svg
+logo: images/logo_zoom.PNG
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
