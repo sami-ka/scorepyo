@@ -1,4 +1,4 @@
-# Optuna-based risk-score model
+# Scorepyo risk-score model
 
 ## Primer on risk-score model
 Let's start with the introduction of risk-score model from <a href="https://en.wikipedia.org/wiki/Risk_score">Wikipedia</a>: 
@@ -38,14 +38,13 @@ For further explanation on the drawback of the rounding of logistic regression a
 :::
 
 <br />
-<br />
 
 The problem of finding sparse small integer coefficients can be explicity formulated with variables, constraints and an objective function.  
 <!-- ## interpretation of feature point
 log odds, similar to log regression -->
 
 
-
+<!-- 
 ## Problem formulation
 
 The risk-score model can be modeled as an optimization problem with 3 sets of decision variables.
@@ -90,7 +89,7 @@ $V_{\text{min}} \leq points_i \leq V_{\text{max}}, \forall i\in [1,...,n]$
 
 #### Link selection of features and points associated -->
 
-These constraints serve two purposes : bound point values to their possible minimum and maximum values, and link selection of features and their associated points. Indeed, we want to make sure that non-selected features will have 0 point associated to them.
+<!-- These constraints serve two purposes : bound point values to their possible minimum and maximum values, and link selection of features and their associated points. Indeed, we want to make sure that non-selected features will have 0 point associated to them.
 
 
 
@@ -103,7 +102,7 @@ Note that in this formulation, the maximum number of selected features is always
 We could also add other constraints, such as limit or force the number of selected features within defined subsets, etc.
 
 <!-- ## Optuna implementation -->
-In this formulation, there are $2n+1$ variables and $n+1$ constraints, with $n$ being the number of binary features. The size of this problem is relatively small, but the hard part is in the combination of the objective function, which involves a non linear (log-loss) function with a lot of samples, and integer variables.
+<!--In this formulation, there are $2n+1$ variables and $n+1$ constraints, with $n$ being the number of binary features. The size of this problem is relatively small, but the hard part is in the combination of the objective function, which involves a non linear (log-loss) function with a lot of samples, and integer variables.
 
 
 
@@ -142,7 +141,7 @@ It will efficiently samples value for the $2N_{\text{max}}$ variables in order t
 Note that nothing prevents Optuna to sample a value of 0 point for one of the selected binary features.
 
 The `OptunaRiskScore` model will implement in future developments the enforcement of the selection of a minimum number of features. 
-:::
+::: --> 
 
 ## Other packages
 
