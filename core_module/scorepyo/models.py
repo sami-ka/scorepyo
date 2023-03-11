@@ -564,7 +564,9 @@ class RiskScore(_BaseRiskScore):
         # Build feature-point card
         self.feature_point_card = pd.DataFrame(index=best_feature_selection)
         self.feature_point_card[self._POINT_COL] = best_scenario
-
+        self.feature_point_card.loc[:, self._POINT_COL] = self.feature_point_card[
+            self._POINT_COL
+        ].astype(int)
         self.feature_point_card["binary_feature"] = self.feature_point_card.index.values
         self.feature_point_card[
             self._FEATURE_COL
@@ -585,6 +587,8 @@ class RiskScore(_BaseRiskScore):
             index=["SCORE", "RISK", "_RISK_FLOAT"],
             data=[possible_scores, possible_risks_pct, possible_risks],
         )
+
+        self.score_card.loc["SCORE", :] = self.score_card.loc["SCORE", :].astype(int)
         self._total_fit_time = time.time() - start_time
         self._model_fit_time = self._total_fit_time - fit_transform_time
 
