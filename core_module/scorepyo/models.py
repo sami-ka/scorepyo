@@ -15,13 +15,13 @@ from sklearn.exceptions import NotFittedError
 
 from scorepyo._utils import fast_numba_auc
 from scorepyo.binarizers import BinarizerProtocol, EBMBinarizer
-from scorepyo.calibration import Calibrator
+from scorepyo.calibration import Calibrator, VanillaCalibrator
 from scorepyo.exceptions import (
     MinPointOverMaxPointError,
     NegativeValueError,
     NonIntegerValueError,
 )
-from scorepyo.ranking import Ranker
+from scorepyo.ranking import OMPRank, Ranker
 
 
 class _BaseRiskScore:
@@ -341,11 +341,11 @@ class RiskScore(_BaseRiskScore):
         self,
         X: pd.DataFrame,
         y: pd.Series,
-        ranker: Ranker,
-        calibrator: Calibrator,
+        ranker: Ranker = OMPRank(),
+        calibrator: Calibrator = VanillaCalibrator(),
         X_calib: pd.DataFrame = None,
         y_calib: pd.Series = None,
-        categorical_features=None,
+        categorical_features="auto",
         fit_binarizer=True,
         enumeration_maximization_metric=fast_numba_auc,
     ):
