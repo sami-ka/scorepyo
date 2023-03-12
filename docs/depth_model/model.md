@@ -59,20 +59,106 @@ The binary features selection and points definition can be decomposed into 2 ste
 * Ranking of binary features
 * Enumeration and maximization
 
+<br />
 #### Ranking of binary features
 
 Once the binary features are created, a binarizer such as `EBMBinarizer` stores information about the process, such as the associated log-odds, the density (number of samples positive on this binary feature) and the name of the feature it originates from. All these information can be used to rank the features.
 
-`GIVE EXAMPLE OF RANKER TO ILLUSTRATE AND REFER TO THE RANKERS PAGE
+Suppose you have the following set of binary features with associated log-odds and density: 
 
-CREATE PAGE WITH ALL DIFFERENT RANKERS
+| binary_feature             |   log_odds |   density |
+|:---------------------------|-----------:|----------:|
+| worst concave points < 0.1 |   0.58 |       213 |
+| mean texture < 18.81       |   0.55 |       130 |
+| worst concavity >= 0.23    |  -0.53 |       210 |
+| area error < 23.93         |   0.45 |       200 |
+| worst area < 684.55        |   0.44 |       213 |
+
+A possible ranking would be to multiply the associated log-odd of the binary feature by the number of samples positive for this binary feature. This would give the following table: 
+
+| binary_feature             |   log_odds |   density |  sum_log_odds |
+|:---------------------------|-----------:|----------:| ----------:|
+| worst concave points < 0.1 |   0.58 |       213 | 123.54|
+| mean texture < 18.81       |   0.55 |       130 | 71.5|
+| worst concavity >= 0.23    |  -0.53 |       210 | 111.3|
+| area error < 23.93         |   0.45 |       200 | 90|
+| worst area < 684.55        |   0.44 |       213 | 93.72|
+
+The ranking of binary features would then be :
+
+| binary_feature             |   log_odds |   density |  sum_log_odds | rank|
+|:---------------------------|-----------:|----------:| ----------:|----------:|
+| worst concave points < 0.1 |   0.58 |       213 | 123.54| 1|
+| worst concavity >= 0.23    |  -0.53 |       210 | 111.3| 2|
+| worst area < 684.55        |   0.44 |       213 | 93.72| 3|
+| area error < 23.93         |   0.45 |       200 | 90| 4|
+| mean texture < 18.81       |   0.55 |       130 | 71.5| 5|
 
 
+TODO : REFER TO RANKERS PAGE (TO CREATE)
+
+Once the features are ranked, we keep the top-$k$ features according to the ranking, with $k$ being a hyperparameter of the risk-score model. This hyperparameter implies a tradeoff between computation time and size of the exploration.
+
+Feel free to design any ranker you feel would be more appropriate, and compare it to the other existing ones. The package is designed to evolve by increasing the possibilities for each component, and adding new rankers is a part of this task.
+
+<br />
 
 #### Binary features combination and points enumeration
 
-TODO
+Now that the features are ranked, the next step is to enumerate all possible combinations of binary features within the top $k$ binary features. This means that the enumeration will yield $\binom{k}{s}$ combinations. This explains why $k$ controls the tradeoff between exploration and computation time. Here is a figure illustrating the increase of combinations tested when increasing $k$, for the same model size $s$.
 
+<img src="illustration_topk_increase.PNG" align="center" title='overview' style="width:500px;"/>
+
+For each combination of $s$ binary features among the top $k$, **Scorepyo** will enumerate all possible points combination. This corresponds to the cartesian product of a range of integers for each binary feature. 
+
+In order to lower as much as possible the number of possibilities, the range of integers for each binary feature will vary. Suppose the log-odd value associated to a binary feature is negative, then the range of possible integer values will only be from the minimum point value allowed by the model to -1. Conversely, in case the associated log-odd is positive, then the range will be from 1 to the maximum point value allowed by the model. 
+
+You will find below an example of point definitions for 3 features, a minimum point value of -2 and a maximum point value of 2.
+
+| binary_feature             |   log_odds |   range_possible_points |  
+|:---------------------------|-----------:|----------:| 
+| worst concave points < 0.1 |   0.58 |       [1,2] | 
+| worst concavity >= 0.23    |  -0.53 |       [-2,-1]  | 
+| worst area < 684.55        |   0.44 |       [1,2]  | 
+
+<br />
+
+This will lead to all the following points combination for these 3 features:
+
+
+| worst concave points < 0.1             |   worst concavity >= 0.23 |   worst area < 684.55  |  
+|---------------------------:|-----------:|----------:| 
+| 1 |   -2 |       1 | 
+| 1 |   -2 |       2 | 
+| 1 |   -1 |       1 | 
+| 1 |   -1 |       2 | 
+| 2 |   -2 |       1 | 
+| 2 |   -2 |       2 | 
+| 2 |   -1 |       1 | 
+| 2 |   -1 |       2 | 
+
+We can observe how the number of combinations explodes and why constructing a risk-score model is a combinatorial problem. This outlines the importance of the quality of the ranker, in order to put at the top the best features to work with.
+
+
+<br />
+
+We can now compute the score (i.e. sum of points) on each sample for each point combination. The selected feature selection and points combination will be the combination with the best value on the defined metric. The chosen metric will be maximized. 
+
+The scores on each samples naturally rank the samples. As the scores are not probabilities yet, ranking metrics such as ROC-AUC or Average Precision are preferable at this stage. Like the ranking step, any custom metric based on a list of integer scores and a binary target can be used.
+
+:::{admonition} Fast numba ROC-AUC
+There exists in **Scorepyo** a fast numba implementation of ROC-AUC taken from <a href="https://github.com/diditforlulz273/fastauc/blob/main/fastauc/fast_auc.py"> this repo</a>.
+
+:::
+
+
+
+<br />
+Enumerating all combinations 1 by 1 takes a lot of time but fit in memory, and  doing all combinations with numpy is more efficient but can take too much memory. Therefore, the <a href="https://www.dask.org/">Dask package</a>  has been chosen to select the best combination of features and points, as it can work out-of-memory if needed, and parallelize as much as possible the different computations.
+
+
+
+<br />
 
 ### Probability calibration
 

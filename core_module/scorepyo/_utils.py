@@ -1,3 +1,8 @@
+"""Fast Numba ROC AUC
+
+credit : https://github.com/diditforlulz273/fastauc/blob/main/fastauc/fast_auc.py
+"""
+
 import numba
 import numpy as np
 import numpy.typing as npt
