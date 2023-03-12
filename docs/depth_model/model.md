@@ -37,9 +37,51 @@ The binary features aspect is independent from the model. However the additive a
 For further explanation on the drawback of the rounding of logistic regression approach, the Neurips 2022 paper <a href="https://arxiv.org/pdf/2210.05846.pdf">FasterRisk: Fast and Accurate Interpretable Risk Scores</a> adresses this issue in its introduction.
 :::
 
-<br />
+## Architecture 
 
-The problem of finding sparse small integer coefficients can be explicity formulated with variables, constraints and an objective function.  
+The problem can be decomposed into finding the subset of binary features, defining points for each, and defining the probabilities of each possible score.
+
+These 3 steps can be done at once or separately. The specificity of the *Scorepyo* package is that it does not rely on the logistic function to link scores and associated probability. It allows to have a wider  model search-space, with more freedom on model probabilities. 
+
+
+
+*Scorepyo* first combines binary feature selection and points definition, then defines the probability for each possible score. 
+
+We can represent the different steps as follows :
+
+<img src="overview_architecture_TB.svg" align="center" title='overview' style="width:700px;"/>
+
+
+
+### Binary feature selection and points definition
+
+The binary features selection and points definition can be decomposed into 2 steps :
+* Ranking of binary features
+* Enumeration and maximization
+
+#### Ranking of binary features
+
+Once the binary features are created, a binarizer such as `EBMBinarizer` stores information about the process, such as the associated log-odds, the density (number of samples positive on this binary feature) and the name of the feature it originates from. All these information can be used to rank the features.
+
+`GIVE EXAMPLE OF RANKER TO ILLUSTRATE AND REFER TO THE RANKERS PAGE
+
+CREATE PAGE WITH ALL DIFFERENT RANKERS
+
+
+
+#### Binary features combination and points enumeration
+
+TODO
+
+
+### Probability calibration
+
+TODO
+
+
+
+
+
 <!-- ## interpretation of feature point
 log odds, similar to log regression -->
 
