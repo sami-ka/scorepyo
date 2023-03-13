@@ -162,9 +162,29 @@ Enumerating all combinations 1 by 1 takes a lot of time but fit in memory, and  
 
 ### Probability calibration
 
-TODO
+At this stage, the selection of binary features and their associated point has been done so each training sample has a score.
+For each possible score $i$, we have the information of positive label samples ($n^+_i$) and negative label samples($n^-_i$). A perfectly calibrated model on the training set would output a probability of $\frac{n^+_i}{n^+_i+n^-_i}$ for each score $i$. This is also the solution that minimizes the log loss (see proof in TODO PROOF).
 
 
+However in risk-score model, you need to respect an ordering constraint of having an increasing probability with the score. In package like risk-slim or fasterrisk, this is done by using the logistic function on the score, with an additional multiplier term for fasterrisk.
+
+**Scorepyo** performs probability calibration by finding the probabilities for each score that optimizes the logloss, and still respecting the ordering constraint.
+This problem is convex, and is solved thanks to the <a href="https://github.com/cvxpy/cvxpy">CVXPY</a> package.
+
+
+
+
+:::{admonition} Calibration set
+There exists in **Scorepyo** the possibility of defining a calibration set in the fit method.
+:::
+
+What is described here is done by the `VanillaCalibrator` class. As with the ranker, or the enumeration maximization metric, you can create your custom calibrator class, given that it respects the convention defined in the package.
+
+As examples of that, **Scorepyo** provides 2 additional calibrators that are useful when the logloss of the training set is deteriorated too much on a test set, mostly due to training set size. There exists `BootstrappedCalibrator` that bootstraps the calibration set in order to have multiple datasets coming from the same distribution. After bootstrapping a specific number of datasets, it will find probabilities that either :
+- optimize the average logloss on all bootstrapped datasets
+- optimize the worst logloss of all bootstrapped datasets
+
+This approach helps by putiing some uncertainty on the dataset used for calibration, and reduce overfitting.
 
 
 
