@@ -184,7 +184,7 @@ As examples of that, **Scorepyo** provides 2 additional calibrators that are use
 - optimize the average logloss on all bootstrapped datasets
 - optimize the worst logloss of all bootstrapped datasets
 
-This approach helps by putiing some uncertainty on the dataset used for calibration, and reduce overfitting.
+This approach helps by putting some uncertainty on the dataset used for calibration, and reduce overfitting.
 
 
 
@@ -291,7 +291,7 @@ Note that nothing prevents Optuna to sample a value of 0 point for one of the se
 The `OptunaRiskScore` model will implement in future developments the enforcement of the selection of a minimum number of features. 
 ::: --> 
 
-## Other packages
+<!-- ## Other packages
 
 ### Risk-slim
 
@@ -304,4 +304,4 @@ The `OptunaRiskScore` model will implement in future developments the enforcemen
 
 ### Comparison performance with FasterRisk
 
-Coming soon.
+Coming soon. -->
