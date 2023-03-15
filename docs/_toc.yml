@@ -19,6 +19,8 @@ parts:
     chapters:
       - file: depth_binarizer/binarizer
       - file: depth_model/model
+        sections:
+          - file: depth_model/misc
 
   - caption: API
     chapters:
