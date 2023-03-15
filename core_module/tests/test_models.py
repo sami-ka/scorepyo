@@ -1,7 +1,8 @@
 # import warnings
 
 import pytest
-from pandera.errors import SchemaError
+
+# from pandera.errors import SchemaError
 from sklearn.exceptions import NotFittedError
 
 from scorepyo.exceptions import (
@@ -41,19 +42,19 @@ def test_min_over_max_point_value():
         EBMRiskScore(min_point_value=3, max_point_value=1)
 
 
-@pytest.mark.parametrize(
-    "erroneous_column_names",
-    [
-        ["confeature", "binary_feature"],
-        ["feature", "binary_confeature"],
-        ["confeature", "binary_confeature"],
-    ],
-)
-def test_schema_df_info(df_info_binary_features, erroneous_column_names):
-    erroneous_df_info = df_info_binary_features.copy()
-    erroneous_df_info.columns = erroneous_column_names
-    with pytest.raises(SchemaError):
-        EBMRiskScore(df_info=erroneous_df_info)
+# @pytest.mark.parametrize(
+#     "erroneous_column_names",
+#     [
+#         ["confeature", "binary_feature"],
+#         ["feature", "binary_confeature"],
+#         ["confeature", "binary_confeature"],
+#     ],
+# )
+# def test_schema_df_info(df_info_binary_features, erroneous_column_names):
+#     erroneous_df_info = df_info_binary_features.copy()
+#     erroneous_df_info.columns = erroneous_column_names
+#     with pytest.raises(SchemaError):
+#         EBMRiskScore(df_info=erroneous_df_info)
 
 
 def test_base_score_card_fit(binary_features, binary_target):

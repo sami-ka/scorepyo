@@ -143,7 +143,7 @@ We can observe how the number of combinations explodes and why constructing a ri
 
 <br />
 
-We can now compute the score (i.e. sum of points) on each sample for each point combination. The selected feature selection and points combination will be the combination with the best value on the defined metric. The chosen metric will be maximized. 
+We can now compute the score (i.e. sum of points) on each sample for each point combination. The selection of features and points combination kept will be the combination with the best value on the defined metric. The chosen metric will be maximized. 
 
 The scores on each samples naturally rank the samples. As the scores are not probabilities yet, ranking metrics such as ROC-AUC or Average Precision are preferable at this stage. Like the ranking step, any custom metric based on a list of integer scores and a binary target can be used.
 
@@ -163,13 +163,13 @@ Enumerating all combinations 1 by 1 takes a lot of time but fit in memory, and  
 
 ### Probability calibration
 
-At this stage, the selection of binary features and their associated point has been done so given a calibration set, each sample in this set has a score.
-For each possible score $i$, we have the information of positive label samples ($n^+_i$) and negative label samples($n^-_i$). A perfectly calibrated model on the training set would output a probability of $\frac{n^+_i}{n^+_i+n^-_i}$ for each score $i$. This is also the solution that minimizes the log loss (see proof <a href="misc.md">here</a>).
+At this stage, the selection of binary features and their associated point has been done so given a calibration set, each sample has a score.
+For each possible score $i$, we have the information of positive label samples ($n^+_i$) and negative label samples ($n^-_i$). A perfectly calibrated model on the training set would output a probability of $\frac{n^+_i}{n^+_i+n^-_i}$ for each score $i$. This is also the solution that minimizes the log loss (see proof <a href="misc.md">here</a>).
 
 
 However in risk-score model, you need to respect an ordering constraint of having an increasing probability with the score. In package like risk-slim or fasterrisk, this is done by using the logistic function on the score, with eventually an additional multiplier term for fasterrisk.
 
-**Scorepyo** performs probability calibration by finding the probabilities for each score that optimizes the logloss, and still respecting the ordering constraint.
+**Scorepyo** performs probability calibration by finding the probabilities for each score, respecting the ordering constraint, that optimize the logloss.
 This problem is convex, and is solved thanks to the <a href="https://github.com/cvxpy/cvxpy">CVXPY</a> package.
 
 
