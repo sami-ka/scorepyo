@@ -17,7 +17,6 @@ Functions
    test_models.test_min_point_value
    test_models.test_max_point_value
    test_models.test_min_over_max_point_value
-   test_models.test_schema_df_info
    test_models.test_base_score_card_fit
    test_models.test_optuna_score_card_predict
    test_models.test_optuna_score_card_predict_proba
@@ -35,9 +34,6 @@ Functions
 
 
 .. py:function:: test_min_over_max_point_value()
-
-
-.. py:function:: test_schema_df_info(df_info_binary_features, erroneous_column_names)
 
 
 .. py:function:: test_base_score_card_fit(binary_features, binary_target)

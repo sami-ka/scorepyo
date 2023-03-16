@@ -448,11 +448,6 @@ title="Print to PDF"
         </a>
        </li>
        <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.binarizers.EBMBinarizer.transform_old">
-         transform_old
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
         <a class="reference internal nav-link" href="#scorepyo.binarizers.EBMBinarizer.get_info">
          get_info
         </a>
@@ -527,11 +522,6 @@ title="Print to PDF"
        <li class="toc-h5 nav-item toc-entry">
         <a class="reference internal nav-link" href="#scorepyo.binarizers.EBMBinarizer.transform">
          transform
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.binarizers.EBMBinarizer.transform_old">
-         transform_old
         </a>
        </li>
        <li class="toc-h5 nav-item toc-entry">
@@ -651,23 +641,6 @@ Defaults to None.</p>
 <dt class="sig sig-object py" id="scorepyo.binarizers.EBMBinarizer.transform">
 <span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.DataFrame</span></span></span><a class="headerlink" href="#scorepyo.binarizers.EBMBinarizer.transform" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.binarizers.EBMBinarizer.transform_old">
-<span class="sig-name descname"><span class="pre">transform_old</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scorepyo.binarizers.EBMBinarizer.transform_old" title="Permalink to this definition">#</a></dt>
-<dd><p>Transform function of binarizer</p>
-<p>This function uses the previously fitted EBM to extract binary features from continuous features.
-For each continuous feature, it looks at each constructed interval to create a binary feature based on feature value belonging to this interval or not.
-For categorical features, it uses the one-hot encoder previously fitted.
-For features to exclude from the binarizer, it copies the values in the new dataset.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>X (pandas.DataFrame): Dataframe of features to transform</p>
-</dd>
-<dt>Returns:</dt><dd><p>pandas.DataFrame: Binarized features
-pandas.DataFrame: DataFrame of information of binary feature and corresponding feature</p>
-</dd>
-</dl>
-</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="scorepyo.binarizers.EBMBinarizer.get_info">

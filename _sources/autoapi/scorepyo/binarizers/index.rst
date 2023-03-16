@@ -95,23 +95,6 @@ Classes
    .. py:method:: transform(X: pandas.DataFrame) -> pandas.DataFrame
 
 
-   .. py:method:: transform_old(X: pandas.DataFrame) -> tuple[pandas.DataFrame, pandas.DataFrame]
-
-      Transform function of binarizer
-
-      This function uses the previously fitted EBM to extract binary features from continuous features.
-      For each continuous feature, it looks at each constructed interval to create a binary feature based on feature value belonging to this interval or not.
-      For categorical features, it uses the one-hot encoder previously fitted.
-      For features to exclude from the binarizer, it copies the values in the new dataset.
-
-      Args:
-          X (pandas.DataFrame): Dataframe of features to transform
-
-      Returns:
-          pandas.DataFrame: Binarized features
-          pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
-
-
    .. py:method:: get_info() -> pandas.DataFrame
 
 

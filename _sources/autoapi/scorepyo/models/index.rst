@@ -24,7 +24,7 @@ Classes
 
 
 
-.. py:class:: _BaseRiskScore(nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3, df_info: Optional[pandas.DataFrame] = None)
+.. py:class:: _BaseRiskScore(nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3)
 
    Base class for risk score type model.
 
@@ -40,8 +40,6 @@ Classes
        minimum points to assign for a binary feature
    max_point_value: ExplainableBoostingClassifier
        maximum points to assign for a binary feature
-   _df_info: pandas.DataFrame
-       Dataframe containing the link between a binary feature and its origin
 
 
 
@@ -65,19 +63,19 @@ Classes
        function that prints the feature-point card and score card of the model
 
    .. py:attribute:: _DESCRIPTION_COL
-      :annotation: = Description
+      :value: 'Description'
 
       Column name for binary feature in the risk score summary
 
 
    .. py:attribute:: _POINT_COL
-      :annotation: = Point(s)
+      :value: 'Point(s)'
 
       Column name for points in the risk score summary
 
 
    .. py:attribute:: _FEATURE_COL
-      :annotation: = Feature
+      :value: 'Feature'
 
       Column name for original feature in the risk score summary
 
@@ -126,7 +124,7 @@ Classes
 
 
 
-.. py:class:: RiskScore(binarizer: scorepyo.binarizers.BinarizerProtocol, nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3, nb_additional_features: int = 4, ranker: scorepyo.ranking.Ranker = OMPRank(), calibrator: scorepyo.calibration.Calibrator = VanillaCalibrator(), enumeration_maximization_metric=fast_numba_auc, df_info: Optional[pandas.DataFrame] = None)
+.. py:class:: RiskScore(binarizer: scorepyo.binarizers.BinarizerProtocol, nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3, nb_additional_features: int = 4, ranker: scorepyo.ranking.Ranker = OMPRank(), calibrator: scorepyo.calibration.Calibrator = VanillaCalibrator(), enumeration_maximization_metric=fast_numba_auc)
 
    Bases: :py:obj:`_BaseRiskScore`
 
@@ -151,8 +149,6 @@ Classes
        maximum points to assign for a binary feature
    binarizer:
        binarizer object that transforms continuous and categorical features into binary features
-   _df_info: pandas.DataFrame
-       Dataframe containing the link between a binary feature and its origin
 
 
 
@@ -222,7 +218,7 @@ Classes
 
 
 
-.. py:class:: EBMRiskScore(nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3, max_number_binaries_by_features: int = 3, keep_negative: bool = True, nb_additional_features: Optional[int] = 4, ranker: scorepyo.ranking.Ranker = OMPRank(), calibrator: scorepyo.calibration.Calibrator = VanillaCalibrator(), enumeration_maximization_metric=fast_numba_auc, df_info: Optional[pandas.DataFrame] = None)
+.. py:class:: EBMRiskScore(nb_max_features: int = 4, min_point_value: int = -2, max_point_value: int = 3, max_number_binaries_by_features: int = 3, keep_negative: bool = True, nb_additional_features: Optional[int] = 4, ranker: scorepyo.ranking.Ranker = OMPRank(), calibrator: scorepyo.calibration.Calibrator = VanillaCalibrator(), enumeration_maximization_metric=fast_numba_auc)
 
    Bases: :py:obj:`RiskScore`
 
@@ -247,8 +243,6 @@ Classes
        maximum points to assign for a binary feature
    binarizer:
        binarizer object that transforms continuous and categorical features into binary features
-   _df_info: pandas.DataFrame
-       Dataframe containing the link between a binary feature and its origin
 
 
 
