@@ -185,7 +185,15 @@ class EBMBinarizer:
             if (c not in self._categorical_features)
             and (c not in self._to_exclude_features)
         ]
-
+        cond_list = [
+            [c in self._continuous_features for c in X.columns],
+            [c in self._categorical_features for c in X.columns],
+        ]
+        choice_list = ["continuous", "nominal"]
+        ebm_feature_type_param = np.select(
+            condlist=cond_list, choicelist=choice_list, default=None
+        )
+        self._ebm.set_params(feature_types=ebm_feature_type_param)
         self._ebm.fit(X, y)
 
         if len(self._categorical_features) > 0:
@@ -311,7 +319,22 @@ class EBMBinarizer:
                         ebm_global.data(i)["scores"],
                         ebm_global.data(i)["density"]["scores"],
                     ):
-                        binary_feature_name = "_".join([feature_name, category_value])
+                        # If category value is of type int or float
+                        if isinstance(category_value, int) or isinstance(
+                            category_value, float
+                        ):
+                            # Test if int or float
+                            if int(category_value) == float(category_value):
+                                # it's a int
+                                category_value = int(category_value)
+                            else:
+                                # it's a float
+                                category_value = float(category_value)
+
+                        binary_feature_name = "_".join(
+                            [str(feature_name), str(category_value)]
+                            # [feature_name, str(category_value)]
+                        )
                         dict_categorical_features[binary_feature_name] = {
                             "score": score,
                             "density": density,
@@ -334,7 +357,6 @@ class EBMBinarizer:
 
             # Add info for info dataframe
             for name_out in self._one_hot_encoder.get_feature_names_out():
-                # for name_out in one_hot_categorical_columns:
                 list_scores.append(dict_categorical_features[name_out]["score"])
                 list_density.append(dict_categorical_features[name_out]["density"])
                 list_feature_type.append("categorical")
@@ -533,269 +555,6 @@ class EBMBinarizer:
             ].astype(int)
 
             return X_binarized
-
-    def transform_old(self, X: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Transform function of binarizer
-
-        This function uses the previously fitted EBM to extract binary features from continuous features.
-        For each continuous feature, it looks at each constructed interval to create a binary feature based on feature value belonging to this interval or not.
-        For categorical features, it uses the one-hot encoder previously fitted.
-        For features to exclude from the binarizer, it copies the values in the new dataset.
-
-        Args:
-            X (pandas.DataFrame): Dataframe of features to transform
-
-        Returns:
-            pandas.DataFrame: Binarized features
-            pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
-        """
-
-        # Only checks for fit of ebm, as the one-hot encoder could be not fitted if there are no categorical features
-        if not getattr(self._ebm, "has_fitted_", False):
-            raise NotFittedError("AutomaticFeatureBinarizer has not been fitted.")
-
-        dict_check_continuous_features = {
-            c: pa.Column(checks=[NumericCheck()]) for c in self._continuous_features
-        }
-
-        dict_check_other_features = {
-            c: pa.Column()
-            for c in self._categorical_features + self._to_exclude_features
-        }
-
-        dataframe_schema = pa.DataFrameSchema(
-            {
-                **dict_check_continuous_features,
-                **dict_check_other_features,
-            },
-            strict=True,  # Enable check of other columns in the dataframe
-        )
-
-        dataframe_schema.validate(X)
-
-        ebm_global = self._ebm.explain_global(name="EBM")
-
-        X_binarized = pd.DataFrame()
-        list_scores = []
-        list_lower_threshold = []
-        list_upper_threshold = []
-        list_original_column = []
-        list_binary_feature_names = []
-        list_columns = []
-        list_density = []
-
-        if len(self._categorical_features) > 0:
-            dict_categorical_features = dict()
-
-        # For each continuous feature, we look at their single-feature tree
-        for (
-            i,
-            feature_name,
-        ) in enumerate(ebm_global.data()["names"]):
-            if feature_name in self._continuous_features:
-
-                # Get EBM info for current feature
-                dict_EBM_info_feature = ebm_global.data(i)
-
-                # Get number of plateaus for the corresponding tree
-                number_plateau = len(ebm_global.data(i)["scores"])
-
-                # For each plateau, extract lower and upper bound of each interval
-                for j in range(number_plateau):
-                    contrib = dict_EBM_info_feature["scores"][j]
-
-                    # If logodd contribution of the feature is negative,
-                    # check if we should keep negative contribution to probability
-                    if (contrib < 0) and (not self.keep_negative):
-                        continue
-
-                    # Store lower and upper bound of interval
-                    threshold_lower = dict_EBM_info_feature["names"][j]
-                    threshold_upper = dict_EBM_info_feature["names"][j + 1]
-
-                    # Round precision for column name
-                    # needed when difference upper and lower bound is below 2 digits
-
-                    # try:
-                    difference = threshold_upper - threshold_lower
-                    # except:
-                    #     # Debug
-                    #     print(feature_name)
-                    #     print(dict_EBM_info_feature)
-                    #     assert False
-
-                    needed_round_precision = -floor(log10(abs(difference)))
-                    needed_round_precision = max(needed_round_precision, 2)
-
-                    # Case of the first plateau, only have an upper bound for current feature value
-                    if j == 0:
-                        col_name = f"{feature_name} < {np.round(threshold_upper,needed_round_precision)}"
-
-                        list_columns.append(
-                            pd.DataFrame(
-                                data=(X[feature_name] < threshold_upper).values,
-                                columns=[col_name],
-                            )
-                        )
-                        threshold_lower = np.nan
-
-                    # Case of the last plateau, only have a lower bound for current feature value
-                    elif j == number_plateau - 1:
-                        col_name = f"{feature_name} >= {np.round(threshold_lower,needed_round_precision)}"
-                        list_columns.append(
-                            pd.DataFrame(
-                                data=(X[feature_name] >= threshold_lower).values,
-                                columns=[col_name],
-                            )
-                        )
-                        threshold_upper = np.nan
-
-                    # Case for other inbetween plateaus
-                    else:
-                        col_name = f"{np.round(threshold_lower,needed_round_precision)} <= {feature_name} < {np.round(threshold_upper,needed_round_precision)}"
-                        list_columns.append(
-                            pd.DataFrame(
-                                data=(
-                                    (X[feature_name] < threshold_upper)
-                                    & (X[feature_name] >= threshold_lower)
-                                ).values,
-                                columns=[col_name],
-                            )
-                        )
-
-                    list_density.append(list_columns[-1][col_name].sum())
-
-                    list_lower_threshold.append(threshold_lower)
-                    list_upper_threshold.append(threshold_upper)
-
-                    list_scores.append(contrib)
-                    list_original_column.append(feature_name)
-                    list_binary_feature_names.append(col_name)
-            else:
-                if (len(self._categorical_features) > 0) and (
-                    feature_name in self._categorical_features
-                ):
-                    # Get EBM info for current feature
-                    dict_EBM_info_feature = ebm_global.data(i)
-
-                    # # Get number of plateaus for the corresponding tree
-                    # number_categories = len(ebm_global.data(i)["names"])
-
-                    feature_name = ebm_global.data()["names"][i]
-
-                    # list_binary_features_name = []
-                    for category_value, score, density in zip(
-                        ebm_global.data(i)["names"],
-                        ebm_global.data(i)["scores"],
-                        ebm_global.data(i)["density"]["scores"],
-                    ):
-                        binary_feature_name = "_".join([feature_name, category_value])
-                        dict_categorical_features[binary_feature_name] = {
-                            "score": score,
-                            "density": density,
-                        }
-
-        # TODO : Put logodds of ebm for categorical features
-        if len(self._categorical_features) > 0:
-            # One-hot encode categorical features
-            one_hot_categorical_columns = self._one_hot_encoder.get_feature_names_out()
-            list_columns.append(
-                pd.DataFrame(
-                    data=(
-                        self._one_hot_encoder.transform(X[self._categorical_features])
-                    ),
-                    columns=one_hot_categorical_columns,
-                )
-            )
-
-            list_binary_feature_names.extend(one_hot_categorical_columns)
-
-            # Add info for info dataframe
-            for name_out in self._one_hot_encoder.get_feature_names_out():
-                # for name_out in one_hot_categorical_columns:
-                list_scores.append(dict_categorical_features[name_out]["score"])
-                list_density.append(dict_categorical_features[name_out]["density"])
-                list_lower_threshold.append(None)
-                list_upper_threshold.append(None)
-                list_original_column.append("_".join(name_out.split("_")[:-1]))
-
-        # Copy features to exclude from binarizing
-        if len(self._to_exclude_features) > 0:
-            list_columns.append(X[self._to_exclude_features].copy())
-
-            for name_out in self._to_exclude_features:
-                list_scores.append(0)
-                list_density.append(0)
-                list_lower_threshold.append(None)
-                list_upper_threshold.append(None)
-                list_original_column.append(name_out)
-
-        # concat all created columns at the end (vs on the fly) for performance
-        X_binarized = pd.concat(list_columns, axis=1)
-
-        # convert to 1/0
-        with warnings.catch_warnings():
-            # Setting values in-place is fine, ignore the warning in Pandas >= 1.5.0
-            # This can be removed, if Pandas 1.5.0 does not need to be supported any longer.
-            # See also: https://stackoverflow.com/q/74057367/859591
-            warnings.filterwarnings(
-                "ignore",
-                category=FutureWarning,
-                message=(
-                    ".*will attempt to set the values inplace instead of always setting a new array. "
-                    "To retain the old behavior, use either.*"
-                ),
-            )
-            X_binarized.loc[:, list_binary_feature_names] = X_binarized.loc[
-                :, list_binary_feature_names
-            ].astype(int)
-
-        # Regroup information about binary features created in the info dataframe
-        # this dataframe contains:
-        # - the list for each binary feature of log odds contribution
-        # - the list for each binary feature of lower threshold used
-        # - the list for each binary feature of upper threshold used
-        # - the list for each binary feature of the original feature it came from
-
-        df_score_feature = pd.DataFrame(
-            index=X_binarized.columns,
-            data=np.array(
-                [
-                    list_scores,
-                    list_lower_threshold,
-                    list_upper_threshold,
-                    list_original_column,
-                    list_density,
-                ]
-            ).T,
-            columns=[
-                "log_odds",
-                "lower_threshold",
-                "upper_threshold",
-                "feature",
-                "density",
-            ],
-        )
-
-        # the intercept is the basis log odd value of the EBM without adding/substracting
-        # the different log odds contribution of each feature
-        row_intercept = pd.DataFrame(
-            index=["intercept"],
-            columns=df_score_feature.columns,
-            data=[[self._ebm.intercept_[0], None, None, "intercept", None]],
-        )
-        df_score_feature = pd.concat(
-            [
-                df_score_feature,
-                row_intercept,
-            ],
-            axis=0,
-        )
-        df_score_feature.index.name = "binary_feature"
-        return (
-            X_binarized,
-            df_score_feature,
-        )
 
     def get_info(self) -> pd.DataFrame:
         return self.df_score_feature
