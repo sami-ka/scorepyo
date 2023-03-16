@@ -34,16 +34,19 @@ def test_end_2_end():
     max_point_value = 3
     nb_max_features = 4
 
+    ranker = LogOddsDensity()
+
+    optim_method = fast_numba_auc
+
     scorepyo_model = EBMRiskScore(
         min_point_value=min_point_value,
         max_point_value=max_point_value,
         nb_max_features=nb_max_features,
         nb_additional_features=6,
+        enumeration_maximization_metric=optim_method,
+        ranker=ranker,
+        calibrator=VanillaCalibrator(),
     )
-
-    ranker = LogOddsDensity()
-
-    optim_method = fast_numba_auc
 
     scorepyo_model.fit(
         X_train,
@@ -51,9 +54,6 @@ def test_end_2_end():
         X_calib=None,
         y_calib=None,
         categorical_features=["category"],
-        enumeration_maximization_metric=optim_method,
-        ranker=ranker,
-        calibrator=VanillaCalibrator(),
     )
 
     print(scorepyo_model.summary())

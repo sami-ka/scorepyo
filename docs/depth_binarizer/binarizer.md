@@ -1,4 +1,4 @@
-# Automatic feature binarizer
+# EBM feature binarizer
 
 A risk-score type model can only be constructed based on binary features.  In most cases, datasets are constructed with a mix of continuous, categorical and binary features.  
 From there, we either manually engineer the binary features, or we can automatically construct them.

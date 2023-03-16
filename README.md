@@ -19,7 +19,7 @@
 <br /> -->
 <br />
 
-**Scorepyo** is a python package for creating risk-score type models for binary classification, based on data. The created models can be used like other ML models, with fit and predict methods.
+**Scorepyo** is a python package for binarizing features, and creating risk-score type models for binary classification, based on data. The created models can be used like other ML models, with fit and predict methods.
 <br /> <br />
 
 ### *Example on Scikit-learn breast cancer dataset*
@@ -28,31 +28,19 @@
 ```python
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
-
-from scorepyo.preprocessing import AutoBinarizer
-from scorepyo.models import OptunaRiskScore
+from sklearn.metrics import average_precision_score
+from scorepyo.models import EBMRiskScore
 
 # Getting data
 data = load_breast_cancer()
-data_X, y = data.data, data.target
+data_X, data_y = data.data, data.target
 
 X = pd.DataFrame(data=data_X, columns=data.feature_names)
+y = pd.Series(data_y)
 
-# Binarization
-binarizer = AutoBinarizer(max_number_binaries_by_features=3)
-binarizer.fit(X, y)
+scorepyo_model = EBMRiskScore()
 
-X_binarized, df_info = binarizer.transform(X)
-
-# Fitting the risk-score model
-scorepyo_model = OptunaRiskScore(
-    nb_max_features=4,
-    min_point_value=-1,
-    max_point_value=2,
-    df_info=df_info["feature"].reset_index(),
-)
-
-scorepyo_model.fit(X_binarized, y)
+scorepyo_model.fit(X, y)
 
 scorepyo_model.summary()
 ```
@@ -61,17 +49,17 @@ scorepyo_model.summary()
 
 | Feature         | Description            |   Point(s) | |      |
 |:----------------|:-----------------------|--------:|---: |--------:|
-| mean perimeter   | mean perimeter >= 95.84 | -1         || ...   |
-| mean compactness | mean compactness < 0.08 | 1          | |+ ... |
-| radius error     | radius error < 0.25     | 2          | |+ ... |
-| worst radius     | worst radius < 13.53    | 2          | |+ ... |
+| worst concave points   | worst concave points >= 0.14 | -2         || ...   |
+| worst radius | worst radius >= 16.8 | -2          | |+ ... |
+| mean texture     | mean texture >= 20.72     | -1          | |+ ... |
+| worst area     | worst area < 553.3    | 1          | |+ ... |
 |                 |                        |         |  |        |
 |                 | |<div style="text-align: right"> **SCORE =**</div> | |**...**|
 
 ####   Score card     
-| SCORE   | -1     | 0      | 1      | 2      | 3      | 4      | 5      |
-|:--------|:-------|:-------|:-------|:-------|:-------|:-------|:-------|
-| RISK    | 18.24% | 37.75% | 62.25% | 81.76% | 92.41% | 97.07% | 98.90% |
+| SCORE   | -5.0   | -4.0   | -3.0   | -2.0   | -1.0   | 0.0    | 1.0     |
+|:--------|:-------|:-------|:-------|:-------|:-------|:-------|:--------|
+| RISK    | 0.00%  | 1.03%  | 1.13%  | 45.95% | 84.09% | 98.10% | 100.00% |
 
 <br />
 <br />
@@ -123,20 +111,26 @@ The **Scorepyo** package provides two components that can be used independently:
 Datasets usually comes with features of various type. Continuous feature must be binarized in order to be used for risk-score model. 
 Scorepyo leverages the awesome <a href="https://github.com/interpretml/interpret" target="_blank">interpretML</a> package and their EBM model to automatically extract binary features.
 
-## Optuna-based Risk score model
+## Risk score model
 The risk-score model can be modeled as an optimization problem with 3 sets of decision variables:
 * Subset of binary features to use
 * Points associated to each selected binary feature
-* Log-odd intercept when 0 point
+* Probabilities associated to each possible score
 
-The objective function is the minimization of the logloss of the computed risk on training samples.
+The objective function is the optimization of a binary classification metric (e.g. the logloss, ROC AUC, average precision) of the computed risk on training samples.
 
 
 This formulation is already used in other packages such as <a href="https://github.com/ustunb/risk-slim" target="_blank">risk-slim</a> or <a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a>.
 
 <br />
 
-The novelty in **Scorepyo** is that it leverages the power of <a href="https://github.com/ustunb/risk-slim" target="_blank">Optuna</a> to efficiently sample values for the decision variables defined above. As Optuna has a highly active community, its improvements will also have benefits for this package.
+The novelty in **Scorepyo** is that it decomposes the model search into simple and easily customizable components:
+* Ranking of binary features
+* Enumeration maximization metric
+* Probability calibration
+
+It also drops the link with the sigmoid function when defining the probability of each score, in order to widen the search space of risk-score model.
+
 <br /><br />
 
 
@@ -145,9 +139,9 @@ The novelty in **Scorepyo** is that it leverages the power of <a href="https://g
 > #### <div style="text-align: right">*Bernard de Chartres* </div>
 <br />
 
-This package is mostly built on top of two great packages:
-* <a href="https://github.com/interpretml/interpret" target="_blank">interpretML</a>
-* <a href="https://github.com/ustunb/risk-slim" target="_blank">Optuna</a>
+This package is built on top of great packages:
+* <a href="https://github.com/interpretml/interpret" target="_blank">interpretML</a> for the binarizer
+* <a href="https://github.com/dask/dask" target="_blank">Dask</a> to easily scale the costly enumeration step
 
 # More context
 
@@ -162,7 +156,7 @@ To better understand the justification of automatically creating risk score mode
 
 #
 
-<a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a> is a recent package that makes the computation much faster by dropping the ILP approach and providing an other approach to explore this large space of solutions and generate a list of interesting risk-score models that will be diverse. This approach does not integrate constraints as risk-slim does, but does a great job at quickly computing risk-score models. It does not provide an automatic feature binarizer though.
+<a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a> is a recent package that makes the computation much faster by dropping the ILP approach and providing an other approach to explore this large space of solutions and generate a list of interesting risk-score models that will be diverse. This approach does not integrate constraints as risk-slim does, but does a great job at quickly computing risk-score models. It only provides a binarizer based on quantile.
 
 
 

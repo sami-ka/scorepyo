@@ -15,13 +15,13 @@ from sklearn.exceptions import NotFittedError
 
 from scorepyo._utils import fast_numba_auc
 from scorepyo.binarizers import BinarizerProtocol, EBMBinarizer
-from scorepyo.calibration import Calibrator
+from scorepyo.calibration import Calibrator, VanillaCalibrator
 from scorepyo.exceptions import (
     MinPointOverMaxPointError,
     NegativeValueError,
     NonIntegerValueError,
 )
-from scorepyo.ranking import Ranker
+from scorepyo.ranking import OMPRank, Ranker
 
 
 class _BaseRiskScore:
@@ -40,8 +40,6 @@ class _BaseRiskScore:
         minimum points to assign for a binary feature
     max_point_value: ExplainableBoostingClassifier
         maximum points to assign for a binary feature
-    _df_info: pandas.DataFrame
-        Dataframe containing the link between a binary feature and its origin
 
 
 
@@ -79,14 +77,13 @@ class _BaseRiskScore:
         nb_max_features: int = 4,
         min_point_value: int = -2,
         max_point_value: int = 3,
-        df_info: Optional[pd.DataFrame] = None,
+        # df_info: Optional[pd.DataFrame] = None,
     ):
         """
         Args:
             nb_max_features (int): Number of maximum binary features to be selected
             min_point_value (int, optional): Minimum point assigned to a binary feature. Defaults to -2.
             max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
-            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
         """
         if nb_max_features <= 0:
             raise NegativeValueError(
@@ -114,40 +111,24 @@ class _BaseRiskScore:
         self.min_point_value: int = min_point_value
         self.max_point_value: int = max_point_value
 
-        self._df_info: Optional[pd.DataFrame]
+        # self._df_info: Optional[pd.DataFrame]
 
-        if df_info is not None:
-            dataframe_schema = pa.DataFrameSchema(
-                {
-                    "binary_feature": pa.Column(),
-                    "feature": pa.Column(),
-                },
-                strict=False,  # Disable check of other columns in the dataframe
-            )
+        # if df_info is not None:
+        #     dataframe_schema = pa.DataFrameSchema(
+        #         {
+        #             "binary_feature": pa.Column(),
+        #             "feature": pa.Column(),
+        #         },
+        #         strict=False,  # Disable check of other columns in the dataframe
+        #     )
 
-            dataframe_schema.validate(df_info)
-            self._df_info = df_info.copy()
-        else:
-            self._df_info = None
+        #     dataframe_schema.validate(df_info)
+        #     self._df_info = df_info.copy()
+        # else:
+        #     self._df_info = None
 
         self.feature_point_card: Optional[pd.DataFrame] = None
         self.score_card: Optional[pd.DataFrame] = None
-
-    # @staticmethod
-    # def _predict_proba_score(
-    #     score: int, intercept: float, multiplier: Optional[float] = 1.0
-    # ) -> np.ndarray:
-    #     """Function that computes the logistic function value at score+intercept value
-
-    #     Args:
-    #         score (np.array(int)): sum of points coming from binary features
-    #         intercept (float): intercept of score card. log-odds of having 0 point
-
-    #     Returns:
-    #         np.array(int): associated probability
-    #     """
-    #     score_associated_proba = 1 / (1 + np.exp(-(score + intercept) / multiplier))
-    #     return score_associated_proba
 
     @abstractmethod
     def fit(
@@ -285,15 +266,13 @@ class RiskScore(_BaseRiskScore):
         maximum points to assign for a binary feature
     binarizer:
         binarizer object that transforms continuous and categorical features into binary features
-    _df_info: pandas.DataFrame
-        Dataframe containing the link between a binary feature and its origin
 
 
 
     Methods
     -------
     fit(self, X, y):
-        function creating the feature-point card and score card attributes via Optuna
+        function creating the feature-point card and score card attributes
 
     From _BaseRiskScore:
 
@@ -317,9 +296,10 @@ class RiskScore(_BaseRiskScore):
         nb_max_features: int = 4,
         min_point_value: int = -2,
         max_point_value: int = 3,
-        max_number_binaries_by_features: int = 3,
         nb_additional_features: int = 4,
-        df_info: Optional[pd.DataFrame] = None,
+        ranker: Ranker = OMPRank(),
+        calibrator: Calibrator = VanillaCalibrator(),
+        enumeration_maximization_metric=fast_numba_auc,
     ):
         """
         Args:
@@ -328,26 +308,30 @@ class RiskScore(_BaseRiskScore):
             max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
             max_number_binaries_by_features (int, optional): Maximum number of binary features by original feature. Defaults to 3.
             nb_additional_features (int, optional): Number of additional features to consider for the binary feature selection. Defaults to 3.
-            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
+            ranker (Ranker): Ranker object to rank binary features, see ranking.py
+            calibrator (Calibrator): Calibrator object to define probabilities, see calibration.py
+            enumeration_maximization_metric: maximization function used for enumeration.
+                This function needs to compute a maximization metric based on 2 arguments in this order :
+                1) numpy array containing the binary target
+                2) numpy array containing the predicted probability or score
         """
-        super().__init__(nb_max_features, min_point_value, max_point_value, df_info)
+        super().__init__(nb_max_features, min_point_value, max_point_value)
 
         # TODO Check value
-        self.max_number_binaries_by_features: int = max_number_binaries_by_features
         self.binarizer: BinarizerProtocol = binarizer
         self.nb_additional_features: int = int(nb_additional_features)
+        self.ranker = ranker
+        self.calibrator = calibrator
+        self.enumeration_maximization_metric = enumeration_maximization_metric
 
     def fit(
         self,
         X: pd.DataFrame,
         y: pd.Series,
-        ranker: Ranker,
-        calibrator: Calibrator,
         X_calib: pd.DataFrame = None,
         y_calib: pd.Series = None,
-        categorical_features=None,
+        categorical_features="auto",
         fit_binarizer=True,
-        enumeration_maximization_metric=fast_numba_auc,
     ):
         """Function that search best parameters (choice of binary features, points and probabilities) of a risk score model.
 
@@ -374,16 +358,10 @@ class RiskScore(_BaseRiskScore):
         Args:
             X (pandas.DataFrame): Dataset of features to fit the risk score model on
             y (pandas.Series): Target binary values
-            ranker (Ranker): Ranker object to rank binary features, see ranking.py
-            calibrator (Calibrator): Calibrator object to define probabilities, see calibration.py
             X_calib (pandas.DataFrame): Dataset of features to calibrate probabilities on
             y_calib (pandas.Series): Target binary values for calibration
             categorical_features: list of categorical features for the binarizer
             fit_binarizer: boolean to indicate the binarizer should be fitted or not
-            enumeration_maximization_metric: maximization function used for enumeration.
-                This function needs to compute a maximization metric based on 2 arguments in this order :
-                1) numpy array containing the binary target
-                2) numpy array containing the predicted probability or score
 
         """
         start_time = time.time()
@@ -410,7 +388,7 @@ class RiskScore(_BaseRiskScore):
 
         df_ranker = df_info[["log_odds", "density", "feature"]].copy()
 
-        df_rank = ranker.compute_ranking_features(
+        df_rank = self.ranker.compute_ranking_features(
             df=df_ranker,
             X_binarized=X_binarized,
             y=y,
@@ -516,7 +494,7 @@ class RiskScore(_BaseRiskScore):
         # 1Dfication of maximization metric function
 
         enumeration_optimization_metric_1d = lambda y_score: [
-            enumeration_maximization_metric(y.values, y_score)
+            self.enumeration_maximization_metric(y.values, y_score)
         ]
 
         # computation of score for all samples for all enumerated points combination
@@ -555,16 +533,16 @@ class RiskScore(_BaseRiskScore):
         min_sum_point = np.sum(np.clip(best_scenario, a_max=0, a_min=None))
         max_sum_point = np.sum(np.clip(best_scenario, a_min=0, a_max=None))
 
-        calibrator.calibrate(df_calibration, min_sum_point, max_sum_point)
-
-        df_reordering = calibrator.calibrate(
+        df_reordering = self.calibrator.calibrate(
             df_calibration, min_sum_point, max_sum_point
         )
 
         # Build feature-point card
         self.feature_point_card = pd.DataFrame(index=best_feature_selection)
         self.feature_point_card[self._POINT_COL] = best_scenario
-
+        self.feature_point_card[self._POINT_COL] = self.feature_point_card[
+            self._POINT_COL
+        ].astype(int)
         self.feature_point_card["binary_feature"] = self.feature_point_card.index.values
         self.feature_point_card[
             self._FEATURE_COL
@@ -585,6 +563,8 @@ class RiskScore(_BaseRiskScore):
             index=["SCORE", "RISK", "_RISK_FLOAT"],
             data=[possible_scores, possible_risks_pct, possible_risks],
         )
+
+        self.score_card.loc["SCORE", :] = self.score_card.loc["SCORE", :].astype(int)
         self._total_fit_time = time.time() - start_time
         self._model_fit_time = self._total_fit_time - fit_transform_time
 
@@ -618,15 +598,13 @@ class EBMRiskScore(RiskScore):
         maximum points to assign for a binary feature
     binarizer:
         binarizer object that transforms continuous and categorical features into binary features
-    _df_info: pandas.DataFrame
-        Dataframe containing the link between a binary feature and its origin
 
 
 
     Methods
     -------
     fit(self, X, y):
-        function creating the feature-point card and score card attributes via Optuna
+        function creating the feature-point card and score card attributes
 
 
 
@@ -652,8 +630,11 @@ class EBMRiskScore(RiskScore):
         min_point_value: int = -2,
         max_point_value: int = 3,
         max_number_binaries_by_features: int = 3,
+        keep_negative: bool = True,
         nb_additional_features: Optional[int] = 4,
-        df_info: Optional[pd.DataFrame] = None,
+        ranker: Ranker = OMPRank(),
+        calibrator: Calibrator = VanillaCalibrator(),
+        enumeration_maximization_metric=fast_numba_auc,
     ):
         """
         Args:
@@ -662,15 +643,24 @@ class EBMRiskScore(RiskScore):
             max_point_value (int, optional): Maximum point assigned to a binary feature. Defaults to 3.
             max_number_binaries_by_features (int, optional): Maximum number of binary features by original feature. Defaults to 3.
             nb_additional_features (int, optional): Number of additional features to consider for the binary feature selection. Defaults to 3.
-            df_info (pandas.DataFrame, optional): DataFrame linking original feature and binary feature. Defaults to None.
+            ranker (Ranker): Ranker object to rank binary features, see ranking.py
+            calibrator (Calibrator): Calibrator object to define probabilities, see calibration.py
+            enumeration_maximization_metric: maximization function used for enumeration.
+                This function needs to compute a maximization metric based on 2 arguments in this order :
+                1) numpy array containing the binary target
+                2) numpy array containing the predicted probability or score
+
         """
         super().__init__(
             binarizer=EBMBinarizer(
-                max_number_binaries_by_features=max_number_binaries_by_features
+                max_number_binaries_by_features=max_number_binaries_by_features,
+                keep_negative=keep_negative,
             ),
             nb_max_features=nb_max_features,
             min_point_value=min_point_value,
             max_point_value=max_point_value,
             nb_additional_features=nb_additional_features,
-            df_info=df_info,
+            ranker=ranker,
+            calibrator=calibrator,
+            enumeration_maximization_metric=enumeration_maximization_metric,
         )

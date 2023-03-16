@@ -11,6 +11,7 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 - architecture of risk score model
 - script naming
 - design of EBMBinarizer
+- update docs
 ### Deprecated
 ### Removed
 - Usage of Optuna and OptunaRiskScore
