@@ -20,7 +20,7 @@ $L(p_{s_1},...,p_{s_k})=\sum_{j=1}^k-n_j^+log(p_{s_j})- n_j^-log(1-p_{s_j}) = \s
 
 Each $L_j$ is a convex function on $p_{s_j} \in (0,1)$, as it's a nonnegative weighted sum of two convex functions. Thus, $L$ is also convex as a nonnegative weigthed sum of convex functions.
 
-Since $L$ is convex, there exists only one minimum, where the gradient of $L$, denoted by \nabla L(p_{s_1},...,p_{s_k}), is equal to 0.
+Since $L$ is convex, there exists only one minimum, where the gradient of $L$, denoted by $\nabla L(p_{s_1},...,p_{s_k})$, is equal to 0.
 
 $$\nabla L(p_{s_1},...,p_{s_k}) = \left[\begin{array}{c} 
 \dfrac{\partial L}{\partial p_{s_1}}(\left.p_{s_1},...,p_{s_k}\right)\\
