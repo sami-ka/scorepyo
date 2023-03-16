@@ -3,6 +3,14 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.2.0] - 2023/03/16
+### Added
 - define architecture of risk score model: binary features ranker, enumeration metric, calibration method.
 - Add several rankers
 - Add several calibration methods
