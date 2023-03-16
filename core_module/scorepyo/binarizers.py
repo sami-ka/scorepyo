@@ -191,7 +191,7 @@ class EBMBinarizer:
         ]
         choice_list = ["continuous", "nominal"]
         ebm_feature_type_param = np.select(
-            condlist=cond_list, choicelist=choice_list, default=None
+            condlist=cond_list, choicelist=choice_list, default=None  # type: ignore[arg-type]
         )
         self._ebm.set_params(feature_types=ebm_feature_type_param)
         self._ebm.fit(X, y)
