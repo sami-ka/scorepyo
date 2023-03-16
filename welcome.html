@@ -94,7 +94,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -148,13 +148,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -167,8 +179,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -177,12 +189,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -194,8 +216,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -445,7 +467,7 @@ title="Print to PDF"
 <div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
 <div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-flex-row-reverse docutils">
 <div class="sd-col sd-d-flex-column sd-col-4 sd-col-xs-4 sd-col-sm-4 sd-col-md-4 sd-col-lg-4 sd-m-auto docutils">
-<img src="images/scorepyo_logo.jpg" style="width:200px;"/>
+<img src="images/logo_zoom_wo_caption.PNG" style="width:200px;"/>
 </div>
 <div class="sd-col sd-d-flex-column sd-col-8 sd-col-xs-8 sd-col-sm-8 sd-col-md-8 sd-col-lg-8 sd-fs-3 docutils">
 <p>Create risk-score type models for binary classification, based on data.</p>
@@ -471,7 +493,7 @@ Get started!</span></a></p>
 <div class="sd-col sd-d-flex-row docutils">
 <div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
 <div class="sd-card-header bg-light docutils">
-<p class="sd-card-text">Deep-dive: Automatic binarizer ✏️</p>
+<p class="sd-card-text">Deep-dive: EBM binarizer ✏️</p>
 </div>
 <div class="sd-card-body docutils">
 <p class="sd-card-text">Discover how Scorepyo leverages a recent ML model to extract binary features!</p>
@@ -484,7 +506,7 @@ Get started!</span></a></p>
 <p class="sd-card-text">Deep-dive: Risk-score ✏️</p>
 </div>
 <div class="sd-card-body docutils">
-<p class="sd-card-text">Learn more about risk-score model, and its link with Optuna!</p>
+<p class="sd-card-text">Learn more about risk-score model and the unique modular design of Scorepyo !</p>
 </div>
 <a class="sd-stretched-link reference internal" href="depth_model/model.html"><span class="doc"></span></a></div>
 </div>

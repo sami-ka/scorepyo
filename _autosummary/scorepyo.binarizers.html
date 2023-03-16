@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>scorepyo.preprocessing</title>
+    <title>scorepyo.binarizers</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -53,7 +53,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="scorepyo.models" href="scorepyo.models.html" />
+    <link rel="next" title="scorepyo.calibration" href="scorepyo.calibration.html" />
+    <link rel="prev" title="scorepyo" href="scorepyo.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -94,7 +95,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -148,13 +149,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -167,8 +180,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../API.html">
    API documentation
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -177,12 +190,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="scorepyo.html">
      scorepyo
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul class="current">
+     <li class="toctree-l3 current active">
+      <a class="current reference internal" href="#">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -193,9 +216,9 @@ const thebe_selector_output = ".output, .cell_output"
        scorepyo.models
       </a>
      </li>
-     <li class="toctree-l3 current active">
-      <a class="current reference internal" href="#">
-       scorepyo.preprocessing
+     <li class="toctree-l3">
+      <a class="reference internal" href="scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -292,7 +315,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F_autosummary/scorepyo.preprocessing.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2F_autosummary/scorepyo.binarizers.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -320,7 +343,7 @@ title="Open an issue"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../_sources/_autosummary/scorepyo.preprocessing.rst"
+        <a href="../_sources/_autosummary/scorepyo.binarizers.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -369,7 +392,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>scorepyo.preprocessing</h1>
+                <h1>scorepyo.binarizers</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -381,9 +404,11 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="module-scorepyo.preprocessing">
-<span id="scorepyo-preprocessing"></span><h1>scorepyo.preprocessing<a class="headerlink" href="#module-scorepyo.preprocessing" title="Permalink to this headline">#</a></h1>
-<p>Class for the EBM-based automatic binarizer</p>
+  <section id="module-scorepyo.binarizers">
+<span id="scorepyo-binarizers"></span><h1>scorepyo.binarizers<a class="headerlink" href="#module-scorepyo.binarizers" title="Permalink to this headline">#</a></h1>
+<p>Class for binarizers:
+- EBM-based automatic binarizer
+- TODO : Quantile binarizer</p>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <colgroup>
@@ -391,8 +416,11 @@ title="Print to PDF"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/scorepyo/preprocessing/index.html#scorepyo.preprocessing.AutoBinarizer" title="scorepyo.preprocessing.AutoBinarizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoBinarizer</span></code></a>([...])</p></td>
-<td><p>Class for automatic feature binarizer.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.BinarizerProtocol" title="scorepyo.binarizers.BinarizerProtocol"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BinarizerProtocol</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Protocol to respect for future and custom binarizer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer" title="scorepyo.binarizers.EBMBinarizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EBMBinarizer</span></code></a>([...])</p></td>
+<td><p>Class for automatic feature binarizer based on EBM.</p></td>
 </tr>
 </tbody>
 </table>
@@ -425,12 +453,19 @@ title="Print to PDF"
                 
     <!-- Previous / next buttons -->
 <div class='prev-next-area'>
-    <a class='left-prev' id="prev-link" href="scorepyo.models.html" title="previous page">
+    <a class='left-prev' id="prev-link" href="scorepyo.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">scorepyo.models</p>
+            <p class="prev-next-title">scorepyo</p>
         </div>
+    </a>
+    <a class='right-next' id="next-link" href="scorepyo.calibration.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">scorepyo.calibration</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
     </a>
 </div>
             </footer>

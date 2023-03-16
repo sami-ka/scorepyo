@@ -93,7 +93,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../../../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../../../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -147,13 +147,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../../depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -166,8 +178,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../../../API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -176,12 +188,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../../../_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -193,8 +215,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../../_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="../../../_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>

@@ -92,7 +92,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -146,13 +146,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -165,8 +177,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -175,12 +187,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -192,8 +214,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -338,18 +360,22 @@ title="Open an issue"
 
 <div class="genindex-jumpbox">
  <a href="#_"><strong>_</strong></a>
- | <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="_">_</h2>
@@ -357,23 +383,41 @@ title="Open an issue"
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore">_BaseRiskScore (class in scorepyo.models)</a>
 </li>
-      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore._DESCRIPTION_COL">_DESCRIPTION_COL (scorepyo.models._BaseRiskScore attribute)</a>
+      <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.BootstrappedCalibrator._calibrate">_calibrate() (scorepyo.calibration.BootstrappedCalibrator method)</a>
+
+      <ul>
+        <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.Calibrator._calibrate">(scorepyo.calibration.Calibrator method)</a>
 </li>
+        <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.VanillaCalibrator._calibrate">(scorepyo.calibration.VanillaCalibrator method)</a>
+</li>
+      </ul></li>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.BordaRank._compute_ranking_features">_compute_ranking_features() (scorepyo.ranking.BordaRank method)</a>
+
+      <ul>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.CumulativeMetric._compute_ranking_features">(scorepyo.ranking.CumulativeMetric method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.DiverseLogOddsDensity._compute_ranking_features">(scorepyo.ranking.DiverseLogOddsDensity method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.FasterRiskRank._compute_ranking_features">(scorepyo.ranking.FasterRiskRank method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LarsPathRank._compute_ranking_features">(scorepyo.ranking.LarsPathRank method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LassoPathRank._compute_ranking_features">(scorepyo.ranking.LassoPathRank method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LogOddsDensity._compute_ranking_features">(scorepyo.ranking.LogOddsDensity method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.OMPRank._compute_ranking_features">(scorepyo.ranking.OMPRank method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.Ranker._compute_ranking_features">(scorepyo.ranking.Ranker method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore._DESCRIPTION_COL">_DESCRIPTION_COL (scorepyo.models._BaseRiskScore attribute)</a>
+</li>
       <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore._FEATURE_COL">_FEATURE_COL (scorepyo.models._BaseRiskScore attribute)</a>
 </li>
       <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore._POINT_COL">_POINT_COL (scorepyo.models._BaseRiskScore attribute)</a>
-</li>
-      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore._predict_proba_score">_predict_proba_score() (scorepyo.models._BaseRiskScore static method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="A">A</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/scorepyo/preprocessing/index.html#scorepyo.preprocessing.AutoBinarizer">AutoBinarizer (class in scorepyo.preprocessing)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -381,12 +425,18 @@ title="Open an issue"
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.BinarizerProtocol">BinarizerProtocol (class in scorepyo.binarizers)</a>
+</li>
       <li><a href="autoapi/conftest/index.html#conftest.binary_features">binary_features() (in module conftest)</a>
 </li>
       <li><a href="autoapi/conftest/index.html#conftest.binary_target">binary_target() (in module conftest)</a>
 </li>
+      <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.BootstrappedCalibrator">BootstrappedCalibrator (class in scorepyo.calibration)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.BordaRank">BordaRank (class in scorepyo.ranking)</a>
+</li>
       <li><a href="autoapi/conftest/index.html#conftest.breast_cancer_dataset">breast_cancer_dataset() (in module conftest)</a>
 </li>
       <li><a href="autoapi/conftest/index.html#conftest.breast_cancer_features">breast_cancer_features() (in module conftest)</a>
@@ -399,6 +449,12 @@ title="Open an issue"
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.Calibrator.calibrate">calibrate() (scorepyo.calibration.Calibrator method)</a>
+</li>
+      <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.Calibrator">Calibrator (class in scorepyo.calibration)</a>
+</li>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.Ranker.compute_ranking_features">compute_ranking_features() (scorepyo.ranking.Ranker method)</a>
+</li>
       <li>
     conftest
 
@@ -412,6 +468,8 @@ title="Open an issue"
 </li>
       <li><a href="autoapi/conftest/index.html#conftest.continuous_target">continuous_target() (in module conftest)</a>
 </li>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.CumulativeMetric">CumulativeMetric (class in scorepyo.ranking)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -421,17 +479,57 @@ title="Open an issue"
       <li><a href="autoapi/conftest/index.html#conftest.df_info_binary_features">df_info_binary_features() (in module conftest)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.DiverseLogOddsDensity">DiverseLogOddsDensity (class in scorepyo.ranking)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer">EBMBinarizer (class in scorepyo.binarizers)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.EBMRiskScore">EBMRiskScore (class in scorepyo.models)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore.fit">fit() (scorepyo.models._BaseRiskScore method)</a>
+      <li><a href="autoapi/scorepyo/_utils/index.html#scorepyo._utils.fast_numba_auc">fast_numba_auc() (in module scorepyo._utils)</a>
+</li>
+      <li><a href="autoapi/scorepyo/_utils/index.html#scorepyo._utils.fast_numba_auc_nonw">fast_numba_auc_nonw() (in module scorepyo._utils)</a>
+</li>
+      <li><a href="autoapi/scorepyo/_utils/index.html#scorepyo._utils.fast_numba_auc_w">fast_numba_auc_w() (in module scorepyo._utils)</a>
+</li>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.FasterRiskRank">FasterRiskRank (class in scorepyo.ranking)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.BinarizerProtocol.fit">fit() (scorepyo.binarizers.BinarizerProtocol method)</a>
 
       <ul>
-        <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.OptunaRiskScore.fit">(scorepyo.models.OptunaRiskScore method)</a>
+        <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer.fit">(scorepyo.binarizers.EBMBinarizer method)</a>
 </li>
-        <li><a href="autoapi/scorepyo/preprocessing/index.html#scorepyo.preprocessing.AutoBinarizer.fit">(scorepyo.preprocessing.AutoBinarizer method)</a>
+        <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore.fit">(scorepyo.models._BaseRiskScore method)</a>
+</li>
+        <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.RiskScore.fit">(scorepyo.models.RiskScore method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.BinarizerProtocol.get_info">get_info() (scorepyo.binarizers.BinarizerProtocol method)</a>
+
+      <ul>
+        <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer.get_info">(scorepyo.binarizers.EBMBinarizer method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -441,6 +539,20 @@ title="Open an issue"
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/scorepyo/exceptions/index.html#scorepyo.exceptions.is_numeric">is_numeric() (in module scorepyo.exceptions)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LarsPathRank">LarsPathRank (class in scorepyo.ranking)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LassoPathRank">LassoPathRank (class in scorepyo.ranking)</a>
+</li>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.LogOddsDensity">LogOddsDensity (class in scorepyo.ranking)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -462,11 +574,17 @@ title="Open an issue"
 </li>
         <li><a href="_autosummary/scorepyo.html#module-scorepyo">scorepyo</a>, <a href="autoapi/scorepyo/index.html#module-scorepyo">[1]</a>
 </li>
+        <li><a href="autoapi/scorepyo/_utils/index.html#module-scorepyo._utils">scorepyo._utils</a>
+</li>
+        <li><a href="_autosummary/scorepyo.binarizers.html#module-scorepyo.binarizers">scorepyo.binarizers</a>, <a href="autoapi/scorepyo/binarizers/index.html#module-scorepyo.binarizers">[1]</a>
+</li>
+        <li><a href="_autosummary/scorepyo.calibration.html#module-scorepyo.calibration">scorepyo.calibration</a>, <a href="autoapi/scorepyo/calibration/index.html#module-scorepyo.calibration">[1]</a>
+</li>
         <li><a href="_autosummary/scorepyo.exceptions.html#module-scorepyo.exceptions">scorepyo.exceptions</a>, <a href="autoapi/scorepyo/exceptions/index.html#module-scorepyo.exceptions">[1]</a>
 </li>
         <li><a href="_autosummary/scorepyo.models.html#module-scorepyo.models">scorepyo.models</a>, <a href="autoapi/scorepyo/models/index.html#module-scorepyo.models">[1]</a>
 </li>
-        <li><a href="_autosummary/scorepyo.preprocessing.html#module-scorepyo.preprocessing">scorepyo.preprocessing</a>, <a href="autoapi/scorepyo/preprocessing/index.html#module-scorepyo.preprocessing">[1]</a>
+        <li><a href="_autosummary/scorepyo.ranking.html#module-scorepyo.ranking">scorepyo.ranking</a>, <a href="autoapi/scorepyo/ranking/index.html#module-scorepyo.ranking">[1]</a>
 </li>
         <li><a href="autoapi/test_binarizer/index.html#module-test_binarizer">test_binarizer</a>
 </li>
@@ -501,7 +619,7 @@ title="Open an issue"
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.OptunaRiskScore">OptunaRiskScore (class in scorepyo.models)</a>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.OMPRank">OMPRank (class in scorepyo.ranking)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -514,6 +632,22 @@ title="Open an issue"
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore.predict_proba">predict_proba() (scorepyo.models._BaseRiskScore method)</a>
+
+      <ul>
+        <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.RiskScore.predict_proba">(scorepyo.models.RiskScore method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/ranking/index.html#scorepyo.ranking.Ranker">Ranker (class in scorepyo.ranking)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.RiskScore">RiskScore (class in scorepyo.models)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -521,8 +655,6 @@ title="Open an issue"
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models.OptunaRiskScore.score_logloss_objective">score_logloss_objective() (scorepyo.models.OptunaRiskScore method)</a>
-</li>
       <li>
     scorepyo
 
@@ -531,14 +663,35 @@ title="Open an issue"
 </li>
       </ul></li>
       <li>
+    scorepyo._utils
+
+      <ul>
+        <li><a href="autoapi/scorepyo/_utils/index.html#module-scorepyo._utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    scorepyo.binarizers
+
+      <ul>
+        <li><a href="_autosummary/scorepyo.binarizers.html#module-scorepyo.binarizers">module</a>, <a href="autoapi/scorepyo/binarizers/index.html#module-scorepyo.binarizers">[1]</a>
+</li>
+      </ul></li>
+      <li>
+    scorepyo.calibration
+
+      <ul>
+        <li><a href="_autosummary/scorepyo.calibration.html#module-scorepyo.calibration">module</a>, <a href="autoapi/scorepyo/calibration/index.html#module-scorepyo.calibration">[1]</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     scorepyo.exceptions
 
       <ul>
         <li><a href="_autosummary/scorepyo.exceptions.html#module-scorepyo.exceptions">module</a>, <a href="autoapi/scorepyo/exceptions/index.html#module-scorepyo.exceptions">[1]</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     scorepyo.models
 
@@ -547,10 +700,10 @@ title="Open an issue"
 </li>
       </ul></li>
       <li>
-    scorepyo.preprocessing
+    scorepyo.ranking
 
       <ul>
-        <li><a href="_autosummary/scorepyo.preprocessing.html#module-scorepyo.preprocessing">module</a>, <a href="autoapi/scorepyo/preprocessing/index.html#module-scorepyo.preprocessing">[1]</a>
+        <li><a href="_autosummary/scorepyo.ranking.html#module-scorepyo.ranking">module</a>, <a href="autoapi/scorepyo/ranking/index.html#module-scorepyo.ranking">[1]</a>
 </li>
       </ul></li>
       <li><a href="autoapi/scorepyo/models/index.html#scorepyo.models._BaseRiskScore.summary">summary() (scorepyo.models._BaseRiskScore method)</a>
@@ -592,12 +745,12 @@ title="Open an issue"
 </li>
       <li><a href="autoapi/test_models/index.html#test_models.test_max_point_value">test_max_point_value() (in module test_models)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/test_models/index.html#test_models.test_min_over_max_point_value">test_min_over_max_point_value() (in module test_models)</a>
 </li>
       <li><a href="autoapi/test_models/index.html#test_models.test_min_point_value">test_min_point_value() (in module test_models)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="autoapi/test_binarizer/index.html#test_binarizer.test_missing_categorical_columns">test_missing_categorical_columns() (in module test_binarizer)</a>
 </li>
       <li><a href="autoapi/test_binarizer/index.html#test_binarizer.test_missing_to_exclude_columns">test_missing_to_exclude_columns() (in module test_binarizer)</a>
@@ -628,7 +781,23 @@ title="Open an issue"
         <li><a href="autoapi/test_scorepyo/index.html#module-test_scorepyo">module</a>
 </li>
       </ul></li>
-      <li><a href="autoapi/scorepyo/preprocessing/index.html#scorepyo.preprocessing.AutoBinarizer.transform">transform() (scorepyo.preprocessing.AutoBinarizer method)</a>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.BinarizerProtocol.transform">transform() (scorepyo.binarizers.BinarizerProtocol method)</a>
+
+      <ul>
+        <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer.transform">(scorepyo.binarizers.EBMBinarizer method)</a>
+</li>
+      </ul></li>
+      <li><a href="autoapi/scorepyo/binarizers/index.html#scorepyo.binarizers.EBMBinarizer.transform_old">transform_old() (scorepyo.binarizers.EBMBinarizer method)</a>
+</li>
+      <li><a href="autoapi/scorepyo/_utils/index.html#scorepyo._utils.trapezoid_area">trapezoid_area() (in module scorepyo._utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autoapi/scorepyo/calibration/index.html#scorepyo.calibration.VanillaCalibrator">VanillaCalibrator (class in scorepyo.calibration)</a>
 </li>
   </ul></td>
 </tr></table>

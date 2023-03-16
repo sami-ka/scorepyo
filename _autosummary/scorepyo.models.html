@@ -53,7 +53,7 @@ const thebe_selector_output = ".output, .cell_output"
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="scorepyo.preprocessing" href="scorepyo.preprocessing.html" />
+    <link rel="next" title="scorepyo.ranking" href="scorepyo.ranking.html" />
     <link rel="prev" title="scorepyo.exceptions" href="scorepyo.exceptions.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
@@ -95,7 +95,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -149,13 +149,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -168,8 +180,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../API.html">
    API documentation
   </a>
-  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -178,12 +190,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="scorepyo.html">
      scorepyo
     </a>
-    <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul class="current">
+     <li class="toctree-l3">
+      <a class="reference internal" href="scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -195,8 +217,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -392,8 +414,11 @@ title="Print to PDF"
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/scorepyo/models/index.html#scorepyo.models.OptunaRiskScore" title="scorepyo.models.OptunaRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptunaRiskScore</span></code></a>([nb_max_features, ...])</p></td>
-<td><p>Risk score model based on Optuna.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../autoapi/scorepyo/models/index.html#scorepyo.models.EBMRiskScore" title="scorepyo.models.EBMRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EBMRiskScore</span></code></a>(nb_max_features, ...[, ...])</p></td>
+<td><p>Risk score model based on a EBMbinarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../autoapi/scorepyo/models/index.html#scorepyo.models.RiskScore" title="scorepyo.models.RiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RiskScore</span></code></a>(binarizer, nb_max_features, ...[, ...])</p></td>
+<td><p>Risk score model based on a binarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p></td>
 </tr>
 </tbody>
 </table>
@@ -433,10 +458,10 @@ title="Print to PDF"
             <p class="prev-next-title">scorepyo.exceptions</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="scorepyo.preprocessing.html" title="next page">
+    <a class='right-next' id="next-link" href="scorepyo.ranking.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">scorepyo.preprocessing</p>
+        <p class="prev-next-title">scorepyo.ranking</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

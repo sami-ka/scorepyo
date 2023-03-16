@@ -1,11 +1,13 @@
-:py:mod:`scorepyo.preprocessing`
-================================
+:py:mod:`scorepyo.binarizers`
+=============================
 
-.. py:module:: scorepyo.preprocessing
+.. py:module:: scorepyo.binarizers
 
 .. autoapi-nested-parse::
 
-   Class for the EBM-based automatic binarizer
+   Class for binarizers:
+   - EBM-based automatic binarizer
+   - TODO : Quantile binarizer
 
 
 
@@ -17,14 +19,31 @@ Classes
 
 .. autoapisummary::
 
-   scorepyo.preprocessing.AutoBinarizer
+   scorepyo.binarizers.BinarizerProtocol
+   scorepyo.binarizers.EBMBinarizer
 
 
 
 
-.. py:class:: AutoBinarizer(max_number_binaries_by_features: int = 2, keep_negative: bool = True)
+.. py:class:: BinarizerProtocol
 
-   Class for automatic feature binarizer.
+   Bases: :py:obj:`Protocol`
+
+   Protocol to respect for future and custom binarizer
+
+   .. py:method:: fit(X, y, *args, **kwargs)
+
+
+   .. py:method:: transform(X, **kwargs) -> pandas.DataFrame
+
+
+   .. py:method:: get_info() -> pandas.DataFrame
+
+
+
+.. py:class:: EBMBinarizer(max_number_binaries_by_features: int = 2, keep_negative: bool = True)
+
+   Class for automatic feature binarizer based on EBM.
 
    This class uses Explainable Boosting Machine (EBM) that are part of the General Additive Model (GAM) family.
    EBM will compute for each feature a tree. The final prediction will be made by summing up the tree value for each feature.
@@ -73,7 +92,10 @@ Classes
           Defaults to None.
 
 
-   .. py:method:: transform(X: pandas.DataFrame) -> tuple[pandas.DataFrame, pandas.DataFrame]
+   .. py:method:: transform(X: pandas.DataFrame) -> pandas.DataFrame
+
+
+   .. py:method:: transform_old(X: pandas.DataFrame) -> tuple[pandas.DataFrame, pandas.DataFrame]
 
       Transform function of binarizer
 
@@ -88,6 +110,9 @@ Classes
       Returns:
           pandas.DataFrame: Binarized features
           pandas.DataFrame: DataFrame of information of binary feature and corresponding feature
+
+
+   .. py:method:: get_info() -> pandas.DataFrame
 
 
 

@@ -93,7 +93,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../../../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../../../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -147,13 +147,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../../depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -166,8 +178,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../../../API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -176,12 +188,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../../../_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -193,8 +215,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../../_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="../../../_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -409,11 +431,6 @@ title="Print to PDF"
         </a>
        </li>
        <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._predict_proba_score">
-         _predict_proba_score
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
         <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.fit">
          fit
         </a>
@@ -436,21 +453,26 @@ title="Print to PDF"
       </ul>
      </li>
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore">
-       OptunaRiskScore
+      <a class="reference internal nav-link" href="#scorepyo.models.RiskScore">
+       RiskScore
       </a>
       <ul class="nav section-nav flex-column">
        <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective">
-         score_logloss_objective
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.fit">
+        <a class="reference internal nav-link" href="#scorepyo.models.RiskScore.fit">
          fit
         </a>
        </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.RiskScore.predict_proba">
+         predict_proba
+        </a>
+       </li>
       </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models.EBMRiskScore">
+       EBMRiskScore
+      </a>
      </li>
     </ul>
    </li>
@@ -506,11 +528,6 @@ title="Print to PDF"
         </a>
        </li>
        <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore._predict_proba_score">
-         _predict_proba_score
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
         <a class="reference internal nav-link" href="#scorepyo.models._BaseRiskScore.fit">
          fit
         </a>
@@ -533,21 +550,26 @@ title="Print to PDF"
       </ul>
      </li>
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore">
-       OptunaRiskScore
+      <a class="reference internal nav-link" href="#scorepyo.models.RiskScore">
+       RiskScore
       </a>
       <ul class="nav section-nav flex-column">
        <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective">
-         score_logloss_objective
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.models.OptunaRiskScore.fit">
+        <a class="reference internal nav-link" href="#scorepyo.models.RiskScore.fit">
          fit
         </a>
        </li>
+       <li class="toc-h5 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#scorepyo.models.RiskScore.predict_proba">
+         predict_proba
+        </a>
+       </li>
       </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.models.EBMRiskScore">
+       EBMRiskScore
+      </a>
      </li>
     </ul>
    </li>
@@ -579,8 +601,11 @@ title="Print to PDF"
 <tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo.models._BaseRiskScore" title="scorepyo.models._BaseRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BaseRiskScore</span></code></a></p></td>
 <td><p>Base class for risk score type model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#scorepyo.models.OptunaRiskScore" title="scorepyo.models.OptunaRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OptunaRiskScore</span></code></a></p></td>
-<td><p>Risk score model based on Optuna.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#scorepyo.models.RiskScore" title="scorepyo.models.RiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RiskScore</span></code></a></p></td>
+<td><p>Risk score model based on a binarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo.models.EBMRiskScore" title="scorepyo.models.EBMRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EBMRiskScore</span></code></a></p></td>
+<td><p>Risk score model based on a EBMbinarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p></td>
 </tr>
 </tbody>
 </table>
@@ -637,21 +662,8 @@ fit(self, X, y):</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore._predict_proba_score">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_predict_proba_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intercept</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore._predict_proba_score" title="Permalink to this definition">#</a></dt>
-<dd><p>Function that computes the logistic function value at score+intercept value</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>score (np.array(int)): sum of points coming from binary features
-intercept (float): intercept of score card. log-odds of having 0 point</p>
-</dd>
-<dt>Returns:</dt><dd><p>np.array(int): associated probability</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="scorepyo.models._BaseRiskScore.fit">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">NotImplementedError</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.fit" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">NotImplementedError</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scorepyo.models._BaseRiskScore.fit" title="Permalink to this definition">#</a></dt>
 <dd><p>Functions that creates the feature-point card and score card</p>
 <p>Must be defined for each child class</p>
 <dl class="simple">
@@ -697,27 +709,32 @@ proba_threshold (float, optional): probability threshold for binary classificati
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.models.</span></span><span class="sig-name descname"><span class="pre">OptunaRiskScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optuna_optimize_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="scorepyo.models.RiskScore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.models.</span></span><span class="sig-name descname"><span class="pre">RiskScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">binarizer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../binarizers/index.html#scorepyo.binarizers.BinarizerProtocol" title="scorepyo.binarizers.BinarizerProtocol"><span class="pre">scorepyo.binarizers.BinarizerProtocol</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_additional_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ranking/index.html#scorepyo.ranking.Ranker" title="scorepyo.ranking.Ranker"><span class="pre">scorepyo.ranking.Ranker</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">OMPRank()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../calibration/index.html#scorepyo.calibration.Calibrator" title="scorepyo.calibration.Calibrator"><span class="pre">scorepyo.calibration.Calibrator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">VanillaCalibrator()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enumeration_maximization_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fast_numba_auc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models.RiskScore" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#scorepyo.models._BaseRiskScore" title="scorepyo.models._BaseRiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_BaseRiskScore</span></code></a></p>
-<p>Risk score model based on Optuna.</p>
+<p>Risk score model based on a binarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p>
 <p>This class is a child class of _BaseRiskScore. It implements the fit method that creates the feature-point card and score card attribute.
-It computes them by leveraging the sampling efficiency of Optuna. Optuna is asked to select nb_max_features among all features, and assign points
-to each selected feature. It minimizes the logloss on a given dataset.</p>
+It computes them by binarizing features based on a given binarizer, ranking binary features and doing an exhaustive enumeration of features combination.
+It performs a hierarchical optimization:
+1) first it optimizes a metric based on scores. ROC AUC and/or PR AUC are good candidates as it is only based on the ranking of samples, compared to logloss which neeeds proper probabilities.
+The optimization is done by enumerating all possible selection of points for all combinations of binary feature and selecting the combination with the best value on the chosen metric;
+2) once the binary feature combination is chosen with the corresponding interger points, the logloss is optimized for each possible sum of points.</p>
 <dl class="simple">
-<dt>nb_max_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
+<dt>max_number_binaries_by_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
+</dd>
+<dt>nb_max_features: int</dt><dd><p>maximum number of binary features to select</p>
 </dd>
 <dt>min_point_value<span class="classifier">int</span></dt><dd><p>minimum points to assign for a binary feature</p>
 </dd>
 <dt>max_point_value: ExplainableBoostingClassifier</dt><dd><p>maximum points to assign for a binary feature</p>
 </dd>
+<dt>binarizer:</dt><dd><p>binarizer object that transforms continuous and categorical features into binary features</p>
+</dd>
 <dt>_df_info: pandas.DataFrame</dt><dd><p>Dataframe containing the link between a binary feature and its origin</p>
 </dd>
 </dl>
 <dl class="simple">
-<dt>fit(self, X, y):</dt><dd><p>function creating the feature-point card and score card attributes via Optuna</p>
-</dd>
-<dt>score_logloss_objective(self, trial, X, y):</dt><dd><p>function that defines the logloss function used by Optuna</p>
+<dt>fit(self, X, y):</dt><dd><p>function creating the feature-point card and score card attributes</p>
 </dd>
 </dl>
 <p>From _BaseRiskScore:</p>
@@ -735,35 +752,98 @@ _predict_proba_score(score, intercept):</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore.score_logloss_objective">
-<span class="sig-name descname"><span class="pre">score_logloss_objective</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore.score_logloss_objective" title="Permalink to this definition">#</a></dt>
-<dd><p>Logloss objective function for Risk score exploration parameters sampled with optuna.</p>
-<p>This function creates 2x`self.nb_max_features`+1 parameters for the optuna trial:
-- <cite>self.nb_max_features</cite> categorical parameters for the choice of binary features to build the risk score on
-- <cite>self.nb_max_features</cite> integer parameters for the choice of points associated to the selected binary feature
-- one float parameter for the intercept of the score card (i.e. the log odd associated to a score of 0)</p>
+<dt class="sig sig-object py" id="scorepyo.models.RiskScore.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_calib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_calib</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorical_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_binarizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models.RiskScore.fit" title="Permalink to this definition">#</a></dt>
+<dd><p>Function that search best parameters (choice of binary features, points and probabilities) of a risk score model.</p>
+<p>It computes them by binarizing features based on EBM, ranking binary features and doing an exhaustive enumeration of features combination.
+It performs a hierarchical optimization:
+1) first it optimizes ROC AUC and/or PR AUC by selecting points for all combinations of selected binary feature.
+The selection of binary features combination is done by:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li><p>ranking the binary features,</p></li>
+<li><p>taking the top features according to the ranking,</p></li>
+<li><p>enumerate all combinations of binary features,</p></li>
+<li><p>enumerate all point assignment for each combination of binary features generated.</p></li>
+<li><p>choose the best combination of binary feature and point based on a ranking metric</p></li>
+</ol>
+</div></blockquote>
+<p>Different ranking techniques are available for step b) :
+LogOddsDensity, DiverseLogOddsDensity, CumulativeMetric, BordaRank, LassoPathRank, LarsPathRank, OMPRank, FasterRiskRank
+Everyone can implement its own ranking technique, given that the customized ranker class implements the Ranker class</p>
+<p>2) once the binary feature combination is chosen with the corresponding interger points, the logloss is optimized for each possible sum of points.
+The logloss optimization can be done on a different dataset (X_calib, y_calib).
+It can be done with a vanilla mode (preferred when train or calibration set is big enough), or a bootstrapped mode to avoid overfitting when there are few samples.
+These logloss optimizer with more details can be found in the calibration script of the package.
+Everyone can implement its own calibration technique, given that the customized calibrator class implements the Calibrator class</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>trial (Optune.trial): Trial for optuna
-X (pandas.DataFrame): dataset of features to minimize scorecard logloss on
-y (nd.array): Target binary values</p>
-</dd>
-<dt>Returns:</dt><dd><p>float: log-loss value for risk score sampled parameters</p>
+<dt>Args:</dt><dd><p>X (pandas.DataFrame): Dataset of features to fit the risk score model on
+y (pandas.Series): Target binary values
+X_calib (pandas.DataFrame): Dataset of features to calibrate probabilities on
+y_calib (pandas.Series): Target binary values for calibration
+categorical_features: list of categorical features for the binarizer
+fit_binarizer: boolean to indicate the binarizer should be fitted or not</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.models.OptunaRiskScore.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#scorepyo.models.OptunaRiskScore.fit" title="Permalink to this definition">#</a></dt>
-<dd><p>Function that search best parameters (choice of binary features, points and intercept) of a risk score model with Optuna</p>
-<p>This functions calls Optuna to find the best parameters of a risk score model and then construct the feature-point card and score card attributes.</p>
+<dt class="sig sig-object py" id="scorepyo.models.RiskScore.predict_proba">
+<span class="sig-name descname"><span class="pre">predict_proba</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#scorepyo.models.RiskScore.predict_proba" title="Permalink to this definition">#</a></dt>
+<dd><p>Function that outputs probability of positive class according to risk-score model</p>
 <dl class="simple">
-<dt>Args:</dt><dd><p>X (pandas.DataFrame): Dataset of features to fit the risk score model on
-y (pandas.Series): Target binary values</p>
+<dt>Args:</dt><dd><p>X (pandas.DataFrame): dataset of features</p>
+</dd>
+<dt>Returns:</dt><dd><p>ndarray of shape (n_samples, 2): probability of negative and positive class in each column resp.</p>
 </dd>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="scorepyo.models.EBMRiskScore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.models.</span></span><span class="sig-name descname"><span class="pre">EBMRiskScore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_max_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-</span> <span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_point_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_number_binaries_by_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_negative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_additional_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranker</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../ranking/index.html#scorepyo.ranking.Ranker" title="scorepyo.ranking.Ranker"><span class="pre">scorepyo.ranking.Ranker</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">OMPRank()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibrator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../calibration/index.html#scorepyo.calibration.Calibrator" title="scorepyo.calibration.Calibrator"><span class="pre">scorepyo.calibration.Calibrator</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">VanillaCalibrator()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enumeration_maximization_metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">fast_numba_auc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.models.EBMRiskScore" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#scorepyo.models.RiskScore" title="scorepyo.models.RiskScore"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RiskScore</span></code></a></p>
+<p>Risk score model based on a EBMbinarizer, ranking of features, exhaustive enumeration with a maximization metric and a calibration method for probabilities.</p>
+<p>This class is a child class of _BaseRiskScore. It implements the fit method that creates the feature-point card and score card attribute.
+It computes them by binarizing features based on a given binarizer, ranking binary features and doing an exhaustive enumeration of features combination.
+It performs a hierarchical optimization:
+1) first it optimizes a metric based on scores. ROC AUC and/or PR AUC are good candidates as it is only based on the ranking of samples, compared to logloss which neeeds proper probabilities.
+The optimization is done by enumerating all possible selection of points for all combinations of binary feature and selecting the combination with the best value on the chosen metric;
+2) once the binary feature combination is chosen with the corresponding interger points, the logloss is optimized for each possible sum of points.</p>
+<dl class="simple">
+<dt>max_number_binaries_by_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
+</dd>
+<dt>nb_max_features: int</dt><dd><p>maximum number of binary features to select</p>
+</dd>
+<dt>min_point_value<span class="classifier">int</span></dt><dd><p>minimum points to assign for a binary feature</p>
+</dd>
+<dt>max_point_value: ExplainableBoostingClassifier</dt><dd><p>maximum points to assign for a binary feature</p>
+</dd>
+<dt>binarizer:</dt><dd><p>binarizer object that transforms continuous and categorical features into binary features</p>
+</dd>
+<dt>_df_info: pandas.DataFrame</dt><dd><p>Dataframe containing the link between a binary feature and its origin</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>fit(self, X, y):</dt><dd><p>function creating the feature-point card and score card attributes</p>
+</dd>
+</dl>
+<p>From _BaseRiskScore:</p>
+<p>&#64;staticmethod
+_predict_proba_score(score, intercept):</p>
+<blockquote>
+<div><p>computes the value of the logistic function at score+intercept value</p>
+</div></blockquote>
+<dl class="simple">
+<dt>predict(self, X, proba_threshold=0.5):</dt><dd><p>function that predicts the positive/negative class by using a threshold on the probability given by the model</p>
+</dd>
+<dt>predict_proba(self, X):</dt><dd><p>function that predicts the probability of the positive class</p>
+</dd>
+<dt>summary(self):</dt><dd><p>function that prints the feature-point card and score card of the model</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

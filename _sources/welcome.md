@@ -11,7 +11,7 @@ title: Welcome to Scorepyo Documentation
 :columns: 4
 :class: sd-m-auto
 
-<img src="images/scorepyo_logo.jpg" style="width:200px;"/>
+<img src="images/logo_zoom_wo_caption.PNG" style="width:200px;"/>
 
 :::
 
@@ -63,7 +63,7 @@ Install and run your first risk-score model!
 :link-type: doc
 :class-header: bg-light
 
-Deep-dive: Automatic binarizer ✏️
+Deep-dive: EBM binarizer ✏️
 ^^^
 
 Discover how Scorepyo leverages a recent ML model to extract binary features!
@@ -77,7 +77,7 @@ Discover how Scorepyo leverages a recent ML model to extract binary features!
 Deep-dive: Risk-score ✏️
 ^^^
 
-Learn more about risk-score model, and its link with Optuna!
+Learn more about risk-score model and the unique modular design of Scorepyo !
 :::
 ::::
 

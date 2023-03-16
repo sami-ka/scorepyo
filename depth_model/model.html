@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Optuna-based risk-score model</title>
+    <title>Scorepyo risk-score model</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -55,8 +55,8 @@ const thebe_selector_output = ".output, .cell_output"
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API documentation" href="../API.html" />
-    <link rel="prev" title="Automatic feature binarizer" href="../depth_binarizer/binarizer.html" />
+    <link rel="next" title="Miscellaneous" href="misc.html" />
+    <link rel="prev" title="EBM feature binarizer" href="../depth_binarizer/binarizer.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -97,7 +97,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -151,13 +151,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1 current active">
+ <li class="toctree-l1 current active has-children">
   <a class="current reference internal" href="#">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -170,8 +182,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -180,12 +192,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="../_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -197,8 +219,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="../_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -393,74 +415,30 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#problem-formulation">
-   Problem formulation
+  <a class="reference internal nav-link" href="#architecture">
+   Architecture
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#sets-parameters-and-variables">
-     Sets, parameters and variables
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#objective-function">
-     Objective function
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#constraints">
-     Constraints
+    <a class="reference internal nav-link" href="#binary-feature-selection-and-points-definition">
+     Binary feature selection and points definition
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#min-and-max-number-of-features">
-       Min. and max. number of features
+      <a class="reference internal nav-link" href="#ranking-of-binary-features">
+       Ranking of binary features
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#min-and-max-points-value-and-link">
-       Min. and max. points value and link
+      <a class="reference internal nav-link" href="#binary-features-combination-and-points-enumeration">
+       Binary features combination and points enumeration
       </a>
      </li>
     </ul>
    </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#optuna-modelization">
-   Optuna modelization
-  </a>
-  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     Sets, parameters and variables
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     Objective function
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#other-packages">
-   Other packages
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#risk-slim">
-     Risk-slim
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#fasterrisk">
-     FasterRisk
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#comparison-performance-with-fasterrisk">
-     Comparison performance with FasterRisk
+    <a class="reference internal nav-link" href="#probability-calibration">
+     Probability calibration
     </a>
    </li>
   </ul>
@@ -474,7 +452,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>Optuna-based risk-score model</h1>
+                <h1>Scorepyo risk-score model</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -495,74 +473,30 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#problem-formulation">
-   Problem formulation
+  <a class="reference internal nav-link" href="#architecture">
+   Architecture
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#sets-parameters-and-variables">
-     Sets, parameters and variables
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#objective-function">
-     Objective function
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#constraints">
-     Constraints
+    <a class="reference internal nav-link" href="#binary-feature-selection-and-points-definition">
+     Binary feature selection and points definition
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#min-and-max-number-of-features">
-       Min. and max. number of features
+      <a class="reference internal nav-link" href="#ranking-of-binary-features">
+       Ranking of binary features
       </a>
      </li>
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#min-and-max-points-value-and-link">
-       Min. and max. points value and link
+      <a class="reference internal nav-link" href="#binary-features-combination-and-points-enumeration">
+       Binary features combination and points enumeration
       </a>
      </li>
     </ul>
    </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#optuna-modelization">
-   Optuna modelization
-  </a>
-  <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id1">
-     Sets, parameters and variables
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#id2">
-     Objective function
-    </a>
-   </li>
-  </ul>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#other-packages">
-   Other packages
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#risk-slim">
-     Risk-slim
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#fasterrisk">
-     FasterRisk
-    </a>
-   </li>
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#comparison-performance-with-fasterrisk">
-     Comparison performance with FasterRisk
+    <a class="reference internal nav-link" href="#probability-calibration">
+     Probability calibration
     </a>
    </li>
   </ul>
@@ -577,8 +511,8 @@ title="Print to PDF"
                 
               <div>
                 
-  <section class="tex2jax_ignore mathjax_ignore" id="optuna-based-risk-score-model">
-<h1>Optuna-based risk-score model<a class="headerlink" href="#optuna-based-risk-score-model" title="Permalink to this headline">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="scorepyo-risk-score-model">
+<h1>Scorepyo risk-score model<a class="headerlink" href="#scorepyo-risk-score-model" title="Permalink to this headline">#</a></h1>
 <section id="primer-on-risk-score-model">
 <h2>Primer on risk-score model<a class="headerlink" href="#primer-on-risk-score-model" title="Permalink to this headline">#</a></h2>
 <p>Let’s start with the introduction of risk-score model from <a href="https://en.wikipedia.org/wiki/Risk_score">Wikipedia</a>:</p>
@@ -615,131 +549,249 @@ The binary features aspect is independent from the model. However the additive a
 <p class="admonition-title">Logistic regression approach</p>
 <p>For further explanation on the drawback of the rounding of logistic regression approach, the Neurips 2022 paper <a href="https://arxiv.org/pdf/2210.05846.pdf">FasterRisk: Fast and Accurate Interpretable Risk Scores</a> adresses this issue in its introduction.</p>
 </div>
-<br />
-<br />
-<p>The problem of finding sparse small integer coefficients can be explicity formulated with variables, constraints and an objective function.</p>
-<!-- ## interpretation of feature point
-log odds, similar to log regression -->
 </section>
-<section id="problem-formulation">
-<h2>Problem formulation<a class="headerlink" href="#problem-formulation" title="Permalink to this headline">#</a></h2>
-<p>The risk-score model can be modeled as an optimization problem with 3 sets of decision variables.</p>
-<section id="sets-parameters-and-variables">
-<h3>Sets, parameters and variables<a class="headerlink" href="#sets-parameters-and-variables" title="Permalink to this headline">#</a></h3>
-<p>We can introduce the following notations:</p>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">#</a></h2>
+<p>The problem can be decomposed into finding the subset of binary features, defining points for each, and defining the probabilities of each possible score.</p>
+<p>These 3 steps can be done at once or separately. The specificity of the <em>Scorepyo</em> package is that it does not rely on the logistic function to link scores and associated probability. It allows to have a wider  model search-space, with more freedom on model probabilities.</p>
+<p><em>Scorepyo</em> first combines binary feature selection and points definition, then defines the probability for each possible score.</p>
+<p>We can represent the different steps as follows :</p>
+<img src="overview_architecture_TB.svg" align="center" title='overview' style="width:700px;"/>
+<section id="binary-feature-selection-and-points-definition">
+<h3>Binary feature selection and points definition<a class="headerlink" href="#binary-feature-selection-and-points-definition" title="Permalink to this headline">#</a></h3>
+<p>The binary features selection and points definition can be decomposed into 2 steps :</p>
 <ul class="simple">
-<li><p>Sets</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\{i \in [1,...,n]\}\)</span>, set of indices of binary features</p></li>
-<li><p><span class="math notranslate nohighlight">\(X=[X_j, j \in [1,...,m]]\)</span>, set of samples with <span class="math notranslate nohighlight">\(X_j \in \{0,1\}^{m}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(y=[y_j \in \{0,1\}, j \in [1,...,m]]\)</span>, set of binary target value</p></li>
+<li><p>Ranking of binary features</p></li>
+<li><p>Enumeration and maximization</p></li>
 </ul>
-</li>
-<li><p>Parameters</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(N_{\text{min}}, N_{\text{max}}\)</span>, resp. minimum and maximum number of selected features</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_{\text{min}}\)</span>, <span class="math notranslate nohighlight">\(V_{\text{max}}\)</span>, resp. minimum and maximum value for points associated to selected features</p></li>
-</ul>
-</li>
-<li><p>Variables</p>
-<ul>
-<li><p>feature selection variables (<em>binary</em>) : <span class="math notranslate nohighlight">\(f_i\)</span>, equals to <span class="math notranslate nohighlight">\(1\)</span> if feature <span class="math notranslate nohighlight">\(i\)</span> is selected for the risk-score model</p></li>
-<li><p>log-odd/point variables (<em>relative integer</em>) : <span class="math notranslate nohighlight">\(points_i\)</span>, points associated to each binary feature</p></li>
-<li><p>log-odd intercept (<em>continuous</em>): <span class="math notranslate nohighlight">\(intercept\)</span>, log-odd when risk score is equal to 0</p></li>
-</ul>
-</li>
-</ul>
+<br />
+<section id="ranking-of-binary-features">
+<h4>Ranking of binary features<a class="headerlink" href="#ranking-of-binary-features" title="Permalink to this headline">#</a></h4>
+<p>Once the binary features are created, a binarizer such as <code class="docutils literal notranslate"><span class="pre">EBMBinarizer</span></code> stores information about the process, such as the associated log-odds, the density (number of samples positive on this binary feature) and the name of the feature it originates from. All these information can be used to rank the features.</p>
+<p>Suppose you have the following set of binary features with associated log-odds and density:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>binary_feature</p></th>
+<th class="text-align:right head"><p>log_odds</p></th>
+<th class="text-align:right head"><p>density</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>worst concave points &lt; 0.1</p></td>
+<td class="text-align:right"><p>0.58</p></td>
+<td class="text-align:right"><p>213</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>mean texture &lt; 18.81</p></td>
+<td class="text-align:right"><p>0.55</p></td>
+<td class="text-align:right"><p>130</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst concavity &gt;= 0.23</p></td>
+<td class="text-align:right"><p>-0.53</p></td>
+<td class="text-align:right"><p>210</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>area error &lt; 23.93</p></td>
+<td class="text-align:right"><p>0.45</p></td>
+<td class="text-align:right"><p>200</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst area &lt; 684.55</p></td>
+<td class="text-align:right"><p>0.44</p></td>
+<td class="text-align:right"><p>213</p></td>
+</tr>
+</tbody>
+</table>
+<p>A possible ranking would be to multiply the associated log-odd of the binary feature by the number of samples positive for this binary feature. This would give the following table:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>binary_feature</p></th>
+<th class="text-align:right head"><p>log_odds</p></th>
+<th class="text-align:right head"><p>density</p></th>
+<th class="text-align:right head"><p>sum_log_odds</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>worst concave points &lt; 0.1</p></td>
+<td class="text-align:right"><p>0.58</p></td>
+<td class="text-align:right"><p>213</p></td>
+<td class="text-align:right"><p>123.54</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>mean texture &lt; 18.81</p></td>
+<td class="text-align:right"><p>0.55</p></td>
+<td class="text-align:right"><p>130</p></td>
+<td class="text-align:right"><p>71.5</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst concavity &gt;= 0.23</p></td>
+<td class="text-align:right"><p>-0.53</p></td>
+<td class="text-align:right"><p>210</p></td>
+<td class="text-align:right"><p>111.3</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>area error &lt; 23.93</p></td>
+<td class="text-align:right"><p>0.45</p></td>
+<td class="text-align:right"><p>200</p></td>
+<td class="text-align:right"><p>90</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst area &lt; 684.55</p></td>
+<td class="text-align:right"><p>0.44</p></td>
+<td class="text-align:right"><p>213</p></td>
+<td class="text-align:right"><p>93.72</p></td>
+</tr>
+</tbody>
+</table>
+<p>The ranking of binary features would then be :</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>binary_feature</p></th>
+<th class="text-align:right head"><p>log_odds</p></th>
+<th class="text-align:right head"><p>density</p></th>
+<th class="text-align:right head"><p>sum_log_odds</p></th>
+<th class="text-align:right head"><p>rank</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>worst concave points &lt; 0.1</p></td>
+<td class="text-align:right"><p>0.58</p></td>
+<td class="text-align:right"><p>213</p></td>
+<td class="text-align:right"><p>123.54</p></td>
+<td class="text-align:right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>worst concavity &gt;= 0.23</p></td>
+<td class="text-align:right"><p>-0.53</p></td>
+<td class="text-align:right"><p>210</p></td>
+<td class="text-align:right"><p>111.3</p></td>
+<td class="text-align:right"><p>2</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst area &lt; 684.55</p></td>
+<td class="text-align:right"><p>0.44</p></td>
+<td class="text-align:right"><p>213</p></td>
+<td class="text-align:right"><p>93.72</p></td>
+<td class="text-align:right"><p>3</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>area error &lt; 23.93</p></td>
+<td class="text-align:right"><p>0.45</p></td>
+<td class="text-align:right"><p>200</p></td>
+<td class="text-align:right"><p>90</p></td>
+<td class="text-align:right"><p>4</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>mean texture &lt; 18.81</p></td>
+<td class="text-align:right"><p>0.55</p></td>
+<td class="text-align:right"><p>130</p></td>
+<td class="text-align:right"><p>71.5</p></td>
+<td class="text-align:right"><p>5</p></td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../_autosummary/scorepyo.ranking.html">here</a>  for more information on available rankers.</p>
+<p>Once the features are ranked, we keep the top-<span class="math notranslate nohighlight">\(k\)</span> features according to the ranking, with <span class="math notranslate nohighlight">\(k\)</span> being a hyperparameter of the risk-score model. This hyperparameter implies a tradeoff between computation time and size of the exploration.</p>
+<p>Feel free to design any ranker you feel would be more appropriate, and compare it to the other existing ones. The package is designed to evolve by increasing the possibilities for each component, and adding new rankers is a part of this task.</p>
+<br />
 </section>
-<section id="objective-function">
-<h3>Objective function<a class="headerlink" href="#objective-function" title="Permalink to this headline">#</a></h3>
-<p>The objective function is the minimization of the logloss of the computed risk on training samples:</p>
-<p><span class="math notranslate nohighlight">\(min \sum_{j=1}^{m}y_jlog(p_j) +(1-y_j)log(1-p_j)\)</span></p>
-<p>with <span class="math notranslate nohighlight">\(p_j = \frac{1}{1+e^{-[\sum_i (points_iX_{ji} F_i)+intercept]}}\)</span></p>
-</section>
-<section id="constraints">
-<h3>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">#</a></h3>
-<section id="min-and-max-number-of-features">
-<h4>Min. and max. number of features<a class="headerlink" href="#min-and-max-number-of-features" title="Permalink to this headline">#</a></h4>
-<p>This constraint enforces that the number of selected features lies in the interval defined by <span class="math notranslate nohighlight">\(N_{\text{min}}\)</span> and <span class="math notranslate nohighlight">\(N_{\text{max}}\)</span>.</p>
-<p><span class="math notranslate nohighlight">\(N_{\text{min}} \leq \sum_{i=1}^n f_i \leq N_{\text{max}}\)</span></p>
-</section>
-<section id="min-and-max-points-value-and-link">
-<h4>Min. and max. points value and link<a class="headerlink" href="#min-and-max-points-value-and-link" title="Permalink to this headline">#</a></h4>
-<!-- These constraints enforce that each points value associated to the selected features lies in the interval defined by $V_{\text{min}}$ and $V_{\text{max}}$.
-
-$V_{\text{min}} \leq points_i \leq V_{\text{max}}, \forall i\in [1,...,n]$
-
-#### Link selection of features and points associated -->
-<p>These constraints serve two purposes : bound point values to their possible minimum and maximum values, and link selection of features and their associated points. Indeed, we want to make sure that non-selected features will have 0 point associated to them.</p>
-<p><span class="math notranslate nohighlight">\(V_{\text{min}}f_i \leq points_i \leq V_{\text{max}}f_i, \forall i \in [1,...,n]\)</span></p>
-<div class="admonition-note admonition">
-<p class="admonition-title">Note</p>
-<p>Note that in this formulation, the maximum number of selected features is always respected, unlike the minimum number of selected features. The model could select some features and assign them 0 point, this would be equate to not selecting that feature.</p>
+<section id="binary-features-combination-and-points-enumeration">
+<h4>Binary features combination and points enumeration<a class="headerlink" href="#binary-features-combination-and-points-enumeration" title="Permalink to this headline">#</a></h4>
+<p>Now that the features are ranked, the next step is to enumerate all possible combinations of binary features within the top <span class="math notranslate nohighlight">\(k\)</span> binary features. This means that the enumeration will yield <span class="math notranslate nohighlight">\(\binom{k}{s}\)</span> combinations. This explains why <span class="math notranslate nohighlight">\(k\)</span> controls the tradeoff between exploration and computation time. Here is a figure illustrating the increase of combinations tested when increasing <span class="math notranslate nohighlight">\(k\)</span>, for the same model size <span class="math notranslate nohighlight">\(s\)</span>.</p>
+<img src="illustration_topk_increase.PNG" align="center" title='overview' style="width:500px;"/>
+<p>For each combination of <span class="math notranslate nohighlight">\(s\)</span> binary features among the top <span class="math notranslate nohighlight">\(k\)</span>, <strong>Scorepyo</strong> will enumerate all possible points combination. This corresponds to the cartesian product of a range of integers for each binary feature.</p>
+<p>In order to lower as much as possible the number of possibilities, the range of integers for each binary feature will vary. Suppose the log-odd value associated to a binary feature is negative, then the range of possible integer values will only be from the minimum point value allowed by the model to -1. Conversely, in case the associated log-odd is positive, then the range will be from 1 to the maximum point value allowed by the model.</p>
+<p>You will find below an example of point definitions for 3 features, a minimum point value of -2 and a maximum point value of 2.</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:left head"><p>binary_feature</p></th>
+<th class="text-align:right head"><p>log_odds</p></th>
+<th class="text-align:right head"><p>range_possible_points</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:left"><p>worst concave points &lt; 0.1</p></td>
+<td class="text-align:right"><p>0.58</p></td>
+<td class="text-align:right"><p>[1,2]</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:left"><p>worst concavity &gt;= 0.23</p></td>
+<td class="text-align:right"><p>-0.53</p></td>
+<td class="text-align:right"><p>[-2,-1]</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:left"><p>worst area &lt; 684.55</p></td>
+<td class="text-align:right"><p>0.44</p></td>
+<td class="text-align:right"><p>[1,2]</p></td>
+</tr>
+</tbody>
+</table>
+<br />
+<p>This will lead to all the following points combination for these 3 features:</p>
+<table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="text-align:right head"><p>worst concave points &lt; 0.1</p></th>
+<th class="text-align:right head"><p>worst concavity &gt;= 0.23</p></th>
+<th class="text-align:right head"><p>worst area &lt; 684.55</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-align:right"><p>1</p></td>
+<td class="text-align:right"><p>-2</p></td>
+<td class="text-align:right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:right"><p>1</p></td>
+<td class="text-align:right"><p>-2</p></td>
+<td class="text-align:right"><p>2</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:right"><p>1</p></td>
+<td class="text-align:right"><p>-1</p></td>
+<td class="text-align:right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:right"><p>1</p></td>
+<td class="text-align:right"><p>-1</p></td>
+<td class="text-align:right"><p>2</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:right"><p>2</p></td>
+<td class="text-align:right"><p>-2</p></td>
+<td class="text-align:right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:right"><p>2</p></td>
+<td class="text-align:right"><p>-2</p></td>
+<td class="text-align:right"><p>2</p></td>
+</tr>
+<tr class="row-even"><td class="text-align:right"><p>2</p></td>
+<td class="text-align:right"><p>-1</p></td>
+<td class="text-align:right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td class="text-align:right"><p>2</p></td>
+<td class="text-align:right"><p>-1</p></td>
+<td class="text-align:right"><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>We can observe how the number of combinations explodes and why constructing a risk-score model is a combinatorial problem. This outlines the importance of the quality of the ranker, in order to put at the top the best features to work with.</p>
+<br />
+<p>We can now compute the score (i.e. sum of points) on each sample for each point combination. The selection of features and points combination kept will be the combination with the best value on the defined metric. The chosen metric will be maximized.</p>
+<p>The scores on each samples naturally rank the samples. As the scores are not probabilities yet, ranking metrics such as ROC-AUC or Average Precision are preferable at this stage. Like the ranking step, any custom metric based on a list of integer scores and a binary target can be used.</p>
+<div class="admonition-fast-numba-roc-auc admonition">
+<p class="admonition-title">Fast numba ROC-AUC</p>
+<p>There exists in <strong>Scorepyo</strong> a fast numba implementation of ROC-AUC taken from <a href="https://github.com/diditforlulz273/fastauc/blob/main/fastauc/fast_auc.py"> this repo</a>.</p>
 </div>
-<p>We could also add other constraints, such as limit or force the number of selected features within defined subsets, etc.</p>
-<!-- ## Optuna implementation -->
-<p>In this formulation, there are <span class="math notranslate nohighlight">\(2n+1\)</span> variables and <span class="math notranslate nohighlight">\(n+1\)</span> constraints, with <span class="math notranslate nohighlight">\(n\)</span> being the number of binary features. The size of this problem is relatively small, but the hard part is in the combination of the objective function, which involves a non linear (log-loss) function with a lot of samples, and integer variables.</p>
+<br />
+Enumerating all combinations 1 by 1 takes a lot of time but fit in memory, and  doing all combinations with numpy is more efficient but can take too much memory. Therefore, the <a href="https://www.dask.org/">Dask package</a>  has been chosen to select the best combination of features and points, as it can work out-of-memory if needed, and parallelize as much as possible the different computations.
+<br />
 </section>
 </section>
-</section>
-<section id="optuna-modelization">
-<h2>Optuna modelization<a class="headerlink" href="#optuna-modelization" title="Permalink to this headline">#</a></h2>
-<p>To handle this problem with Optuna, we should not exactly use the same variables, as it is better to have a smaller number of variables with larger domain.</p>
-<section id="id1">
-<h3>Sets, parameters and variables<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<section id="probability-calibration">
+<h3>Probability calibration<a class="headerlink" href="#probability-calibration" title="Permalink to this headline">#</a></h3>
+<p>At this stage, the selection of binary features and their associated point has been done so given a calibration set, each sample has a score.
+For each possible score <span class="math notranslate nohighlight">\(i\)</span>, we have the information of positive label samples (<span class="math notranslate nohighlight">\(n^+_i\)</span>) and negative label samples (<span class="math notranslate nohighlight">\(n^-_i\)</span>). A perfectly calibrated model on the training set would output a probability of <span class="math notranslate nohighlight">\(\frac{n^+_i}{n^+_i+n^-_i}\)</span> for each score <span class="math notranslate nohighlight">\(i\)</span>. This is also the solution that minimizes the log loss (see proof <a href="misc.md">here</a>).</p>
+<p>However in risk-score model, you need to respect an ordering constraint of having an increasing probability with the score. In package like risk-slim or fasterrisk, this is done by using the logistic function on the score, with eventually an additional multiplier term for fasterrisk.</p>
+<p><strong>Scorepyo</strong> performs probability calibration by finding the probabilities for each score, respecting the ordering constraint, that optimize the logloss.
+This problem is convex, and is solved thanks to the <a href="https://github.com/cvxpy/cvxpy">CVXPY</a> package.</p>
+<div class="admonition-calibration-set admonition">
+<p class="admonition-title">Calibration set</p>
+<p>You can give the  calibration set via arguments in the fit method. If none are provided, calibration will be done on the training set.</p>
+</div>
+<p>What is described here is done by the <code class="docutils literal notranslate"><span class="pre">VanillaCalibrator</span></code> class. As with the ranker, or the enumeration maximization metric, you can create your custom calibrator class, given that it respects the convention defined in the package.</p>
+<p>As examples of that, <strong>Scorepyo</strong> provides 2 additional calibrators that are useful when the logloss of the calibration set is deteriorated too much on a test set, mostly due to calibration set size. There exists <code class="docutils literal notranslate"><span class="pre">BootstrappedCalibrator</span></code> that bootstraps the calibration set in order to have multiple datasets coming from the same distribution. After bootstrapping a specific number of datasets, it will find probabilities that either :</p>
 <ul class="simple">
-<li><p>Sets</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\{i \in [1,...,n]\}\)</span>, set of binary features</p></li>
-<li><p><span class="math notranslate nohighlight">\(X=[X_j, j \in [1,...,m]]\)</span>, set of samples with <span class="math notranslate nohighlight">\(X_j \in \{0,1\}^{m}\)</span></p></li>
-<li><p><span class="math notranslate nohighlight">\(y=[y_j \in \{0,1\}, j \in [1,...,m]]\)</span>, set of binary target value</p></li>
+<li><p>optimize the average logloss on all bootstrapped datasets</p></li>
+<li><p>optimize the worst logloss of all bootstrapped datasets</p></li>
 </ul>
-</li>
-<li><p>Parameters</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(N_{\text{min}}, N_{\text{max}}\)</span>, resp. minimum and maximum number of selected features</p></li>
-<li><p><span class="math notranslate nohighlight">\(V_{\text{min}}\)</span>, <span class="math notranslate nohighlight">\(V_{\text{max}}\)</span>, resp. minimum and maximum value for points associated to selected features</p></li>
-</ul>
-</li>
-<li><p>Variables</p>
-<ul>
-<li><p>feature selection variables (<em>categorical</em>) : <span class="math notranslate nohighlight">\(cf_k\)</span>, equals to <span class="math notranslate nohighlight">\(i\)</span> if feature <span class="math notranslate nohighlight">\(i\)</span> is selected for the risk-score model for the <span class="math notranslate nohighlight">\(k^{th}\)</span> selected features, <span class="math notranslate nohighlight">\(k \in [1,...,N_{\text{max}}]\)</span></p></li>
-<li><p>log-odd/point variables (<em>relative integer</em>) : <span class="math notranslate nohighlight">\(points_k\)</span>, points associated to <span class="math notranslate nohighlight">\(k^{th}\)</span> selected features</p></li>
-<li><p>log-odd intercept (<em>continuous</em>): <span class="math notranslate nohighlight">\(intercept\)</span>, log-odd when risk score is equal to</p></li>
-</ul>
-</li>
-</ul>
-<p>Observe that now we are left only with <span class="math notranslate nohighlight">\(2N_{\text{max}}+1\)</span> variables</p>
+<p>This approach helps by putting some uncertainty on the dataset used for calibration, and reduce overfitting, especially if you are using the training set because of a reduced dataset.</p>
 </section>
-<section id="id2">
-<h3>Objective function<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
-<p>The objective function is still the minimization of the logloss of the computed risk on training samples:</p>
-<p><span class="math notranslate nohighlight">\(min \sum_{j=1}^{m}y_jlog(p_j) +(1-y_j)log(1-p_j)\)</span></p>
-<p>with <span class="math notranslate nohighlight">\(p_j = \frac{1}{1+e^{-[\sum_k (points_kX_{jcf_k} F_{cf_k})+intercept]}}\)</span></p>
-<p>Since Optuna offers the possibility to put any objective function, we can also use other classification metrics (e.g. average precision, ROC AUC).</p>
-<p>It will efficiently samples value for the <span class="math notranslate nohighlight">\(2N_{\text{max}}\)</span> variables in order to minimize the log-loss.</p>
-<div class="admonition-note admonition">
-<p class="admonition-title">Note</p>
-<p>Note that nothing prevents Optuna to sample a value of 0 point for one of the selected binary features.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">OptunaRiskScore</span></code> model will implement in future developments the enforcement of the selection of a minimum number of features.</p>
+</section>
+<div class="toctree-wrapper compound">
 </div>
-</section>
-</section>
-<section id="other-packages">
-<h2>Other packages<a class="headerlink" href="#other-packages" title="Permalink to this headline">#</a></h2>
-<section id="risk-slim">
-<h3>Risk-slim<a class="headerlink" href="#risk-slim" title="Permalink to this headline">#</a></h3>
-<p><a href="https://github.com/ustunb/risk-slim" target="_blank">risk-slim</a> has an elegant approach mixing Machine Learning and Integer Linear Programming (ILP), that provides the ability to integrate preferences and constraints on the subset of features, and their associated point. It is unfortunately based on CPLEX, a commercial ILP solver that limits its use, and also have trouble converging in large dimensions.</p>
-</section>
-<section id="fasterrisk">
-<h3>FasterRisk<a class="headerlink" href="#fasterrisk" title="Permalink to this headline">#</a></h3>
-<p><a href="https://github.com/jiachangliu/FasterRisk" target="_blank">FasterRisk</a> is a recent package that makes the computation much faster by dropping the ILP approach and providing an other approach to explore this large space of solutions and generate a list of interesting risk-score models that will be diverse. This approach does not integrate constraints as risk-slim does, but does a great job at quickly computing risk-score models. It does not provide an automatic feature binarizer though.</p>
-</section>
-<section id="comparison-performance-with-fasterrisk">
-<h3>Comparison performance with FasterRisk<a class="headerlink" href="#comparison-performance-with-fasterrisk" title="Permalink to this headline">#</a></h3>
-<p>Coming soon.</p>
-</section>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -773,13 +825,13 @@ $V_{\text{min}} \leq points_i \leq V_{\text{max}}, \forall i\in [1,...,n]$
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
             <p class="prev-next-subtitle">previous</p>
-            <p class="prev-next-title">Automatic feature binarizer</p>
+            <p class="prev-next-title">EBM feature binarizer</p>
         </div>
     </a>
-    <a class='right-next' id="next-link" href="../API.html" title="next page">
+    <a class='right-next' id="next-link" href="misc.html" title="next page">
     <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">API documentation</p>
+        <p class="prev-next-title">Miscellaneous</p>
     </div>
     <i class="fas fa-angle-right"></i>
     </a>

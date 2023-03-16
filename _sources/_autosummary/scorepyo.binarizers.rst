@@ -1,7 +1,7 @@
-scorepyo.preprocessing
-======================
+scorepyo.binarizers
+===================
 
-.. automodule:: scorepyo.preprocessing
+.. automodule:: scorepyo.binarizers
 
    
    
@@ -17,7 +17,8 @@ scorepyo.preprocessing
 
    .. autosummary::
    
-      AutoBinarizer
+      BinarizerProtocol
+      EBMBinarizer
    
    
 

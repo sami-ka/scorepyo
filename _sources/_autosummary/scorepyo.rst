@@ -27,7 +27,9 @@
    :toctree:
    :recursive:
 
+   scorepyo.binarizers
+   scorepyo.calibration
    scorepyo.exceptions
    scorepyo.models
-   scorepyo.preprocessing
+   scorepyo.ranking
 

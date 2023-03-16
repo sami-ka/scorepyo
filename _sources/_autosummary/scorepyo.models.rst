@@ -17,7 +17,8 @@ scorepyo.models
 
    .. autosummary::
    
-      OptunaRiskScore
+      EBMRiskScore
+      RiskScore
    
    
 

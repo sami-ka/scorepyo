@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>scorepyo.preprocessing</title>
+    <title>scorepyo._utils</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -93,7 +93,7 @@ const thebe_selector_output = ".output, .cell_output"
         
       
       
-      <img src="../../../_static/square_logo_1000pxl.svg" class="logo" alt="logo">
+      <img src="../../../_static/logo_zoom.PNG" class="logo" alt="logo">
       
       
     </a>
@@ -147,13 +147,25 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../../../depth_binarizer/binarizer.html">
-   Automatic feature binarizer
+   EBM feature binarizer
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="../../../depth_model/model.html">
-   Optuna-based risk-score model
+   Scorepyo risk-score model
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../../../depth_model/misc.html">
+     Miscellaneous
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 <p aria-level="2" class="caption" role="heading">
@@ -166,8 +178,8 @@ const thebe_selector_output = ".output, .cell_output"
   <a class="reference internal" href="../../../API.html">
    API documentation
   </a>
-  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
-  <label for="toctree-checkbox-2">
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
    <i class="fas fa-chevron-down">
    </i>
   </label>
@@ -176,12 +188,22 @@ const thebe_selector_output = ".output, .cell_output"
     <a class="reference internal" href="../../../_autosummary/scorepyo.html">
      scorepyo
     </a>
-    <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
-    <label for="toctree-checkbox-3">
+    <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+    <label for="toctree-checkbox-4">
      <i class="fas fa-chevron-down">
      </i>
     </label>
     <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.binarizers.html">
+       scorepyo.binarizers
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="../../../_autosummary/scorepyo.calibration.html">
+       scorepyo.calibration
+      </a>
+     </li>
      <li class="toctree-l3">
       <a class="reference internal" href="../../../_autosummary/scorepyo.exceptions.html">
        scorepyo.exceptions
@@ -193,8 +215,8 @@ const thebe_selector_output = ".output, .cell_output"
       </a>
      </li>
      <li class="toctree-l3">
-      <a class="reference internal" href="../../../_autosummary/scorepyo.preprocessing.html">
-       scorepyo.preprocessing
+      <a class="reference internal" href="../../../_autosummary/scorepyo.ranking.html">
+       scorepyo.ranking
       </a>
      </li>
     </ul>
@@ -291,7 +313,7 @@ title="Source repository"
       </li>
       
       <li>
-        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fautoapi/scorepyo/preprocessing/index.html&body=Your%20issue%20content%20here."
+        <a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fautoapi/scorepyo/_utils/index.html&body=Your%20issue%20content%20here."
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -319,7 +341,7 @@ title="Open an issue"
   <div class="menu-dropdown__content">
     <ul>
       <li>
-        <a href="../../../_sources/autoapi/scorepyo/preprocessing/index.rst"
+        <a href="../../../_sources/autoapi/scorepyo/_utils/index.rst"
    class="headerbtn"
    data-toggle="tooltip"
 data-placement="left"
@@ -384,26 +406,29 @@ title="Print to PDF"
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#classes">
-     Classes
+    <a class="reference internal nav-link" href="#functions">
+     Functions
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer">
-       AutoBinarizer
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc">
+       fast_numba_auc
       </a>
-      <ul class="nav section-nav flex-column">
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer.fit">
-         fit
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer.transform">
-         transform
-        </a>
-       </li>
-      </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.trapezoid_area">
+       trapezoid_area
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc_nonw">
+       fast_numba_auc_nonw
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc_w">
+       fast_numba_auc_w
+      </a>
      </li>
     </ul>
    </li>
@@ -418,7 +443,7 @@ title="Print to PDF"
         <div class="col pl-md-3 pl-lg-5 content-container">
             <!-- Table of contents that is only displayed when printing the page -->
             <div id="jb-print-docs-body" class="onlyprint">
-                <h1>scorepyo.preprocessing</h1>
+                <h1>scorepyo._utils</h1>
                 <!-- Table of contents -->
                 <div id="print-main-content">
                     <div id="jb-print-toc">
@@ -434,26 +459,29 @@ title="Print to PDF"
   </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#classes">
-     Classes
+    <a class="reference internal nav-link" href="#functions">
+     Functions
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h4 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer">
-       AutoBinarizer
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc">
+       fast_numba_auc
       </a>
-      <ul class="nav section-nav flex-column">
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer.fit">
-         fit
-        </a>
-       </li>
-       <li class="toc-h5 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#scorepyo.preprocessing.AutoBinarizer.transform">
-         transform
-        </a>
-       </li>
-      </ul>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.trapezoid_area">
+       trapezoid_area
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc_nonw">
+       fast_numba_auc_nonw
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo._utils.fast_numba_auc_w">
+       fast_numba_auc_w
+      </a>
      </li>
     </ul>
    </li>
@@ -469,89 +497,64 @@ title="Print to PDF"
                 
               <div>
                 
-  <section id="module-scorepyo.preprocessing">
-<span id="scorepyo-preprocessing"></span><h1><a class="reference internal" href="#module-scorepyo.preprocessing" title="scorepyo.preprocessing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scorepyo.preprocessing</span></code></a><a class="headerlink" href="#module-scorepyo.preprocessing" title="Permalink to this headline">#</a></h1>
-<p>Class for the EBM-based automatic binarizer</p>
+  <section id="module-scorepyo._utils">
+<span id="scorepyo-utils"></span><h1><a class="reference internal" href="#module-scorepyo._utils" title="scorepyo._utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scorepyo._utils</span></code></a><a class="headerlink" href="#module-scorepyo._utils" title="Permalink to this headline">#</a></h1>
+<p>Fast Numba ROC AUC</p>
+<p>credit : <a class="reference external" href="https://github.com/diditforlulz273/fastauc/blob/main/fastauc/fast_auc.py">https://github.com/diditforlulz273/fastauc/blob/main/fastauc/fast_auc.py</a></p>
 <section id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">#</a></h2>
-<section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">#</a></h3>
+<section id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">#</a></h3>
 <table class="autosummary longtable table autosummary">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo.preprocessing.AutoBinarizer" title="scorepyo.preprocessing.AutoBinarizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AutoBinarizer</span></code></a></p></td>
-<td><p>Class for automatic feature binarizer.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo._utils.fast_numba_auc" title="scorepyo._utils.fast_numba_auc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_numba_auc</span></code></a>(→ float)</p></td>
+<td><p>a function to calculate AUC via python + numba.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#scorepyo._utils.trapezoid_area" title="scorepyo._utils.trapezoid_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trapezoid_area</span></code></a>(→ float)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#scorepyo._utils.fast_numba_auc_nonw" title="scorepyo._utils.fast_numba_auc_nonw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_numba_auc_nonw</span></code></a>(→ float)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#scorepyo._utils.fast_numba_auc_w" title="scorepyo._utils.fast_numba_auc_w"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fast_numba_auc_w</span></code></a>(→ float)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
-<dl class="py class">
-<dt class="sig sig-object py" id="scorepyo.preprocessing.AutoBinarizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.preprocessing.</span></span><span class="sig-name descname"><span class="pre">AutoBinarizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_number_binaries_by_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_negative</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.preprocessing.AutoBinarizer" title="Permalink to this definition">#</a></dt>
-<dd><p>Class for automatic feature binarizer.</p>
-<p>This class uses Explainable Boosting Machine (EBM) that are part of the General Additive Model (GAM) family.
-EBM will compute for each feature a tree. The final prediction will be made by summing up the tree value for each feature.
-Since it’s single-feature tree, it actually is a piecewise constant scalar function.
-For each interval where the single-feature tree yields a constant contribution for the prediction, this class computes a binary feature.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="scorepyo._utils.fast_numba_auc">
+<span class="sig-prename descclassname"><span class="pre">scorepyo._utils.</span></span><span class="sig-name descname"><span class="pre">fast_numba_auc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo._utils.fast_numba_auc" title="Permalink to this definition">#</a></dt>
+<dd><p>a function to calculate AUC via python + numba.
+Args:</p>
+<blockquote>
+<div><p>y_true (np.array): 1D numpy array as true labels.
+y_score (np.array): 1D numpy array as probability predictions.
+sample_weight (np.array): 1D numpy array as sample weights, optional.</p>
+</div></blockquote>
 <dl class="simple">
-<dt>max_number_binaries_by_features<span class="classifier">int</span></dt><dd><p>maximum number of binary features to compute by feature</p>
-</dd>
-<dt>keep_negative<span class="classifier">bool</span></dt><dd><p>indicator to keep features that decrease predicted probability</p>
-</dd>
-<dt>_ebm: ExplainableBoostingClassifier</dt><dd><p>EBM classifier that is fitted and used to binarize feature</p>
-</dd>
-<dt>_one_hot_encoder: OneHotEncoder</dt><dd><p>Scikit-learn one-hot encoder for categorical features</p>
-</dd>
-<dt>_categorical_features: list(str)</dt><dd><p>list of categorical features</p>
-</dd>
-<dt>_continuous_features: list(str)</dt><dd><p>list of continuous features</p>
-</dd>
-<dt>_to_exclude_features: list(str)</dt><dd><p>list of features to exclude from binarizing</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>fit(X, y, categorical_features=”auto”, to_exclude_features=None))</dt><dd><p>fits the EBM model on X,y and the one-hot encoder on the categorical features</p>
-</dd>
-<dt>transform(X)</dt><dd><p>transforms features in X into binarized features based on previously fitted EBM and one-hot encoder</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.preprocessing.AutoBinarizer.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categorical_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_exclude_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scorepyo.preprocessing.AutoBinarizer.fit" title="Permalink to this definition">#</a></dt>
-<dd><p>Fit function of binarizer</p>
-<p>This functions fits the EBM on X,y and the one-hot encoder on X.
-It stores the categorical, continuous and to exclude columns.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>X (pandas.Dataframe): Dataframe of features to use to fit the binarizer
-y (pandas.Series): target values
-categorical_features (list(str), optional): list of categorical features to one-hot encode.
-Defaults to “auto” to automatically detect categorical features.
-to_exclude_features (list(str), optional): List of features to leave as is.
-Defaults to None.</p>
+<dt>Returns:</dt><dd><p>AUC score as float</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="scorepyo.preprocessing.AutoBinarizer.transform">
-<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pandas.DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">pandas.DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#scorepyo.preprocessing.AutoBinarizer.transform" title="Permalink to this definition">#</a></dt>
-<dd><p>Transform function of binarizer</p>
-<p>This function uses the previously fitted EBM to extract binary features from continuous features.
-For each continuous feature, it looks at each constructed interval to create a binary feature based on feature value belonging to this interval or not.
-For categorical features, it uses the one-hot encoder previously fitted.
-For features to exclude from the binarizer, it copies the values in the new dataset.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>X (pandas.DataFrame): Dataframe of features to transform</p>
-</dd>
-<dt>Returns:</dt><dd><p>pandas.DataFrame: Binarized features
-pandas.DataFrame: DataFrame of information of binary feature and corresponding feature</p>
-</dd>
-</dl>
-</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scorepyo._utils.trapezoid_area">
+<span class="sig-prename descclassname"><span class="pre">scorepyo._utils.</span></span><span class="sig-name descname"><span class="pre">trapezoid_area</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo._utils.trapezoid_area" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
-</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="scorepyo._utils.fast_numba_auc_nonw">
+<span class="sig-prename descclassname"><span class="pre">scorepyo._utils.</span></span><span class="sig-name descname"><span class="pre">fast_numba_auc_nonw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo._utils.fast_numba_auc_nonw" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="scorepyo._utils.fast_numba_auc_w">
+<span class="sig-prename descclassname"><span class="pre">scorepyo._utils.</span></span><span class="sig-name descname"><span class="pre">fast_numba_auc_w</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.typing.NDArray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="headerlink" href="#scorepyo._utils.fast_numba_auc_w" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </section>
 </section>
@@ -570,7 +573,7 @@ pandas.DataFrame: DataFrame of information of binary feature and corresponding f
         },
         kernelOptions: {
             kernelName: "python3",
-            path: "./autoapi\scorepyo\preprocessing"
+            path: "./autoapi\scorepyo\_utils"
         },
         predefinedOutput: true
     }
