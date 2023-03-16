@@ -49,35 +49,34 @@ jobs:
           pip install --upgrade pip wheel
           pip install core_module/.[dev,doc] --no-cache-dir
 
-      - name: format check - black+isort
+      # - name: format check - black+isort
+      #   run: |
+      #     python codepal.py format_CI
+
+      - name: format check - black
         run: |
-          python codepal.py format_CI
+          python -m black --check --diff . --config ./core_module/pyproject.toml
 
-      # - name: format check - black
-      #   run: |
-      #     python -m black --check --diff . --config ./core_module/pyproject.toml
-
-      # - name: format check - isort
-      #   run: |
-      #     python -m isort --diff --check-only . --settings-path ./core_module/pyproject.toml
+      - name: format check - isort
+        run: |
+          python -m isort --diff --check . --settings-path ./core_module/pyproject.toml
       #--settings-path is suppose to point to the directory and not the file?
       - name: Test with pytest
         run: |
-          python codepal.py test
 
-      # python -m pytest -rfs --cov=scorepyo --cov-report term-missing
+          python -m pytest -rfs --cov=scorepyo --cov-report term-missing
 
       - name: Linting
         run: |
-          python codepal.py lint
+          # python codepal.py lint
 
-        # python -m pylint --rcfile=./core_module/pyproject.toml .
+          python -m pylint --rcfile=./core_module/pyproject.toml .
       - name: type checking :mypy
         run: |
-          python codepal.py mypy
+          # python codepal.py mypy
 
-        # python -m mypy --config-file ./core_module/pyproject.toml core_module/
+          python -m mypy --config-file ./core_module/pyproject.toml core_module/
       - name: check vulnerabilities
         run: |
-          python codepal.py bandit
-        # python -m bandit -c ./core_module/pyproject.toml -r .
+          # python codepal.py bandit
+          python -m bandit -c ./core_module/pyproject.toml -r .
