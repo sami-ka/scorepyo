@@ -2,11 +2,14 @@
 """
 
 from abc import ABC, abstractmethod
+from typing import Any, List
 
 import cvxpy as cp
 import numpy as np
 import pandas as pd
 from numpy.random import default_rng
+
+from scorepyo.exceptions import NonIncreasingProbabilities, NonProbabilityValues
 
 
 class Calibrator(ABC):
@@ -40,8 +43,6 @@ class Calibrator(ABC):
         Returns:
             pd.DataFrame: DataFrame containing the probability assigned to each possible score( or sum of points)
         """
-        # TODO check Pandera input
-        # TODO check pandera input?
 
         # computing the proportion of positive samples for each possible score value
         # This corresponds to the natural probability that would be the most calibrated without the reordering constraints
@@ -79,13 +80,35 @@ class Calibrator(ABC):
         # Call _calibrate function of child class
         list_calibrated_proba = self._calibrate(df_cvx, **kwargs)
 
-        # TODO check Pandera output
+        _check_is_probability = all(
+            [(0 <= p) and (p <= 1) for p in list_calibrated_proba]
+        )
+
+        if not _check_is_probability:
+            raise NonProbabilityValues(
+                f"Probability values outputed by calibrator are not between 0 and 1. \n Probability list : {list_calibrated_proba}."
+            )
+        _check_increasing = all(
+            [
+                list_calibrated_proba[i] <= list_calibrated_proba[i + 1]
+                for i in range(len(list_calibrated_proba) - 1)
+            ]
+        )
+        if not _check_increasing:
+            raise NonIncreasingProbabilities(
+                f"Probability values outputed by calibrator must be increasing. \n Probability list : {list_calibrated_proba}."
+            )
+
         # Get the optimized value for the probabilities
         df_reordering["sorted_proba"] = list_calibrated_proba
         return df_reordering
 
     @abstractmethod
-    def _calibrate(self, df_score, **kwargs):
+    def _calibrate(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> List[float]:
         raise NotImplementedError
 
 
@@ -103,7 +126,7 @@ class VanillaCalibrator(Calibrator):
     def __init__(self, **kwargs):
         ...
 
-    def _calibrate(self, df_cvx, **kwargs):
+    def _calibrate(self, df_cvx: pd.DataFrame, **_kwargs) -> List[float]:
 
         # Declare the list of probabilities to be set as variables
         list_proba = [cp.Variable(1) for _ in df_cvx.index]
@@ -153,7 +176,7 @@ class BootstrappedCalibrator(Calibrator):
 
     """
 
-    def __init__(self, nb_experiments: int = 20, method: str = "average", **kwargs):
+    def __init__(self, nb_experiments: int = 20, method: str = "average", **_kwargs):
         """
         Args:
             nb_experiments (int, optional): Number of bootstrapped datasets used to optimize the logloss. Defaults to 20.
@@ -164,7 +187,7 @@ class BootstrappedCalibrator(Calibrator):
             raise NotImplementedError
         self.method = method
 
-    def _calibrate(self, df_cvx, **kwargs):
+    def _calibrate(self, df_cvx: pd.DataFrame, **_kwargs) -> List[float]:
         list_proba_multinomial = list(df_cvx["positive_proba"].values)
         list_proba_multinomial += list(df_cvx["negative_proba"].values)
 
