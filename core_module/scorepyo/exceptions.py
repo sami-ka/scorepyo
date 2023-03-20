@@ -67,3 +67,14 @@ class NonBooleanValueError(Exception):
     """Error raised when value is not boolean"""
 
     pass
+
+
+class NonProbabilityValues(Exception):
+    """Error raised when a probability value returned by a calibrator is not valid (between 0 and 1)"""
+
+    pass
+
+class NonIncreasingProbabilities(Exception):
+    """Error raised when list of probabilities returned by a calibrator is not increasing"""
+
+    pass
