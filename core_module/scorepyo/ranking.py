@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 import pandera as pa
 from fasterrisk.fasterrisk import RiskScoreOptimizer
-from pandera import Check, Column, DataFrameSchema, Index
 from sklearn.linear_model import OrthogonalMatchingPursuit, lars_path, lasso_path
 
 
@@ -28,7 +27,7 @@ class Ranker(ABC):
             # dtype=pa.Int(),
             name="rank",
             checks=[
-                Check.isin(range(len(df))),
+                pa.Check.isin(range(len(df))),
                 pa.Check(
                     lambda x: int(x) == x, element_wise=True
                 ),  # check that type is an int (any bit number int32, int64, etc.)
