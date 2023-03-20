@@ -3,10 +3,12 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
 ### Added
+- added checks in calibrator and ranker classes for future developments
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+- signature of parent class abstract function for mypy (ranker and calibrator)
 ### Security
 
 ## [0.2.0] - 2023/03/16
