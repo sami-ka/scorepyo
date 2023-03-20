@@ -1,4 +1,3 @@
-# mypy: ignore-errors
 """Classes for binary features rankers
 """
 
@@ -22,12 +21,26 @@ class Ranker(ABC):
     def compute_ranking_features(
         self, df: pd.DataFrame, *args: Any, **kwargs: Any
     ) -> pd.Series:
-        # TODO : pandera checks for output
-        return self._compute_ranking_features(df, *args, **kwargs)
+        series_ranking = self._compute_ranking_features(df, *args, **kwargs)
+
+        series_ranking_schema = pa.SeriesSchema(
+            # dtype=pa.Int(),
+            name="rank",
+            checks=[
+                pa.Check.isin(range(len(df))),
+                pa.Check(
+                    lambda x: int(x) == x, element_wise=True
+                ),  # check that type is an int (any bit number int32, int64, etc.)
+            ],
+        )
+        series_ranking_schema.validate(series_ranking)
+        return series_ranking
 
     @abstractmethod
     def _compute_ranking_features(
-        self, df: pd.DataFrame, *args: Any, **kwargs: Any
+        # self, df: pd.DataFrame,
+        *args: Any,
+        **kwargs: Any,
     ) -> pd.Series:
         raise NotImplementedError
 
@@ -80,7 +93,7 @@ class LogOddsDensity(Ranker):
             method="min", na_option="bottom", ascending=False
         )
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class DiverseLogOddsDensity(Ranker):
@@ -155,7 +168,7 @@ class DiverseLogOddsDensity(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class CumulativeMetric(Ranker):
@@ -272,7 +285,7 @@ class CumulativeMetric(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class BordaRank(Ranker):
@@ -316,7 +329,7 @@ class BordaRank(Ranker):
         )
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class LassoPathRank(Ranker):
@@ -394,7 +407,7 @@ class LassoPathRank(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class LarsPathRank(Ranker):
@@ -468,7 +481,7 @@ class LarsPathRank(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class OMPRank(Ranker):
@@ -537,7 +550,7 @@ class OMPRank(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
 
 
 class FasterRiskRank(Ranker):
@@ -668,4 +681,4 @@ class FasterRiskRank(Ranker):
         df_["rank"] = df_["rank"] + 1
 
         index_without_intercept = [c for c in df_.index if c != "intercept"]
-        return df_.loc[index_without_intercept, "rank"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
