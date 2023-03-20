@@ -74,6 +74,7 @@ class NonProbabilityValues(Exception):
 
     pass
 
+
 class NonIncreasingProbabilities(Exception):
     """Error raised when list of probabilities returned by a calibrator is not increasing"""
 
