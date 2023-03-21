@@ -544,9 +544,10 @@ class RiskScore(_BaseRiskScore):
             self._POINT_COL
         ].astype(int)
         self.feature_point_card["binary_feature"] = self.feature_point_card.index.values
-        self.feature_point_card[
-            self._FEATURE_COL
-        ] = self.feature_point_card.index.values
+        features_column = self.feature_point_card.merge(
+            df_info["feature"], left_index=True, right_index=True
+        )["feature"]
+        self.feature_point_card[self._FEATURE_COL] = features_column
 
         self.feature_point_card = self.feature_point_card.set_index(self._FEATURE_COL)
         self.feature_point_card[self._DESCRIPTION_COL] = self.feature_point_card[
