@@ -7,6 +7,14 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 ### Deprecated
 ### Removed
 ### Fixed
+### Security
+
+## [0.2.2] - 2023/03/21
+## Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
 - column in risk score model summary
 ### Security
 
