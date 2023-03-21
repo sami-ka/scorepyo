@@ -39,7 +39,8 @@ $$\nabla L(p_{s_1},...,p_{s_k}) = \left[\begin{array}{c}
 \end{array}\right] 
 $$
 
-The probabilities $p_{s_j}, j \in [1,k]$ minimizing the logloss satisfies the folowing system:
+The probabilities $p_{s_j}, j \in [1,k]$ minimizing the logloss satisfy the following system:
+
 $$
 \left\{\begin{array}{rcl} 
 -\frac{n_1^+}{p_{s_1}}+ \frac{n_1^-}{1-p_{s_1}} & = & 0\\

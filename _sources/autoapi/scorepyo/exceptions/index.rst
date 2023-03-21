@@ -82,3 +82,17 @@ Functions
    Error raised when value is not boolean
 
 
+.. py:exception:: NonProbabilityValues
+
+   Bases: :py:obj:`Exception`
+
+   Error raised when a probability value returned by a calibrator is not valid (between 0 and 1)
+
+
+.. py:exception:: NonIncreasingProbabilities
+
+   Bases: :py:obj:`Exception`
+
+   Error raised when list of probabilities returned by a calibrator is not increasing
+
+

@@ -445,6 +445,16 @@ title="Print to PDF"
        NonBooleanValueError
       </a>
      </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.exceptions.NonProbabilityValues">
+       NonProbabilityValues
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.exceptions.NonIncreasingProbabilities">
+       NonIncreasingProbabilities
+      </a>
+     </li>
     </ul>
    </li>
   </ul>
@@ -511,6 +521,16 @@ title="Print to PDF"
      <li class="toc-h4 nav-item toc-entry">
       <a class="reference internal nav-link" href="#scorepyo.exceptions.NonBooleanValueError">
        NonBooleanValueError
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.exceptions.NonProbabilityValues">
+       NonProbabilityValues
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#scorepyo.exceptions.NonIncreasingProbabilities">
+       NonIncreasingProbabilities
       </a>
      </li>
     </ul>
@@ -606,6 +626,20 @@ is over max point value</p>
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonBooleanValueError</span></span><a class="headerlink" href="#scorepyo.exceptions.NonBooleanValueError" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Error raised when value is not boolean</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="scorepyo.exceptions.NonProbabilityValues">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonProbabilityValues</span></span><a class="headerlink" href="#scorepyo.exceptions.NonProbabilityValues" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error raised when a probability value returned by a calibrator is not valid (between 0 and 1)</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="scorepyo.exceptions.NonIncreasingProbabilities">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">scorepyo.exceptions.</span></span><span class="sig-name descname"><span class="pre">NonIncreasingProbabilities</span></span><a class="headerlink" href="#scorepyo.exceptions.NonIncreasingProbabilities" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error raised when list of probabilities returned by a calibrator is not increasing</p>
 </dd></dl>
 
 </section>

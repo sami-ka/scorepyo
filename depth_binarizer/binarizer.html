@@ -471,7 +471,7 @@ Hereafter is an example from the interpretML package for the feature <em>Age</em
 <p>We can observe that each single-feature tree defines intervals on the feature domain, and a constant value on each interval. In a binary classification setting, that constant value is the log-odd to add for each sample depending on the feature value of each sample.</p>
 <img src="illustration_feature_extraction.PNG" align="right" style="width:700px;"/>
 <p>‘   ‘</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">AutoBinarizer</span></code> class extracts every plateau of single-feature trees of the fitted EBM. Plateau with a negative log-odd value can be filtered with the <code class="docutils literal notranslate"><span class="pre">keep_negative</span></code> parameter. The number of plateaux of single-feature tree, and thus binary features extracted by continuous feature, is bounded by the <code class="docutils literal notranslate"><span class="pre">max_number_binaries_by_features</span></code> parameter.
+<p>The <code class="docutils literal notranslate"><span class="pre">EBMBinarizer</span></code> class extracts every plateau of single-feature trees of the fitted EBM. Plateau with a negative log-odd value can be filtered with the <code class="docutils literal notranslate"><span class="pre">keep_negative</span></code> parameter. The number of plateaux of single-feature tree, and thus binary features extracted by continuous feature, is bounded by the <code class="docutils literal notranslate"><span class="pre">max_number_binaries_by_features</span></code> parameter.
 <br /><br /></p>
 <div class="admonition-info admonition">
 <p class="admonition-title">Info</p>

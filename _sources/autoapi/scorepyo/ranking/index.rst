@@ -42,7 +42,7 @@ Classes
    .. py:method:: compute_ranking_features(df: pandas.DataFrame, *args: Any, **kwargs: Any) -> pandas.Series
 
 
-   .. py:method:: _compute_ranking_features(df: pandas.DataFrame, *args: Any, **kwargs: Any) -> pandas.Series
+   .. py:method:: _compute_ranking_features(**kwargs: Any) -> pandas.Series
       :abstractmethod:
 
 

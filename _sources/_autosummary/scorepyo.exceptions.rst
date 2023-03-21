@@ -1,4 +1,4 @@
-scorepyo.exceptions
+﻿scorepyo.exceptions
 ===================
 
 .. automodule:: scorepyo.exceptions
@@ -31,7 +31,9 @@ scorepyo.exceptions
       MissingColumnError
       NegativeValueError
       NonBooleanValueError
+      NonIncreasingProbabilities
       NonIntegerValueError
+      NonProbabilityValues
    
    
 

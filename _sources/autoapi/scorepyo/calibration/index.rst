@@ -54,7 +54,7 @@ Classes
           pd.DataFrame: DataFrame containing the probability assigned to each possible score( or sum of points)
 
 
-   .. py:method:: _calibrate(df_score, **kwargs)
+   .. py:method:: _calibrate(*args: Any, **kwargs: Any) -> List[float]
       :abstractmethod:
 
 
@@ -72,11 +72,11 @@ Classes
    This calibrator should be favored when calibrating on a large dataset.
 
 
-   .. py:method:: _calibrate(df_cvx, **kwargs)
+   .. py:method:: _calibrate(df_cvx: pandas.DataFrame, **_kwargs) -> List[float]
 
 
 
-.. py:class:: BootstrappedCalibrator(nb_experiments: int = 20, method: str = 'average', **kwargs)
+.. py:class:: BootstrappedCalibrator(nb_experiments: int = 20, method: str = 'average', **_kwargs)
 
    Bases: :py:obj:`Calibrator`
 
@@ -92,7 +92,7 @@ Classes
    The BootstrappedCalibrator should be favored when calibrating on a small dataset.
 
 
-   .. py:method:: _calibrate(df_cvx, **kwargs)
+   .. py:method:: _calibrate(df_cvx: pandas.DataFrame, **_kwargs) -> List[float]
 
 
 
