@@ -2,6 +2,14 @@
 This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
+## Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [0.2.1] - 2023/03/21
 ### Added
 - added checks in calibrator and ranker classes for future developments
 ### Changed
@@ -9,6 +17,7 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 ### Removed
 ### Fixed
 - signature of parent class abstract function for mypy (ranker and calibrator)
+- typos in docs
 ### Security
 
 ## [0.2.0] - 2023/03/16
