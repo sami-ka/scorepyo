@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pandera as pa
 from fasterrisk.fasterrisk import RiskScoreOptimizer
+from mrmr import mrmr_classif
 from sklearn.linear_model import OrthogonalMatchingPursuit, lars_path, lasso_path
 
 
@@ -60,7 +61,6 @@ class LogOddsDensity(Ranker):
     def _compute_ranking_features(
         self, df: pd.DataFrame, *args: Any, **kwargs: Any
     ) -> pd.Series:  # pylint disable=W0613
-
         """
         This method ranks the binary features based on the product of :
          - logodds contribution of the binary feature
@@ -676,6 +676,71 @@ class FasterRiskRank(Ranker):
 
         df_ = df_.sort_values(
             by=["fasterrisk_chosen_features", "log_odds_sum"], ascending=[False, False]
+        )
+        df_["rank"] = list(range(len(df_)))
+        df_["rank"] = df_["rank"] + 1
+
+        index_without_intercept = [c for c in df_.index if c != "intercept"]
+        return df_.loc[index_without_intercept, "rank"].astype(int)
+
+
+class MRMRRank(Ranker):
+    """Binary feature ranker based on mRMR.
+
+    From https://github.com/smazzanti/mrmr:
+    " mRMR, which stands for "minimum Redundancy - Maximum Relevance", is a feature selection algorithm.
+    The peculiarity of mRMR is that it is a minimal-optimal feature selection algorithm.
+    This means it is designed to find the smallest relevant subset of features for a given Machine Learning task."
+
+    Based on this, the ranker selects the binary features selected by the mRMR algorithm where the number of non zero coefficients is equal to the specified target.
+
+    Child class of Ranker.
+    """
+
+    def __init__(self, **kwargs):  # pylint: disable=W0613
+        ...
+
+    def _compute_ranking_features(
+        self,
+        df: pd.DataFrame,
+        X_binarized: pd.DataFrame,
+        y: pd.Series,
+        nb_steps: int,
+        **kwargs,
+    ) -> pd.Series:
+        """This function returns binary features rank based on OMP
+
+        Args:
+            df (pd.DataFrame): Information dataframe on logodds, density and binary feature name
+            X_binarized (pd.DataFrame): Binary features
+            y (pd.Series): Binary target
+            nb_steps (int): Number of features to select
+
+        Returns:
+            pd.Series: Rank for each binary feature in a decreasing order of importance
+        """
+        dataframe_schema = pa.DataFrameSchema(
+            {
+                "log_odds": pa.Column(nullable=True),
+                "density": pa.Column(nullable=True),
+            },
+            index=pa.Index(str, name="binary_feature"),
+            strict=False,  # disable check of other columns in the dataframe
+        )
+
+        dataframe_schema.validate(df)
+
+        df_ = df.copy()
+        df_["log_odds_sum"] = df_["log_odds"].abs() * df_["density"].fillna(0)
+
+        mrmr_selected_features = mrmr_classif(X=X_binarized, y=y, K=nb_steps, show_progress=False)
+
+        df_["mrmr_selected_features"] = np.where(
+            df_.index.isin(mrmr_selected_features), 1, 0
+        )
+
+        df_ = df_.sort_values(
+            by=["mrmr_selected_features", "log_odds_sum"], ascending=[False, False]
         )
         df_["rank"] = list(range(len(df_)))
         df_["rank"] = df_["rank"] + 1
