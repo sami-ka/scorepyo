@@ -733,7 +733,9 @@ class MRMRRank(Ranker):
         df_ = df.copy()
         df_["log_odds_sum"] = df_["log_odds"].abs() * df_["density"].fillna(0)
 
-        mrmr_selected_features = mrmr_classif(X=X_binarized, y=y, K=nb_steps, show_progress=False)
+        mrmr_selected_features = mrmr_classif(
+            X=X_binarized, y=y, K=nb_steps, show_progress=False
+        )
 
         df_["mrmr_selected_features"] = np.where(
             df_.index.isin(mrmr_selected_features), 1, 0
