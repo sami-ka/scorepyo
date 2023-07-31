@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from sklearn.datasets import load_breast_cancer
 from sklearn.metrics import (
     average_precision_score,
@@ -11,12 +12,14 @@ from sklearn.model_selection import train_test_split
 from scorepyo._utils import fast_numba_auc
 from scorepyo.calibration import VanillaCalibrator
 from scorepyo.models import EBMRiskScore
-from scorepyo.ranking import LogOddsDensity
+from scorepyo.ranking import LogOddsDensity, MRMRRank
 
 
-def test_end_2_end():
-    # assert True
-
+@pytest.mark.parametrize(
+    "ranker",
+    [LogOddsDensity(), MRMRRank()],
+)
+def test_end_2_end(ranker):
     data = load_breast_cancer()
     data_X, data_y = data.data, data.target
 
@@ -33,8 +36,6 @@ def test_end_2_end():
     min_point_value = -2
     max_point_value = 3
     nb_max_features = 4
-
-    ranker = LogOddsDensity()
 
     optim_method = fast_numba_auc
 

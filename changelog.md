@@ -3,10 +3,12 @@ This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
 ## Added
+- ranker based on mrmr
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
+- index of binarized features dataframe set to original dataframe
 ### Security
 
 ## [0.2.2] - 2023/03/21
