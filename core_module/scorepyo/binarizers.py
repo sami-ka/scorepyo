@@ -554,6 +554,9 @@ class EBMBinarizer:
                 :, list_binary_feature_names
             ].astype(int)
 
+            # Set the index of the transformed dataframe with original index
+            X_binarized.index = X.index
+
             return X_binarized
 
     def get_info(self) -> pd.DataFrame:
