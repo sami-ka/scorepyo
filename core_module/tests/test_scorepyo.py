@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from sklearn.datasets import load_breast_cancer
 from sklearn.metrics import (
     average_precision_score,
