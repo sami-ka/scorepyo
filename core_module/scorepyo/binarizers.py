@@ -122,7 +122,7 @@ class EBMBinarizer:
         self._one_hot_encoder: BaseEstimator = OneHotEncoder(
             handle_unknown="infrequent_if_exist",
             # max_categories=10,
-            sparse=False,
+            sparse_output=False,
         )
 
     def fit(

@@ -532,7 +532,7 @@ class OMPRank(Ranker):
         df_ = df.copy()
         df_["log_odds_sum"] = df_["log_odds"].abs() * df_["density"].fillna(0)
 
-        omp = OrthogonalMatchingPursuit(n_nonzero_coefs=nb_steps, normalize=False)
+        omp = OrthogonalMatchingPursuit(n_nonzero_coefs=nb_steps)
         omp.fit(X_binarized, y)
 
         omp_selected_features = [

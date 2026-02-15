@@ -7,7 +7,7 @@ import time
 from abc import abstractmethod
 from typing import Any, Optional
 
-import dask.array as da
+import polars as pl
 import numpy as np
 import pandas as pd
 import pandera as pa
@@ -479,37 +479,36 @@ class RiskScore(_BaseRiskScore):
             ] = all_points_possibilities
             idx += all_points_possibilities.shape[0]
 
-        # Use dask to compute the metric to optimize on all points combination
+        # Use polars lazy mode to compute the metric on all points combinations
 
-        # Dask array for the global enumeration of combinations
-        # TODO better design of chunk size
-        dask_cube = da.from_array(cube, chunks=((50, len(pool_top_features))))
-
-        # Dask array for the dataset of selected binary features
         dataset_transpose = X_binarized[list(pool_top_features)].values.T
-        dask_dataset_T = da.from_array(
-            dataset_transpose, chunks=dataset_transpose.shape
+
+        col_names = [f"f{i}" for i in range(cube.shape[1])]
+        # LazyFrame defers construction; map_batches applies UDF in one pass with schema override
+        lf_cube = pl.LazyFrame(
+            data=cube.astype(np.float32),
+            schema={name: pl.Float32 for name in col_names},
         )
 
-        # 1Dfication of maximization metric function
+        def compute_metric_for_batch(batch: pl.DataFrame) -> pl.DataFrame:
+            batch_np = batch.to_numpy()
+            scores = batch_np @ dataset_transpose  # (batch_rows, samples)
+            metrics = np.array([
+                self.enumeration_maximization_metric(y.values, scores[i, :])
+                for i in range(scores.shape[0])
+            ])
+            return pl.DataFrame({"metric": metrics})
 
-        enumeration_optimization_metric_1d = lambda y_score: [
-            self.enumeration_maximization_metric(y.values, y_score)
-        ]
-
-        # computation of score for all samples for all enumerated points combination
-        matmul = da.matmul(dask_cube, dask_dataset_T)
-
-        # computation of the maximum value on the defined enumeration metric
-        idx_max = da.argmax(
-            da.apply_along_axis(
-                enumeration_optimization_metric_1d,
-                axis=1,
-                arr=matmul,
-                shape=(1,),
-                dtype=matmul.dtype,
+        df_result = (
+            lf_cube
+            .map_batches(
+                compute_metric_for_batch,
+                schema={"metric": pl.Float64},
             )
-        ).compute()
+            .collect()
+        )
+
+        idx_max = df_result["metric"].arg_max()
 
         # Getting the points combination with the maximumu value
         best_points = cube[idx_max, :]

@@ -73,3 +73,27 @@ def test_end_2_end(ranker):
     print(f"Precision@0.5: \n{precision_test}")
 
     assert True
+
+
+def test_ebm_risk_score_polars_enumeration():
+    """Verify end-to-end fit/predict after replacing dask with polars lazy evaluation."""
+    data = load_breast_cancer()
+    X = pd.DataFrame(data=data.data, columns=data.feature_names)
+    y = pd.Series(data.target)
+
+    X_train, X_test, y_train, _ = train_test_split(X, y, test_size=0.25, random_state=42)
+
+    model = EBMRiskScore(
+        nb_max_features=3,
+        min_point_value=-2,
+        max_point_value=3,
+        nb_additional_features=3,
+    )
+    model.fit(X_train, y_train)
+
+    probas = model.predict_proba(X_test)
+    assert probas.shape == (X_test.shape[0], 2)
+    assert (probas >= 0).all() and (probas <= 1).all()
+
+    assert model.feature_point_card is not None and len(model.feature_point_card) > 0
+    assert model.score_card is not None and len(model.score_card.columns) > 0
