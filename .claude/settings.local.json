@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(/c/Users/samik/anaconda3/Scripts/pytest.exe --version)",
+      "Bash(/c/Users/samik/anaconda3/python.exe:*)",
+      "Bash(/c/Users/samik/anaconda3/envs/env_scorepyo/Scripts/pip.exe install:*)",
+      "Bash(/c/Users/samik/anaconda3/envs/env_scorepyo/Scripts/pytest.exe core_module/tests/test_scorepyo.py -rfs -v)",
+      "Bash(/c/Users/samik/anaconda3/envs/env_scorepyo/Scripts/pytest.exe \"core_module/tests/test_scorepyo.py::test_end_2_end[ranker0]\" -rfs -v)",
+      "Bash(/c/Users/samik/anaconda3/envs/env_scorepyo/python.exe:*)"
+    ]
+  }
+}
