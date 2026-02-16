@@ -2,11 +2,15 @@
 This changelog is based on https://keepachangelog.com/en/1.0.0/.
 
 ## [Unreleased]
-## Added
+### Added
 ### Changed
+- Replace `dask` with `polars` for the point-assignment enumeration step in `models.py`. The enumeration cube is now built as a `pl.LazyFrame` and reduced via `map_batches`, yielding ~2x faster enumeration and removing the `dask[distributed]` dependency.
 ### Deprecated
 ### Removed
+- `dask[distributed]` dependency removed from `setup.cfg`
 ### Fixed
+- `OneHotEncoder` instantiation updated to use `sparse_output=False` (replaces removed `sparse=False` parameter, sklearn ≥ 1.2)
+- `OrthogonalMatchingPursuit` instantiation updated to remove deprecated `normalize` parameter (removed in sklearn ≥ 1.2)
 ### Security
 
 ## [0.2.3] - 2023/07/31
